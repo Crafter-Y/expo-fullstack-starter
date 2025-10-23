@@ -1,0 +1,113 @@
+import { authClient } from "@/lib/auth-client";
+import { useRouter } from "expo-router";
+import { useEffect, useState } from "react";
+import { Pressable, Text, View } from "react-native";
+
+export default function ProfileScreen() {
+  const router = useRouter();
+  const [user, setUser] = useState<{ name?: string; email?: string } | null>(
+    null
+  );
+  const [loading, setLoading] = useState(true);
+  const [loggingOut, setLoggingOut] = useState(false);
+
+  useEffect(() => {
+    loadUser();
+  }, []);
+
+  const loadUser = async () => {
+    try {
+      const session = await authClient.getSession();
+      if (session && "data" in session && session.data?.user) {
+        setUser(session.data.user);
+      }
+    } catch (error) {
+      console.error("Error loading user:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleLogout = async () => {
+    setLoggingOut(true);
+    try {
+      await authClient.signOut();
+      router.replace("/(auth)/login" as any);
+    } catch (error) {
+      console.error("Logout error:", error);
+      setLoggingOut(false);
+    }
+  };
+
+  if (loading) {
+    return (
+      <View className="flex-1 items-center justify-center bg-gray-50 dark:bg-gray-900">
+        <Text className="text-gray-500 dark:text-gray-400">Loading...</Text>
+      </View>
+    );
+  }
+
+  return (
+    <View className="flex-1 bg-gray-50 dark:bg-gray-900">
+      <View className="border-b border-gray-200 bg-white px-6 pb-4 pt-12 dark:border-gray-700 dark:bg-gray-800">
+        <Text className="text-2xl font-bold text-gray-900 dark:text-white">
+          Profile
+        </Text>
+      </View>
+
+      <View className="p-4">
+        <View className="mb-4 rounded-lg border border-gray-200 bg-white p-4 dark:border-gray-700 dark:bg-gray-800">
+          <Text className="mb-1 text-sm text-gray-500 dark:text-gray-400">
+            Name
+          </Text>
+          <Text className="text-base font-medium text-gray-900 dark:text-white">
+            {user?.name || "Not set"}
+          </Text>
+        </View>
+
+        <View className="mb-4 rounded-lg border border-gray-200 bg-white p-4 dark:border-gray-700 dark:bg-gray-800">
+          <Text className="mb-1 text-sm text-gray-500 dark:text-gray-400">
+            Email
+          </Text>
+          <Text className="text-base font-medium text-gray-900 dark:text-white">
+            {user?.email || "Not set"}
+          </Text>
+        </View>
+
+        <View className="mt-6">
+          <Text className="mb-3 text-sm font-semibold uppercase text-gray-500 dark:text-gray-400">
+            Settings
+          </Text>
+
+          <Pressable className="mb-2 rounded-lg border border-gray-200 bg-white p-4 active:bg-gray-50 dark:border-gray-700 dark:bg-gray-800 dark:active:bg-gray-700">
+            <Text className="text-base text-gray-900 dark:text-white">
+              Theme
+            </Text>
+            <Text className="mt-1 text-sm text-gray-500 dark:text-gray-400">
+              System default
+            </Text>
+          </Pressable>
+
+          <Pressable className="mb-2 rounded-lg border border-gray-200 bg-white p-4 active:bg-gray-50 dark:border-gray-700 dark:bg-gray-800 dark:active:bg-gray-700">
+            <Text className="text-base text-gray-900 dark:text-white">
+              Language
+            </Text>
+            <Text className="mt-1 text-sm text-gray-500 dark:text-gray-400">
+              English
+            </Text>
+          </Pressable>
+        </View>
+
+        <Pressable
+          className={`mt-6 rounded-lg p-4 ${loggingOut ? "bg-red-400" : "bg-red-600 active:bg-red-700"}`}
+          onPress={handleLogout}
+          disabled={loggingOut}
+        >
+          <Text className="text-center text-base font-semibold text-white">
+            {loggingOut ? "Signing out..." : "Sign Out"}
+          </Text>
+        </Pressable>
+      </View>
+    </View>
+  );
+}

@@ -153,7 +153,7 @@
 
 #### **2.2 Navigation & Routing (Week 2-3)**
 
-- [ ] Set up Expo Router file structure:
+- [x] Set up Expo Router file structure:
   ```
   /app
     /(auth)
@@ -164,9 +164,9 @@
       /profile.tsx
     /_layout.tsx
   ```
-- [ ] Create protected route wrapper
-- [ ] Add navigation guards (redirect if not authenticated)
-- [ ] Implement tab navigation
+- [x] Create protected route wrapper
+- [x] Add navigation guards (redirect if not authenticated)
+- [x] Implement tab navigation
 
 #### **2.3 State Management (Week 3)**
 
