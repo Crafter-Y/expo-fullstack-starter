@@ -38,7 +38,7 @@ See [TECHSTACK.md](./TECHSTACK.md) for detailed architecture.
 ### Prerequisites
 
 - [Bun](https://bun.sh/) installed
-- MySQL database (or compatible service)
+- [Docker](https://www.docker.com/) and Docker Compose installed
 
 ### Setup
 
@@ -48,28 +48,65 @@ See [TECHSTACK.md](./TECHSTACK.md) for detailed architecture.
    bun install
    ```
 
-2. **Configure environment variables:**
+2. **Start Docker services:**
+
+   ```bash
+   docker compose up -d
+   ```
+
+   This starts:
+   - MariaDB database (port 3306)
+   - OpenTelemetry Collector
+   - Tempo (tracing backend)
+   - Grafana (observability dashboard)
+
+3. **Configure environment variables:**
 
    ```bash
    cp .env.example .env
    ```
 
    Fill in the required values:
-   - `DATABASE_URL`: Your database connection string
+   - `DATABASE_URL`: `mysql://root:password@localhost:3306/todoapp` (default Docker MariaDB setup)
    - `BETTER_AUTH_SECRET`: Random secret for auth (generate with `openssl rand -base64 32`)
    - `BETTER_AUTH_URL`: Backend URL (default: `http://localhost:8081`)
    - `EXPO_PUBLIC_API_URL`: API URL for client (default: `http://localhost:8081`)
 
-3. **Start the development server:**
+4. **Start the development server:**
    ```bash
    bun start
    ```
 
+## Docker Services
+
+The `docker-compose.yml` provides the following services for development:
+
+- **MariaDB**: Database server (port 3306)
+- **OpenTelemetry Collector**: Telemetry data aggregation
+- **Tempo**: Distributed tracing backend
+- **Grafana**: Observability dashboard (port 3000)
+
+### Managing Docker Services
+
+```bash
+# Start all services
+docker compose up -d
+
+# Stop all services
+docker compose down
+
+# View logs
+docker compose logs -f
+
+# Reset database (removes all data)
+docker compose down -v
+```
+
 ## Environment Variables
 
-| Variable              | Description                   | Example                               |
-| --------------------- | ----------------------------- | ------------------------------------- |
-| `DATABASE_URL`        | Database connection string    | `mysql://user:pass@localhost:3306/db` |
-| `BETTER_AUTH_SECRET`  | Secret key for authentication | `your-secret-key`                     |
-| `BETTER_AUTH_URL`     | Backend URL                   | `http://localhost:8081`               |
-| `EXPO_PUBLIC_API_URL` | Public API endpoint           | `http://localhost:8081`               |
+| Variable              | Description                   | Example                                        |
+| --------------------- | ----------------------------- | ---------------------------------------------- |
+| `DATABASE_URL`        | Database connection string    | `mysql://root:password@localhost:3306/todoapp` |
+| `BETTER_AUTH_SECRET`  | Secret key for authentication | `your-secret-key`                              |
+| `BETTER_AUTH_URL`     | Backend URL                   | `http://localhost:8081`                        |
+| `EXPO_PUBLIC_API_URL` | Public API endpoint           | `http://localhost:8081`                        |

@@ -11,44 +11,48 @@
 - [x] Update `babel.config.js` to include NativeWind preset
 - [x] Test basic styling on a component
 
-#### **0.2 Prisma Setup**
+#### **0.2 Docker Development Environment**
+
+- [x] Create `docker-compose.yml` with services:
+  - MySQL database
+  - OpenTelemetry Collector
+  - Tempo (tracing backend)
+  - Grafana (observability dashboard)
+- [x] Update `.env.example` with Docker database URL
+- [x] Add Docker setup instructions to README
+- [x] Test Docker services with `docker compose up -d`
+
+#### **0.3 Prisma Setup**
 
 - [ ] Install Prisma CLI and client (`prisma`, `@prisma/client`)
-- [ ] Install database driver (e.g., `@prisma/adapter-libsql` for Turso, or MySQL driver)
+- [ ] Install MySQL driver (`mysql2`)
 - [ ] Initialize Prisma with `bunx prisma init`
-- [ ] Configure `.env` with `DATABASE_URL`
+- [ ] Configure `.env` with `DATABASE_URL` (Docker MySQL)
 - [ ] Test Prisma connection
 
-#### **0.3 Better Auth Dependencies**
+#### **0.4 Better Auth Dependencies**
 
 - [ ] Install Better Auth (`better-auth`)
 - [ ] Install required auth adapters
 
-#### **0.4 tRPC Dependencies**
+#### **0.5 tRPC Dependencies**
 
 - [ ] Install tRPC server packages (`@trpc/server`)
 - [ ] Install tRPC client packages (`@trpc/client`, `@trpc/react-query`)
 - [ ] Install React Query (`@tanstack/react-query`)
 - [ ] Install Zod for input validation (`zod`)
 
-#### **0.5 Zustand Setup**
+#### **0.6 Zustand Setup**
 
 - [ ] Install Zustand (`zustand`)
 - [ ] Install AsyncStorage for persistence (`@react-native-async-storage/async-storage`)
-- [ ] Create placeholder stores:
-  - `/stores/authStore.ts`
-  - `/stores/uiStore.ts`
 
-#### **0.6 i18next Setup**
+#### **0.7 i18next Setup**
 
 - [ ] Install i18next packages (`react-i18next`, `i18next`)
 - [ ] Install Expo localization (`expo-localization`)
-- [ ] Create `/locales` folder structure:
-  - `/locales/en.json` (primary language)
-  - `/locales/de.json`
-- [ ] Create i18n config file at `/lib/i18n.ts`
 
-#### **0.7 ESLint & Prettier**
+#### **0.8 ESLint & Prettier**
 
 - [x] Install Prettier and ESLint integration packages:
 - [x] Update `eslint.config.js` to integrate Prettier
@@ -56,19 +60,13 @@
 - [x] Create `.prettierignore` file
 - [x] Test with `bunx expo lint`
 
-#### **0.8 Environment Variables**
+#### **0.9 Environment Variables**
 
-- [x] Create `.env.example` with all required variables:
-  ```
-  DATABASE_URL=
-  BETTER_AUTH_SECRET=
-  BETTER_AUTH_URL=
-  EXPO_PUBLIC_API_URL=
-  ```
+- [x] Create `.env.example` with all required variables
 - [x] Create `.env` file (gitignored)
 - [x] Document each variable in README
 
-#### **0.9 VSCode Configuration**
+#### **0.10 VSCode Configuration**
 
 - [x] Update `.vscode/settings.json` with:
   - Format on save
@@ -89,7 +87,6 @@
 
 #### **1.1 Database Setup (Week 1)**
 
-- [ ] Install Prisma + MySQL driver
 - [ ] Create Prisma schema:
   - Better Auth tables (user, session, account, verification)
   - Todo model (id, userId, title, description, completed, createdAt, updatedAt)
@@ -258,7 +255,7 @@
 
 - [ ] Install Lost Pixel
 - [ ] Configure Lost Pixel with Storybook
-- [ ] Set up self-hosted Lost Pixel instance (Docker)
+- [ ] Add Lost Pixel service to `docker-compose.yml`
 - [ ] Create baseline snapshots
 - [ ] Configure CI integration
 
@@ -292,9 +289,10 @@
 #### **6.1 OpenTelemetry Setup (Week 8-9)**
 
 - [ ] Install OTel SDKs (client + server)
-- [ ] Configure exporters (Tempo, Jaeger, or similar)
+- [ ] Configure exporters to send data to Docker Tempo instance
 - [ ] Set up sampling strategy (5% default, 100% errors)
 - [ ] Create session-based tracing with `sessionId`
+- [ ] Configure Grafana dashboards for trace visualization
 - [ ] Add custom spans for key operations:
   - API calls (tRPC)
   - Database queries
@@ -338,6 +336,8 @@
 - [ ] Set up Expo EAS Build
 - [ ] Configure staging & production environments
 - [ ] Set up backend deployment (Railway, Fly.io, etc.)
+- [ ] Deploy production database (managed MySQL service)
+- [ ] Deploy observability stack (Grafana Cloud or self-hosted)
 - [ ] Database migrations in CI
 - [ ] Environment variable management
 
