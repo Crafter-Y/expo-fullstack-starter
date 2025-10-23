@@ -14,14 +14,12 @@
 
 - **tRPC hooks** → primary data fetching & caching.
 - **Zustand** → client-side state (theme, preferences).
-
   - Optional: persist to AsyncStorage for session-long or longer persistence.
 
 ### **Data Fetching & API**
 
 - **tRPC** → typed client-server communication.
 - Public & protected procedures:
-
   - `publicProcedure` → open API routes.
   - `protectedProcedure` → requires authenticated user (`Better Auth` session).
 
@@ -64,7 +62,6 @@
 - **MySQL** → production database.
 - **Prisma schema** → includes Better Auth tables + your custom tables.
 - **Testing**:
-
   - Unit tests → Prismock or mocked Prisma for tRPC endpoints.
   - Integration tests → optional temporary MySQL / SQLite DB.
 
@@ -83,7 +80,6 @@
 
 - **Jest + Prismock** → unit tests for tRPC procedures.
 - **TRPC procedure testing**:
-
   - Public → test data returned correctly.
   - Protected → test authorization & user context.
 
@@ -94,7 +90,6 @@
 ## **🛠️ CI / DevOps / Workflow**
 
 - **Github Actions CI/CD** → pipeline to run:
-
   - Linting & unit tests (frontend & backend)
   - Storybook build
   - Visual regression tests (Lost Pixel)
@@ -109,13 +104,11 @@
 - **Full type safety** end-to-end (tRPC + TypeScript).
 - **Frontend-first development** with Storybook + Lost Pixel.
 - **Robust testing**:
-
   - Unit → Jest + tRPC mocks.
   - Visual → Lost Pixel.
   - E2E → Maestro.
 
 - **Scalable & maintainable architecture**:
-
   - Frontend caches with tRPC/React Query.
   - Backend handles auth + Prisma ORM cleanly.
 

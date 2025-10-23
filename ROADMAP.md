@@ -22,37 +22,24 @@
 - [x] Add Docker setup instructions to README
 - [x] Test Docker services with `docker compose up -d`
 
-#### **0.3 Prisma Setup**
-
-- [ ] Install Prisma CLI and client (`prisma`, `@prisma/client`)
-- [ ] Install MySQL driver (`mysql2`)
-- [ ] Initialize Prisma with `bunx prisma init`
-- [ ] Configure `.env` with `DATABASE_URL` (Docker MySQL)
-- [ ] Test Prisma connection
-
-#### **0.4 Better Auth Dependencies**
-
-- [ ] Install Better Auth (`better-auth`)
-- [ ] Install required auth adapters
-
-#### **0.5 tRPC Dependencies**
+#### **0.3 tRPC Dependencies**
 
 - [ ] Install tRPC server packages (`@trpc/server`)
 - [ ] Install tRPC client packages (`@trpc/client`, `@trpc/react-query`)
 - [ ] Install React Query (`@tanstack/react-query`)
 - [ ] Install Zod for input validation (`zod`)
 
-#### **0.6 Zustand Setup**
+#### **0.4 Zustand Setup**
 
 - [ ] Install Zustand (`zustand`)
 - [ ] Install AsyncStorage for persistence (`@react-native-async-storage/async-storage`)
 
-#### **0.7 i18next Setup**
+#### **0.5 i18next Setup**
 
 - [ ] Install i18next packages (`react-i18next`, `i18next`)
 - [ ] Install Expo localization (`expo-localization`)
 
-#### **0.8 ESLint & Prettier**
+#### **0.6 ESLint & Prettier**
 
 - [x] Install Prettier and ESLint integration packages:
 - [x] Update `eslint.config.js` to integrate Prettier
@@ -60,13 +47,13 @@
 - [x] Create `.prettierignore` file
 - [x] Test with `bunx expo lint`
 
-#### **0.9 Environment Variables**
+#### **0.7 Environment Variables**
 
 - [x] Create `.env.example` with all required variables
 - [x] Create `.env` file (gitignored)
 - [x] Document each variable in README
 
-#### **0.10 VSCode Configuration**
+#### **0.8 VSCode Configuration**
 
 - [x] Update `.vscode/settings.json` with:
   - Format on save
@@ -85,23 +72,43 @@
 
 **Goal:** Database, authentication, and API infrastructure
 
-#### **1.1 Database Setup (Week 1)**
+#### **1.1 Better Auth Integration (Week 1)**
 
-- [ ] Create Prisma schema:
-  - Better Auth tables (user, session, account, verification)
+**Server Setup:**
+
+- [ ] Install Better Auth server packages: `better-auth @better-auth/expo`
+- [ ] Install Prisma adapter: `@prisma/client mysql2`
+- [ ] Initialize Prisma with `bunx prisma init`
+- [ ] Create Better Auth config at `/lib/auth.ts`:
+  - Add Expo plugin
+  - Configure Prisma adapter (refer to https://www.better-auth.com/docs/adapters/prisma)
+  - Enable email/password authentication
+  - Add `trustedOrigins` with scheme `expofullstackstarter://`
+- [ ] Create Expo API route at `/app/api/auth/[...auth]+api.ts`
+- [ ] Mount Better Auth handler for GET and POST requests
+- [ ] Generate Better Auth database schema with Prisma
+- [ ] Run Prisma migrations
+
+**Client Setup:**
+
+- [ ] Install client packages: `better-auth @better-auth/expo expo-secure-store`
+- [ ] Create auth client at `/lib/auth-client.ts`:
+  - Import `expoClient` plugin from `@better-auth/expo/client`
+  - Configure with scheme `expofullstackstarter` (from app.json)
+  - Use `process.env.EXPO_PUBLIC_API_URL` for baseURL
+  - Configure SecureStore for session caching
+- [ ] Update `metro.config.js` to enable `unstable_enablePackageExports`
+- [ ] Test basic authentication flow (sign up, sign in, session)
+
+#### **1.2 Prisma Schema & Database Setup (Week 1)**
+
+- [ ] Extend Prisma schema with app models:
   - Todo model (id, userId, title, description, completed, createdAt, updatedAt)
   - Categories model (optional: for organizing todos)
-- [ ] Set up Prisma migrations
+- [ ] Run Prisma migrations for app tables
 - [ ] Create seed script with sample data
 - [ ] Set up Prismock for testing
-
-#### **1.2 Better Auth Integration (Week 1)**
-
-- [ ] Install Better Auth
-- [ ] Configure authentication providers (email/password, OAuth)
-- [ ] Set up session management
-- [ ] Create auth endpoints (login, register, logout, refresh)
-- [ ] Add middleware for session validation
+- [ ] Test database connection
 
 #### **1.3 tRPC Setup (Week 1-2)**
 
