@@ -6,11 +6,10 @@
 
 #### **0.1 NativeWind Setup**
 
-- [ ] Install NativeWind v4 and dependencies (`nativewind`, `tailwindcss`)
-- [ ] Create `tailwind.config.js` with content paths
-- [ ] Update `babel.config.js` to include NativeWind preset
-- [ ] Create `/constants/theme.ts` for design tokens (colors, spacing, typography)
-- [ ] Test basic styling on a component
+- [x] Install NativeWind v4 and dependencies (`nativewind`, `tailwindcss`)
+- [x] Create `tailwind.config.js` with content paths
+- [x] Update `babel.config.js` to include NativeWind preset
+- [x] Test basic styling on a component
 
 #### **0.2 Folder Structure - Frontend**
 
