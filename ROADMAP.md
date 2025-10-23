@@ -70,11 +70,11 @@
 
 #### **0.9 VSCode Configuration**
 
-- [ ] Update `.vscode/settings.json` with:
+- [x] Update `.vscode/settings.json` with:
   - Format on save
   - TypeScript import organization
   - Prettier as default formatter
-- [ ] Create `.vscode/extensions.json` with recommended extensions:
+- [x] Create `.vscode/extensions.json` with recommended extensions:
   - Prisma
   - Tailwind CSS IntelliSense
   - ESLint

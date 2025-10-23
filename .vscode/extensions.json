@@ -1,1 +1,10 @@
-{ "recommendations": ["expo.vscode-expo-tools"] }
+{
+  "recommendations": [
+    "expo.vscode-expo-tools",
+    "dbaeumer.vscode-eslint",
+    "esbenp.prettier-vscode",
+    "Prisma.prisma",
+    "bradlc.vscode-tailwindcss",
+    "msjsdiag.vscode-react-native"
+  ]
+}
