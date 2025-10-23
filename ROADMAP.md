@@ -58,15 +58,15 @@
 
 #### **0.8 Environment Variables**
 
-- [ ] Create `.env.example` with all required variables:
+- [x] Create `.env.example` with all required variables:
   ```
   DATABASE_URL=
   BETTER_AUTH_SECRET=
   BETTER_AUTH_URL=
   EXPO_PUBLIC_API_URL=
   ```
-- [ ] Create `.env` file (gitignored)
-- [ ] Document each variable in README
+- [x] Create `.env` file (gitignored)
+- [x] Document each variable in README
 
 #### **0.9 VSCode Configuration**
 
