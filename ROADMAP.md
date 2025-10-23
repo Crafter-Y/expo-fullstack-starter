@@ -11,44 +11,7 @@
 - [x] Update `babel.config.js` to include NativeWind preset
 - [x] Test basic styling on a component
 
-#### **0.2 Folder Structure - Frontend**
-
-- [ ] Create `/components` folder for reusable UI components
-- [ ] Create `/components/ui` for base components (Button, Input, etc.)
-- [ ] Create `/lib` folder for utilities and helpers
-- [ ] Create `/hooks` folder for custom React hooks
-- [ ] Create `/stores` folder for Zustand state management
-- [ ] Create `/constants` folder for app-wide constants
-
-#### **0.3 Folder Structure - Backend (Expo API Routes)**
-
-- [ ] Create `/app/api` folder for Expo API routes
-- [ ] Create `/server` folder for backend logic (tRPC routers, helpers)
-- [ ] Create `/server/routers` for tRPC route definitions
-- [ ] Create `/server/context.ts` for tRPC context
-- [ ] Create `/server/trpc.ts` for tRPC initialization
-
-#### **0.4 Folder Structure - Database**
-
-- [ ] Create `/prisma` folder at project root
-- [ ] Create placeholder `schema.prisma` file
-- [ ] Create `/prisma/seed.ts` for database seeding
-
-#### **0.5 TypeScript Configuration**
-
-- [ ] Update `tsconfig.json` with path aliases:
-  ```json
-  "@/components/*": ["components/*"]
-  "@/lib/*": ["lib/*"]
-  "@/hooks/*": ["hooks/*"]
-  "@/stores/*": ["stores/*"]
-  "@/server/*": ["server/*"]
-  "@/constants/*": ["constants/*"]
-  ```
-- [ ] Add strict mode options
-- [ ] Configure for Expo API routes
-
-#### **0.6 Prisma Setup**
+#### **0.2 Prisma Setup**
 
 - [ ] Install Prisma CLI and client (`prisma`, `@prisma/client`)
 - [ ] Install database driver (e.g., `@prisma/adapter-libsql` for Turso, or MySQL driver)
@@ -56,21 +19,19 @@
 - [ ] Configure `.env` with `DATABASE_URL`
 - [ ] Test Prisma connection
 
-#### **0.7 Better Auth Dependencies**
+#### **0.3 Better Auth Dependencies**
 
 - [ ] Install Better Auth (`better-auth`)
 - [ ] Install required auth adapters
-- [ ] Create placeholder auth config file at `/lib/auth.ts`
-- [ ] Create `.env.example` with auth-related variables (SECRET, providers)
 
-#### **0.8 tRPC Dependencies**
+#### **0.4 tRPC Dependencies**
 
 - [ ] Install tRPC server packages (`@trpc/server`)
 - [ ] Install tRPC client packages (`@trpc/client`, `@trpc/react-query`)
 - [ ] Install React Query (`@tanstack/react-query`)
 - [ ] Install Zod for input validation (`zod`)
 
-#### **0.9 Zustand Setup**
+#### **0.5 Zustand Setup**
 
 - [ ] Install Zustand (`zustand`)
 - [ ] Install AsyncStorage for persistence (`@react-native-async-storage/async-storage`)
@@ -78,25 +39,24 @@
   - `/stores/authStore.ts`
   - `/stores/uiStore.ts`
 
-#### **0.10 i18next Setup**
+#### **0.6 i18next Setup**
 
 - [ ] Install i18next packages (`react-i18next`, `i18next`)
 - [ ] Install Expo localization (`expo-localization`)
 - [ ] Create `/locales` folder structure:
-  - `/locales/en/common.json`
-  - `/locales/es/common.json` (or another language)
+  - `/locales/en.json` (primary language)
+  - `/locales/de.json`
 - [ ] Create i18n config file at `/lib/i18n.ts`
 
-#### **0.11 ESLint & Prettier**
+#### **0.7 ESLint & Prettier**
 
-- [ ] Install Prettier (`prettier`)
-- [ ] Create `.prettierrc` with formatting rules
-- [ ] Create `.prettierignore`
-- [ ] Extend ESLint config with Prettier rules
-- [ ] Add format script to `package.json`
-- [ ] Set up VSCode settings for auto-format
+- [x] Install Prettier and ESLint integration packages:
+- [x] Update `eslint.config.js` to integrate Prettier
+- [x] Create `.prettierrc` with formatting rules (Tailwind plugin already installed)
+- [x] Create `.prettierignore` file
+- [x] Test with `bunx expo lint`
 
-#### **0.12 Environment Variables**
+#### **0.8 Environment Variables**
 
 - [ ] Create `.env.example` with all required variables:
   ```
@@ -108,7 +68,7 @@
 - [ ] Create `.env` file (gitignored)
 - [ ] Document each variable in README
 
-#### **0.13 VSCode Configuration**
+#### **0.9 VSCode Configuration**
 
 - [ ] Update `.vscode/settings.json` with:
   - Format on save

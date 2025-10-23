@@ -1,0 +1,26 @@
+# Dependencies
+node_modules/
+bun.lock
+
+# Expo
+.expo/
+dist/
+
+# Build outputs
+*.jsbundle
+*.map
+
+# Android
+android/
+ios/
+
+# Git
+.git/
+
+# IDE
+.vscode/
+.idea/
+
+# Misc
+coverage/
+*.log
