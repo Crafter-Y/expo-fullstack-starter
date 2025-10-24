@@ -1,35 +1,20 @@
 import { authClient } from "@/lib/auth-client";
 import { Tabs, useRouter } from "expo-router";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { Text, View } from "react-native";
 
 export default function TabsLayout() {
   const router = useRouter();
-  const [isChecking, setIsChecking] = useState(true);
+  const { data: session, isPending } = authClient.useSession();
 
   useEffect(() => {
-    const checkAuth = async () => {
-      try {
-        const session = await authClient.getSession();
-        const isAuthenticated =
-          session && "data" in session && session.data?.user;
+    if (!isPending && !session) {
+      // User is not authenticated, redirect to login
+      router.replace("/login" as any);
+    }
+  }, [session, isPending, router]);
 
-        if (!isAuthenticated) {
-          // User is not authenticated, redirect to login
-          router.replace("/login" as any);
-        }
-      } catch (error) {
-        console.error("Auth check error:", error);
-        router.replace("/login" as any);
-      } finally {
-        setIsChecking(false);
-      }
-    };
-
-    checkAuth();
-  }, [router]);
-
-  if (isChecking) {
+  if (isPending) {
     return (
       <View className="flex-1 items-center justify-center bg-white dark:bg-gray-900">
         <Text className="text-gray-500 dark:text-gray-400">Loading...</Text>

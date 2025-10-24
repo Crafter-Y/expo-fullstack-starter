@@ -4,25 +4,14 @@ import { useEffect } from "react";
 
 export default function AuthLayout() {
   const router = useRouter();
+  const { data: session, isPending } = authClient.useSession();
 
   useEffect(() => {
-    const checkAuth = async () => {
-      try {
-        const session = await authClient.getSession();
-        const isAuthenticated =
-          session && "data" in session && session.data?.user;
-
-        if (isAuthenticated) {
-          // User is already authenticated, redirect to tabs
-          router.replace("/(tabs)" as any);
-        }
-      } catch (error) {
-        console.error("Auth check error:", error);
-      }
-    };
-
-    checkAuth();
-  }, [router]);
+    if (!isPending && session) {
+      // User is already authenticated, redirect to tabs
+      router.replace("/(tabs)" as any);
+    }
+  }, [session, isPending, router]);
 
   return (
     <Stack

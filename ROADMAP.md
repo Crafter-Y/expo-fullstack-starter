@@ -24,10 +24,10 @@
 
 #### **0.3 tRPC Dependencies**
 
-- [ ] Install tRPC server packages (`@trpc/server`)
-- [ ] Install tRPC client packages (`@trpc/client`, `@trpc/react-query`)
-- [ ] Install React Query (`@tanstack/react-query`)
-- [ ] Install Zod for input validation (`zod`)
+- [x] Install tRPC server packages (`@trpc/server`)
+- [x] Install tRPC client packages (`@trpc/client`, `@trpc/react-query`)
+- [x] Install React Query (`@tanstack/react-query`)
+- [x] Install Zod for input validation (`zod`)
 
 #### **0.4 Zustand Setup**
 
@@ -76,46 +76,46 @@
 
 **Server Setup:**
 
-- [ ] Install Better Auth server packages: `better-auth @better-auth/expo`
-- [ ] Install Prisma adapter: `@prisma/client mysql2`
-- [ ] Initialize Prisma with `bunx prisma init`
-- [ ] Create Better Auth config at `/lib/auth.ts`:
+- [x] Install Better Auth server packages: `better-auth @better-auth/expo`
+- [x] Install Prisma adapter: `@prisma/client mysql2`
+- [x] Initialize Prisma with `bunx prisma init`
+- [x] Create Better Auth config at `/lib/auth.ts`:
   - Add Expo plugin
   - Configure Prisma adapter (refer to https://www.better-auth.com/docs/adapters/prisma)
   - Enable email/password authentication
   - Add `trustedOrigins` with scheme `expofullstackstarter://`
-- [ ] Create Expo API route at `/app/api/auth/[...auth]+api.ts`
-- [ ] Mount Better Auth handler for GET and POST requests
-- [ ] Generate Better Auth database schema with Prisma
-- [ ] Run Prisma migrations
+- [x] Create Expo API route at `/app/api/auth/[...auth]+api.ts`
+- [x] Mount Better Auth handler for GET and POST requests
+- [x] Generate Better Auth database schema with Prisma
+- [x] Run Prisma migrations
 
 **Client Setup:**
 
-- [ ] Install client packages: `better-auth @better-auth/expo expo-secure-store`
-- [ ] Create auth client at `/lib/auth-client.ts`:
+- [x] Install client packages: `better-auth @better-auth/expo expo-secure-store`
+- [x] Create auth client at `/lib/auth-client.ts`:
   - Import `expoClient` plugin from `@better-auth/expo/client`
   - Configure with scheme `expofullstackstarter` (from app.json)
   - Use `process.env.EXPO_PUBLIC_API_URL` for baseURL
   - Configure SecureStore for session caching
-- [ ] Update `metro.config.js` to enable `unstable_enablePackageExports`
-- [ ] Test basic authentication flow (sign up, sign in, session)
+- [x] Update `metro.config.js` to enable `unstable_enablePackageExports`
+- [x] Test basic authentication flow (sign up, sign in, session)
 
 #### **1.2 Prisma Schema & Database Setup (Week 1)**
 
-- [ ] Extend Prisma schema with app models:
+- [x] Extend Prisma schema with app models:
   - Todo model (id, userId, title, description, completed, createdAt, updatedAt)
   - Categories model (optional: for organizing todos)
-- [ ] Run Prisma migrations for app tables
+- [x] Run Prisma migrations for app tables
 - [ ] Create seed script with sample data
 - [ ] Set up Prismock for testing
-- [ ] Test database connection
+- [x] Test database connection
 
 #### **1.3 tRPC Setup (Week 1-2)**
 
-- [ ] Create tRPC router structure
-- [ ] Set up tRPC context (session, user, prisma client)
-- [ ] Create `publicProcedure` and `protectedProcedure` helpers
-- [ ] Implement todo routers:
+- [x] Create tRPC router structure
+- [x] Set up tRPC context (session, user, prisma client)
+- [x] Create `publicProcedure` and `protectedProcedure` helpers
+- [x] Implement todo routers:
   ```
   - todo.getAll (protected)
   - todo.getById (protected)
@@ -124,8 +124,8 @@
   - todo.delete (protected)
   - todo.toggleComplete (protected)
   ```
-- [ ] Add Zod input validation schemas
-- [ ] Set up error handling middleware
+- [x] Add Zod input validation schemas
+- [x] Set up error handling middleware
 
 #### **1.4 Backend Testing Setup (Week 2)**
 
@@ -143,8 +143,8 @@
 
 #### **2.1 Styling Setup (Week 2)**
 
-- [ ] Install and configure NativeWind v4
-- [ ] Set up Tailwind config with custom theme
+- [x] Install and configure NativeWind v4
+- [x] Set up Tailwind config with custom theme
 - [ ] Create design tokens (colors, spacing, typography)
 - [ ] Build base component library:
   - Button, Input, Card, Text, Container
@@ -179,11 +179,11 @@
 
 #### **2.4 tRPC Client Setup (Week 3)**
 
-- [ ] Install tRPC client + React Query
-- [ ] Create tRPC provider component
-- [ ] Configure React Query client (caching, refetching)
-- [ ] Set up tRPC links (HTTP, auth headers)
-- [ ] Create typed hooks for API calls
+- [x] Install tRPC client + React Query
+- [x] Create tRPC provider component
+- [x] Configure React Query client (caching, refetching)
+- [x] Set up tRPC links (HTTP, auth headers)
+- [x] Create typed hooks for API calls
 
 ---
 
@@ -193,19 +193,19 @@
 
 #### **3.1 Authentication UI (Week 3-4)**
 
-- [ ] Login screen with email/password
-- [ ] Registration screen
+- [x] Login screen with email/password
+- [x] Registration screen
 - [ ] Password reset flow
 - [ ] OAuth provider buttons (optional)
-- [ ] Loading & error states
-- [ ] Form validation (client-side + server-side)
+- [x] Loading & error states
+- [x] Form validation (client-side + server-side)
 
 #### **3.2 Todo List Features (Week 4-5)**
 
-- [ ] Todo list view with infinite scroll/pagination
-- [ ] Empty state component
-- [ ] Pull-to-refresh
-- [ ] Todo item component (title, description, checkbox)
+- [x] Todo list view with infinite scroll/pagination
+- [x] Empty state component
+- [x] Pull-to-refresh
+- [x] Todo item component (title, description, checkbox)
 - [ ] Swipe actions (delete, edit)
 - [ ] Filter/sort options (all, active, completed)
 - [ ] Search functionality
@@ -215,17 +215,17 @@
 - [ ] Create todo modal/screen
 - [ ] Edit todo modal/screen
 - [ ] Delete todo with confirmation
-- [ ] Toggle complete with optimistic updates
+- [x] Toggle complete with optimistic updates
 - [ ] Category assignment (optional)
 - [ ] Due dates (optional)
-- [ ] Loading states & error handling
+- [x] Loading states & error handling
 
 #### **3.4 Profile & Settings (Week 5)**
 
-- [ ] User profile screen
+- [x] User profile screen
 - [ ] Theme toggle (light/dark)
 - [ ] Language selector
-- [ ] Logout functionality
+- [x] Logout functionality
 - [ ] Delete account option
 
 ---

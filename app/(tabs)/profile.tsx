@@ -1,32 +1,14 @@
 import { authClient } from "@/lib/auth-client";
 import { useRouter } from "expo-router";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Pressable, Text, View } from "react-native";
 
 export default function ProfileScreen() {
   const router = useRouter();
-  const [user, setUser] = useState<{ name?: string; email?: string } | null>(
-    null
-  );
-  const [loading, setLoading] = useState(true);
+  const { data: session, isPending } = authClient.useSession();
   const [loggingOut, setLoggingOut] = useState(false);
 
-  useEffect(() => {
-    loadUser();
-  }, []);
-
-  const loadUser = async () => {
-    try {
-      const session = await authClient.getSession();
-      if (session && "data" in session && session.data?.user) {
-        setUser(session.data.user);
-      }
-    } catch (error) {
-      console.error("Error loading user:", error);
-    } finally {
-      setLoading(false);
-    }
-  };
+  const user = session?.user;
 
   const handleLogout = async () => {
     setLoggingOut(true);
@@ -39,7 +21,7 @@ export default function ProfileScreen() {
     }
   };
 
-  if (loading) {
+  if (isPending) {
     return (
       <View className="flex-1 items-center justify-center bg-gray-50 dark:bg-gray-900">
         <Text className="text-gray-500 dark:text-gray-400">Loading...</Text>
