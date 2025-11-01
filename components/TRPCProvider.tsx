@@ -1,8 +1,10 @@
-import { useState } from "react";
+import { authClient } from "@/lib/auth-client";
+import { trpc } from "@/lib/trpc-client";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { httpBatchLink } from "@trpc/client";
-import { trpc } from "@/lib/trpc-client";
 import Constants from "expo-constants";
+import { useState } from "react";
+import { Platform } from "react-native";
 
 const baseURL =
   Constants.expoConfig?.extra?.apiUrl ||
@@ -28,10 +30,14 @@ export function TRPCProvider({ children }: { children: React.ReactNode }) {
         httpBatchLink({
           url: `${baseURL}/api/trpc`,
           // Pass session headers automatically
-          async headers() {
-            // Better Auth will automatically include session cookies
-            // No need to manually add authorization header
-            return {};
+          headers() {
+            if (Platform.OS === "web") return {};
+            const headers = new Map<string, string>();
+            const cookies = authClient.getCookie();
+            if (cookies) {
+              headers.set("Cookie", cookies);
+            }
+            return Object.fromEntries(headers);
           },
         }),
       ],

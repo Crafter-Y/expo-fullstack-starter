@@ -1,7 +1,6 @@
 import { initTRPC, TRPCError } from "@trpc/server";
 import { auth } from "./auth";
 
-// Create context from headers (for session)
 export const createContext = async (opts: { headers: Headers }) => {
   const session = await auth.api.getSession({ headers: opts.headers });
   return { session };
@@ -20,7 +19,7 @@ export const protectedProcedure = t.procedure.use(async ({ ctx, next }) => {
   return next({
     ctx: {
       ...ctx,
-      user: ctx.session.user, // Now ctx.user is guaranteed to exist
+      user: ctx.session.user,
     },
   });
 });
