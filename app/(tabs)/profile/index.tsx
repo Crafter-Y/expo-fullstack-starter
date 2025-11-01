@@ -14,7 +14,7 @@ export default function ProfileScreen() {
     setLoggingOut(true);
     try {
       await authClient.signOut();
-      router.replace("/(auth)/login" as any);
+      router.replace("/login");
     } catch (error) {
       console.error("Logout error:", error);
       setLoggingOut(false);

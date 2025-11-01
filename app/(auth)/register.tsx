@@ -76,7 +76,7 @@ export default function RegisterScreen() {
         setError(result.error.message || "Registration failed");
       } else {
         // Navigate to main app
-        router.replace("/(tabs)" as any);
+        router.replace("/");
       }
     } catch (err) {
       setError("An unexpected error occurred");
@@ -205,7 +205,7 @@ export default function RegisterScreen() {
           <Text className="text-gray-600 dark:text-gray-400">
             Already have an account?{" "}
           </Text>
-          <Pressable onPress={() => router.push("/login" as any)}>
+          <Pressable onPress={() => router.push("/login")}>
             <Text className="font-semibold text-blue-600 dark:text-blue-400">
               Sign In
             </Text>

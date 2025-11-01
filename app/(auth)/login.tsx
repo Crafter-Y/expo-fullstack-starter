@@ -61,7 +61,7 @@ export default function LoginScreen() {
         setError(result.error.message || "Login failed");
       } else {
         // Navigate to main app
-        router.replace("/(tabs)" as any);
+        router.replace("/");
       }
     } catch (err) {
       setError("An unexpected error occurred");
@@ -148,7 +148,7 @@ export default function LoginScreen() {
           <Text className="text-gray-600 dark:text-gray-400">
             Don&apos;t have an account?{" "}
           </Text>
-          <Pressable onPress={() => router.push("/register" as any)}>
+          <Pressable onPress={() => router.push("/register")}>
             <Text className="font-semibold text-blue-600 dark:text-blue-400">
               Sign Up
             </Text>

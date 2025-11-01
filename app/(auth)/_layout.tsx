@@ -9,7 +9,7 @@ export default function AuthLayout() {
   useEffect(() => {
     if (!isPending && session) {
       // User is already authenticated, redirect to tabs
-      router.replace("/(tabs)" as any);
+      router.replace("/");
     }
   }, [session, isPending, router]);
 

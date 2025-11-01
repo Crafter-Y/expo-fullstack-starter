@@ -11,7 +11,7 @@ export default function TabsLayout() {
   useEffect(() => {
     if (!isPending && !session) {
       // User is not authenticated, redirect to login
-      router.replace("/login" as any);
+      router.replace("/login");
     }
   }, [session, isPending, router]);
 
