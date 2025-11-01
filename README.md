@@ -69,7 +69,6 @@ See [TECHSTACK.md](./TECHSTACK.md) for detailed architecture.
    Fill in the required values:
    - `DATABASE_URL`: `mysql://root:password@localhost:3306/todoapp` (default Docker MariaDB setup)
    - `BETTER_AUTH_SECRET`: Random secret for auth (generate with `openssl rand -base64 32`)
-   - `BETTER_AUTH_URL`: Backend URL (default: `http://localhost:8081`)
    - `EXPO_PUBLIC_API_URL`: API URL for client (default: `http://localhost:8081`)
 
 4. **Start the development server:**
@@ -108,5 +107,4 @@ docker compose down -v
 | --------------------- | ----------------------------- | ---------------------------------------------- |
 | `DATABASE_URL`        | Database connection string    | `mysql://root:password@localhost:3306/todoapp` |
 | `BETTER_AUTH_SECRET`  | Secret key for authentication | `your-secret-key`                              |
-| `BETTER_AUTH_URL`     | Backend URL                   | `http://localhost:8081`                        |
 | `EXPO_PUBLIC_API_URL` | Public API endpoint           | `http://localhost:8081`                        |

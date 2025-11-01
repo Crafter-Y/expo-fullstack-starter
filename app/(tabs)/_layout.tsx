@@ -1,5 +1,6 @@
 import { authClient } from "@/lib/auth-client";
-import { Tabs, useRouter } from "expo-router";
+import { useRouter } from "expo-router";
+import { Icon, Label, NativeTabs } from "expo-router/unstable-native-tabs";
 import { useEffect } from "react";
 import { Text, View } from "react-native";
 
@@ -23,35 +24,27 @@ export default function TabsLayout() {
   }
 
   return (
-    <Tabs
-      screenOptions={{
-        headerShown: false,
-        tabBarActiveTintColor: "#2563EB",
-        tabBarInactiveTintColor: "#9CA3AF",
-        tabBarStyle: {
-          backgroundColor: "#FFFFFF",
-          borderTopColor: "#E5E7EB",
-        },
-      }}
-    >
-      <Tabs.Screen
-        name="index"
-        options={{
-          title: "Todos",
-          tabBarIcon: ({ color }) => (
-            <Text style={{ fontSize: 20, color }}>✓</Text>
-          ),
-        }}
-      />
-      <Tabs.Screen
-        name="profile"
-        options={{
-          title: "Profile",
-          tabBarIcon: ({ color }) => (
-            <Text style={{ fontSize: 20, color }}>👤</Text>
-          ),
-        }}
-      />
-    </Tabs>
+    <NativeTabs disableTransparentOnScrollEdge>
+      <NativeTabs.Trigger name="(todos)">
+        <Label>Todos</Label>
+        <Icon
+          sf={{
+            default: "checkmark.circle",
+            selected: "checkmark.circle.fill",
+          }}
+          drawable="ic_menu_agenda"
+        />
+      </NativeTabs.Trigger>
+      <NativeTabs.Trigger name="profile">
+        <Label>Profile</Label>
+        <Icon
+          sf={{
+            default: "person.crop.circle",
+            selected: "person.crop.circle.fill",
+          }}
+          drawable="ic_menu_myplaces"
+        />
+      </NativeTabs.Trigger>
+    </NativeTabs>
   );
 }

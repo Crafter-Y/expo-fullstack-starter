@@ -1,6 +1,6 @@
-import { fetchRequestHandler } from "@trpc/server/adapters/fetch";
 import { appRouter } from "@/lib/routers/_app";
 import { createContext } from "@/lib/trpc";
+import { fetchRequestHandler } from "@trpc/server/adapters/fetch";
 
 export async function GET(request: Request) {
   return fetchRequestHandler({

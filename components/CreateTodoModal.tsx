@@ -78,11 +78,7 @@ export function CreateTodoModal({ visible, onClose }: CreateTodoModalProps) {
       transparent={true}
       onRequestClose={handleClose}
     >
-      <Pressable
-        style={{ flex: 1, justifyContent: "flex-end" }}
-        className="bg-black/50"
-        onPress={handleClose}
-      >
+      <Pressable className="flex-1 justify-end" onPress={handleClose}>
         <TouchableWithoutFeedback>
           <View className="max-h-[90%] rounded-t-3xl bg-white dark:bg-gray-800">
             {/* Header */}
