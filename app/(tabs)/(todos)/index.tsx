@@ -1,22 +1,219 @@
 import { CategoryModal } from "@/components/CategoryModal";
-import { CreateTodoModal } from "@/components/CreateTodoModal";
 import { trpc } from "@/lib/trpc-client";
-import { useMemo, useState } from "react";
+import { memo, useEffect, useMemo, useRef, useState } from "react";
 import {
   FlatList,
   Pressable,
   RefreshControl,
   ScrollView,
   Text,
+  TextInput,
   View,
 } from "react-native";
+import Animated, {
+  useAnimatedStyle,
+  useSharedValue,
+  withTiming,
+} from "react-native-reanimated";
+
+// Memoized form component to prevent unnecessary re-renders
+const CreateTodoForm = memo(
+  ({
+    error,
+    title,
+    description,
+    createCategoryId,
+    isFormExpanded,
+    shouldShowExpandedFields,
+    createTodoPending,
+    categories,
+    onTitleChange,
+    onDescriptionChange,
+    onCategoryChange,
+    onFocus,
+    onBlur,
+    onSubmit,
+    titleInputRef,
+  }: {
+    error: string;
+    title: string;
+    description: string;
+    createCategoryId: string | undefined;
+    isFormExpanded: boolean;
+    shouldShowExpandedFields: boolean;
+    createTodoPending: boolean;
+    categories:
+      | {
+          id: string;
+          name: string;
+          icon: string | null;
+          color: string | null;
+        }[]
+      | undefined;
+    onTitleChange: (text: string) => void;
+    onDescriptionChange: (text: string) => void;
+    onCategoryChange: (id: string | undefined) => void;
+    onFocus: () => void;
+    onBlur: () => void;
+    onSubmit: () => void;
+    titleInputRef: React.RefObject<TextInput | null>;
+  }) => {
+    const expandedProgress = useSharedValue(0);
+
+    useEffect(() => {
+      expandedProgress.value = withTiming(shouldShowExpandedFields ? 1 : 0, {
+        duration: shouldShowExpandedFields ? 300 : 200,
+      });
+    }, [shouldShowExpandedFields, expandedProgress]);
+
+    const animatedStyle = useAnimatedStyle(() => {
+      return {
+        maxHeight: expandedProgress.value * 500,
+        opacity: expandedProgress.value,
+        overflow: "hidden",
+      };
+    });
+
+    return (
+      <View className="mb-4">
+        {error ? (
+          <View className="mb-3 rounded-lg bg-red-100 p-3 dark:bg-red-900/30">
+            <Text className="text-sm text-red-700 dark:text-red-400">
+              {error}
+            </Text>
+          </View>
+        ) : null}
+
+        {/* Title Input - Always Visible */}
+        <TextInput
+          ref={titleInputRef}
+          className="rounded-lg border border-gray-300 bg-white px-4 py-3 text-base text-gray-900 dark:border-gray-600 dark:bg-gray-900 dark:text-white"
+          placeholder="What needs to be done?"
+          placeholderTextColor="#9CA3AF"
+          value={title}
+          onChangeText={onTitleChange}
+          onFocus={onFocus}
+          onBlur={onBlur}
+          editable={!createTodoPending}
+          maxLength={200}
+        />
+
+        {/* Expanded Fields - Animated */}
+        <Animated.View style={animatedStyle}>
+          <View className="mt-3 gap-3">
+            {/* Description Input */}
+            <TextInput
+              className="min-h-[80px] rounded-lg border border-gray-300 bg-white px-4 py-3 text-base text-gray-900 dark:border-gray-600 dark:bg-gray-900 dark:text-white"
+              placeholder="Add more details..."
+              placeholderTextColor="#9CA3AF"
+              value={description}
+              onChangeText={onDescriptionChange}
+              multiline
+              textAlignVertical="top"
+              editable={!createTodoPending}
+            />
+
+            {/* Category Selection */}
+            <View className="flex-row flex-wrap gap-2">
+              {/* None option */}
+              <Pressable
+                onPress={() => onCategoryChange(undefined)}
+                className={`rounded-lg border px-3 py-2 ${
+                  !createCategoryId
+                    ? "border-blue-600 bg-blue-50 dark:border-blue-500 dark:bg-blue-900/30"
+                    : "border-gray-300 bg-white dark:border-gray-600 dark:bg-gray-900"
+                }`}
+                disabled={createTodoPending}
+              >
+                <Text
+                  className={`text-sm font-medium ${
+                    !createCategoryId
+                      ? "text-blue-600 dark:text-blue-400"
+                      : "text-gray-700 dark:text-gray-300"
+                  }`}
+                >
+                  No Category
+                </Text>
+              </Pressable>
+
+              {/* Category options */}
+              {categories?.map((category) => (
+                <Pressable
+                  key={category.id}
+                  onPress={() => onCategoryChange(category.id)}
+                  className={`flex-row items-center rounded-lg border px-3 py-2 ${
+                    createCategoryId === category.id
+                      ? "border-blue-600 bg-blue-50 dark:border-blue-500 dark:bg-blue-900/30"
+                      : "border-gray-300 bg-white dark:border-gray-600 dark:bg-gray-900"
+                  }`}
+                  disabled={createTodoPending}
+                >
+                  {category.icon ? (
+                    <Text className="mr-2 text-sm">{category.icon}</Text>
+                  ) : null}
+                  <Text
+                    className={`text-sm font-medium ${
+                      createCategoryId === category.id
+                        ? "text-blue-600 dark:text-blue-400"
+                        : "text-gray-700 dark:text-gray-300"
+                    }`}
+                    style={
+                      category.color && createCategoryId !== category.id
+                        ? { color: category.color }
+                        : undefined
+                    }
+                  >
+                    {category.name}
+                  </Text>
+                </Pressable>
+              ))}
+            </View>
+
+            {/* Action Button */}
+            <Pressable
+              onPress={onSubmit}
+              className={`rounded-lg py-3 ${
+                createTodoPending
+                  ? "bg-blue-400"
+                  : "bg-blue-600 active:bg-blue-700"
+              }`}
+              disabled={createTodoPending || !title.trim()}
+            >
+              <Text className="text-center text-base font-semibold text-white">
+                {createTodoPending ? "Creating..." : "Create Todo"}
+              </Text>
+            </Pressable>
+          </View>
+        </Animated.View>
+      </View>
+    );
+  }
+);
+
+CreateTodoForm.displayName = "CreateTodoForm";
 
 export default function TodosScreen() {
-  const [showCreateModal, setShowCreateModal] = useState(false);
   const [showCategoryModal, setShowCategoryModal] = useState(false);
   const [selectedCategoryId, setSelectedCategoryId] = useState<
     string | null | "uncategorized"
   >(null);
+
+  // Create form state
+  const [title, setTitle] = useState("");
+  const [description, setDescription] = useState("");
+  const [createCategoryId, setCreateCategoryId] = useState<
+    string | undefined
+  >();
+  const [isFormExpanded, setIsFormExpanded] = useState(false);
+  const [error, setError] = useState("");
+  const titleInputRef = useRef<TextInput>(null);
+
+  // Handle keyboard dismiss
+  const handleBlur = () => {
+    if (title.trim().length === 0) {
+      setIsFormExpanded(false);
+    }
+  };
 
   const { data: todos, isLoading, refetch } = trpc.todo.getAll.useQuery();
   const { data: categories } = trpc.category.getAll.useQuery();
@@ -33,6 +230,42 @@ export default function TodosScreen() {
 
     return todos.filter((todo) => todo.categoryId === selectedCategoryId);
   }, [todos, selectedCategoryId]);
+
+  // Determine if form should be expanded (focused or has content)
+  const shouldShowExpandedFields = isFormExpanded || title.trim().length > 0;
+
+  const createTodo = trpc.todo.create.useMutation({
+    onSuccess: () => {
+      utils.todo.getAll.invalidate();
+      setTitle("");
+      setDescription("");
+      setCreateCategoryId(undefined);
+      setError("");
+      setIsFormExpanded(false);
+    },
+    onError: (err) => {
+      setError(err.message || "Failed to create todo");
+    },
+  });
+
+  const handleSubmit = () => {
+    if (!title.trim()) {
+      setError("Title is required");
+      return;
+    }
+
+    if (title.length > 200) {
+      setError("Title must be less than 200 characters");
+      return;
+    }
+
+    setError("");
+    createTodo.mutate({
+      title: title.trim(),
+      description: description.trim() || undefined,
+      categoryId: createCategoryId,
+    });
+  };
 
   const toggleComplete = trpc.todo.toggleComplete.useMutation({
     onMutate: async ({ id }) => {
@@ -154,6 +387,25 @@ export default function TodosScreen() {
         data={filteredTodos}
         keyExtractor={(item) => item.id}
         contentContainerClassName="p-4 native:pb-28"
+        ListHeaderComponent={
+          <CreateTodoForm
+            error={error}
+            title={title}
+            description={description}
+            createCategoryId={createCategoryId}
+            isFormExpanded={isFormExpanded}
+            shouldShowExpandedFields={shouldShowExpandedFields}
+            createTodoPending={createTodo.isPending}
+            categories={categories}
+            onTitleChange={setTitle}
+            onDescriptionChange={setDescription}
+            onCategoryChange={setCreateCategoryId}
+            onFocus={() => setIsFormExpanded(true)}
+            onBlur={handleBlur}
+            onSubmit={handleSubmit}
+            titleInputRef={titleInputRef}
+          />
+        }
         refreshControl={
           <RefreshControl refreshing={isLoading} onRefresh={() => refetch()} />
         }
@@ -230,18 +482,6 @@ export default function TodosScreen() {
             </Text>
           </View>
         }
-      />
-
-      <Pressable
-        className="absolute bottom-6 right-6 h-14 w-14 items-center justify-center rounded-full bg-blue-600 shadow-lg active:bg-blue-700"
-        onPress={() => setShowCreateModal(true)}
-      >
-        <Text className="text-2xl text-white">+</Text>
-      </Pressable>
-
-      <CreateTodoModal
-        visible={showCreateModal}
-        onClose={() => setShowCreateModal(false)}
       />
 
       <CategoryModal
