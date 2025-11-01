@@ -60,12 +60,8 @@ export default function TodosScreen() {
 
   return (
     <View className="flex-1 bg-gray-50 dark:bg-gray-900">
-      <View className="border-b border-gray-200 bg-white px-6 pb-4 pt-12 dark:border-gray-700 dark:bg-gray-800">
-        <Text className="mb-3 text-2xl font-bold text-gray-900 dark:text-white">
-          My Todos
-        </Text>
-
-        {/* Category Filter Section */}
+      {/* Category Filter Section */}
+      <View className="border-b border-gray-200 bg-white px-4 py-3 dark:border-gray-700 dark:bg-gray-800">
         <ScrollView
           horizontal
           showsHorizontalScrollIndicator={false}
