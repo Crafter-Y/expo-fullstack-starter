@@ -61,11 +61,11 @@ export default function TodosScreen() {
   return (
     <View className="flex-1 bg-gray-50 dark:bg-gray-900">
       {/* Category Filter Section */}
-      <View className="border-b border-gray-200 bg-white px-4 py-3 dark:border-gray-700 dark:bg-gray-800">
+      <View className="border-b border-gray-200 bg-white py-3 dark:border-gray-700 dark:bg-gray-800">
         <ScrollView
           horizontal
           showsHorizontalScrollIndicator={false}
-          className="-mx-1"
+          className="px-4"
         >
           {/* All Todos Badge */}
           <Pressable
@@ -141,7 +141,7 @@ export default function TodosScreen() {
           {/* Add Category Button */}
           <Pressable
             onPress={() => setShowCategoryModal(true)}
-            className="mx-1 rounded-full border border-dashed border-gray-400 bg-white px-4 py-2 dark:border-gray-500 dark:bg-gray-700"
+            className="ml-1 mr-8 rounded-full border border-dashed border-gray-400 bg-white px-4 py-2 dark:border-gray-500 dark:bg-gray-700"
           >
             <Text className="text-sm font-medium text-gray-600 dark:text-gray-300">
               + Add
@@ -153,7 +153,7 @@ export default function TodosScreen() {
       <FlatList
         data={filteredTodos}
         keyExtractor={(item) => item.id}
-        contentContainerClassName="p-4"
+        contentContainerClassName="p-4 native:pb-28"
         refreshControl={
           <RefreshControl refreshing={isLoading} onRefresh={() => refetch()} />
         }

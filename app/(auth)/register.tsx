@@ -1,7 +1,16 @@
 import { authClient } from "@/lib/auth-client";
 import { useRouter } from "expo-router";
-import { useState } from "react";
-import { Pressable, Text, TextInput, View } from "react-native";
+import { useEffect, useRef, useState } from "react";
+import {
+  Keyboard,
+  KeyboardAvoidingView,
+  Platform,
+  Pressable,
+  ScrollView,
+  Text,
+  TextInput,
+  View,
+} from "react-native";
 
 export default function RegisterScreen() {
   const router = useRouter();
@@ -11,6 +20,31 @@ export default function RegisterScreen() {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+  const [keyboardVisible, setKeyboardVisible] = useState(false);
+
+  const emailRef = useRef<TextInput>(null);
+  const passwordRef = useRef<TextInput>(null);
+  const confirmPasswordRef = useRef<TextInput>(null);
+
+  useEffect(() => {
+    const keyboardDidShowListener = Keyboard.addListener(
+      "keyboardDidShow",
+      () => {
+        setKeyboardVisible(true);
+      }
+    );
+    const keyboardDidHideListener = Keyboard.addListener(
+      "keyboardDidHide",
+      () => {
+        setKeyboardVisible(false);
+      }
+    );
+
+    return () => {
+      keyboardDidShowListener.remove();
+      keyboardDidHideListener.remove();
+    };
+  }, []);
 
   const handleRegister = async () => {
     if (!name || !email || !password || !confirmPassword) {
@@ -53,8 +87,16 @@ export default function RegisterScreen() {
   };
 
   return (
-    <View className="flex-1 bg-white dark:bg-gray-900">
-      <View className="flex-1 justify-center px-6">
+    <KeyboardAvoidingView
+      className="flex-1 bg-white dark:bg-gray-900"
+      behavior={Platform.OS === "ios" ? "padding" : undefined}
+    >
+      <ScrollView
+        contentContainerClassName="flex-grow justify-center px-6 py-8"
+        keyboardShouldPersistTaps="handled"
+        showsVerticalScrollIndicator={false}
+        scrollEnabled={keyboardVisible}
+      >
         <Text className="mb-8 text-center text-3xl font-bold text-gray-900 dark:text-white">
           Create Account
         </Text>
@@ -73,9 +115,13 @@ export default function RegisterScreen() {
             className="rounded-lg border border-gray-300 bg-white px-4 py-3 text-gray-900 dark:border-gray-600 dark:bg-gray-800 dark:text-white"
             placeholder="John Doe"
             placeholderTextColor="#9CA3AF"
-            value={name}
+            inputMode="text"
+            autoComplete="name"
             onChangeText={setName}
             editable={!loading}
+            returnKeyType="next"
+            onSubmitEditing={() => emailRef.current?.focus()}
+            submitBehavior="submit"
           />
         </View>
 
@@ -84,14 +130,19 @@ export default function RegisterScreen() {
             Email
           </Text>
           <TextInput
+            ref={emailRef}
             className="rounded-lg border border-gray-300 bg-white px-4 py-3 text-gray-900 dark:border-gray-600 dark:bg-gray-800 dark:text-white"
             placeholder="your@email.com"
             placeholderTextColor="#9CA3AF"
-            value={email}
             onChangeText={setEmail}
             autoCapitalize="none"
             keyboardType="email-address"
+            inputMode="email"
+            autoComplete="email"
             editable={!loading}
+            returnKeyType="next"
+            onSubmitEditing={() => passwordRef.current?.focus()}
+            submitBehavior="submit"
           />
         </View>
 
@@ -100,13 +151,21 @@ export default function RegisterScreen() {
             Password
           </Text>
           <TextInput
+            ref={passwordRef}
             className="rounded-lg border border-gray-300 bg-white px-4 py-3 text-gray-900 dark:border-gray-600 dark:bg-gray-800 dark:text-white"
             placeholder="••••••••"
             placeholderTextColor="#9CA3AF"
-            value={password}
             onChangeText={setPassword}
             secureTextEntry
+            inputMode="text"
+            autoCorrect={false}
+            autoCapitalize="none"
+            autoComplete="password"
+            keyboardType="visible-password"
             editable={!loading}
+            returnKeyType="next"
+            onSubmitEditing={() => confirmPasswordRef.current?.focus()}
+            submitBehavior="submit"
           />
         </View>
 
@@ -115,13 +174,20 @@ export default function RegisterScreen() {
             Confirm Password
           </Text>
           <TextInput
+            ref={confirmPasswordRef}
             className="rounded-lg border border-gray-300 bg-white px-4 py-3 text-gray-900 dark:border-gray-600 dark:bg-gray-800 dark:text-white"
             placeholder="••••••••"
             placeholderTextColor="#9CA3AF"
-            value={confirmPassword}
+            inputMode="text"
+            autoCorrect={false}
+            autoCapitalize="none"
+            autoComplete="password"
+            keyboardType="visible-password"
             onChangeText={setConfirmPassword}
             secureTextEntry
             editable={!loading}
+            returnKeyType="done"
+            onSubmitEditing={handleRegister}
           />
         </View>
 
@@ -145,7 +211,7 @@ export default function RegisterScreen() {
             </Text>
           </Pressable>
         </View>
-      </View>
-    </View>
+      </ScrollView>
+    </KeyboardAvoidingView>
   );
 }

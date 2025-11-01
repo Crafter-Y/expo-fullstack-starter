@@ -1,7 +1,16 @@
 import { authClient } from "@/lib/auth-client";
 import { useRouter } from "expo-router";
-import { useState } from "react";
-import { Pressable, Text, TextInput, View } from "react-native";
+import { useEffect, useRef, useState } from "react";
+import {
+  Keyboard,
+  KeyboardAvoidingView,
+  Platform,
+  Pressable,
+  ScrollView,
+  Text,
+  TextInput,
+  View,
+} from "react-native";
 
 export default function LoginScreen() {
   const router = useRouter();
@@ -9,6 +18,29 @@ export default function LoginScreen() {
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+  const [keyboardVisible, setKeyboardVisible] = useState(false);
+
+  const passwordRef = useRef<TextInput>(null);
+
+  useEffect(() => {
+    const keyboardDidShowListener = Keyboard.addListener(
+      "keyboardDidShow",
+      () => {
+        setKeyboardVisible(true);
+      }
+    );
+    const keyboardDidHideListener = Keyboard.addListener(
+      "keyboardDidHide",
+      () => {
+        setKeyboardVisible(false);
+      }
+    );
+
+    return () => {
+      keyboardDidShowListener.remove();
+      keyboardDidHideListener.remove();
+    };
+  }, []);
 
   const handleLogin = async () => {
     if (!email || !password) {
@@ -40,8 +72,16 @@ export default function LoginScreen() {
   };
 
   return (
-    <View className="flex-1 bg-white dark:bg-gray-900">
-      <View className="flex-1 justify-center px-6">
+    <KeyboardAvoidingView
+      className="flex-1 bg-white dark:bg-gray-900"
+      behavior={Platform.OS === "ios" ? "padding" : undefined}
+    >
+      <ScrollView
+        contentContainerClassName="flex-grow justify-center px-6 py-8"
+        keyboardShouldPersistTaps="handled"
+        showsVerticalScrollIndicator={false}
+        scrollEnabled={keyboardVisible}
+      >
         <Text className="mb-8 text-center text-3xl font-bold text-gray-900 dark:text-white">
           Welcome Back
         </Text>
@@ -60,11 +100,15 @@ export default function LoginScreen() {
             className="rounded-lg border border-gray-300 bg-white px-4 py-3 text-gray-900 dark:border-gray-600 dark:bg-gray-800 dark:text-white"
             placeholder="your@email.com"
             placeholderTextColor="#9CA3AF"
-            value={email}
             onChangeText={setEmail}
             autoCapitalize="none"
             keyboardType="email-address"
+            inputMode="email"
+            autoComplete="email"
             editable={!loading}
+            returnKeyType="next"
+            onSubmitEditing={() => passwordRef.current?.focus()}
+            submitBehavior="submit"
           />
         </View>
 
@@ -73,13 +117,20 @@ export default function LoginScreen() {
             Password
           </Text>
           <TextInput
+            ref={passwordRef}
             className="rounded-lg border border-gray-300 bg-white px-4 py-3 text-gray-900 dark:border-gray-600 dark:bg-gray-800 dark:text-white"
             placeholder="••••••••"
             placeholderTextColor="#9CA3AF"
-            value={password}
+            inputMode="text"
+            autoCorrect={false}
+            autoCapitalize="none"
+            autoComplete="password"
+            keyboardType="visible-password"
             onChangeText={setPassword}
             secureTextEntry
             editable={!loading}
+            returnKeyType="done"
+            onSubmitEditing={handleLogin}
           />
         </View>
 
@@ -103,7 +154,7 @@ export default function LoginScreen() {
             </Text>
           </Pressable>
         </View>
-      </View>
-    </View>
+      </ScrollView>
+    </KeyboardAvoidingView>
   );
 }
