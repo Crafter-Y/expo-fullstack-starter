@@ -1,8 +1,35 @@
 import { authClient } from "@/lib/auth-client";
+import {
+  DrawerContentComponentProps,
+  DrawerContentScrollView,
+  DrawerItemList,
+} from "@react-navigation/drawer";
 import { useRouter } from "expo-router";
 import { Drawer } from "expo-router/drawer";
 import { useEffect } from "react";
-import { Text, useColorScheme, useWindowDimensions, View } from "react-native";
+import {
+  Image,
+  Text,
+  useColorScheme,
+  useWindowDimensions,
+  View,
+} from "react-native";
+
+const CustomDrawer = (props: DrawerContentComponentProps) => {
+  return (
+    <DrawerContentScrollView {...props}>
+      <View className="items-center">
+        <Image
+          source={require("@/assets/images/icon.png")}
+          // style={{ width: 100, height: 100, marginBottom: 20 }}
+          className="mb-12"
+          style={{ width: 100, height: 100 }}
+        />
+      </View>
+      <DrawerItemList {...props} />
+    </DrawerContentScrollView>
+  );
+};
 
 export default function TabsLayout() {
   const dimensions = useWindowDimensions();
@@ -30,6 +57,7 @@ export default function TabsLayout() {
 
   return (
     <Drawer
+      drawerContent={CustomDrawer}
       screenOptions={{
         drawerType: isLargeScreen ? "permanent" : "front",
         headerShown: true,
