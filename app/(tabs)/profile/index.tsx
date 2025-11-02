@@ -75,11 +75,11 @@ export default function ProfileScreen() {
         </View>
 
         <Pressable
-          className={`mt-6 rounded-lg p-4 ${loggingOut ? "bg-red-400" : "bg-red-600 active:bg-red-700"}`}
+          className={`mt-6 rounded-lg border border-gray-200 bg-white p-4 dark:border-gray-700 dark:bg-gray-800 ${loggingOut ? "opacity-50" : "active:bg-gray-50 dark:active:bg-gray-700"}`}
           onPress={handleLogout}
           disabled={loggingOut}
         >
-          <Text className="text-center text-base font-semibold text-white">
+          <Text className="text-center text-base text-red-600 dark:text-red-400">
             {loggingOut ? "Signing out..." : "Sign Out"}
           </Text>
         </Pressable>
