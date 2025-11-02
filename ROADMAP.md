@@ -36,8 +36,8 @@
 
 #### **0.5 i18next Setup**
 
-- [ ] Install i18next packages (`react-i18next`, `i18next`)
-- [ ] Install Expo localization (`expo-localization`)
+- [x] Install i18next packages (`react-i18next`, `i18next`)
+- [x] Install Expo localization (`expo-localization`)
 
 #### **0.6 ESLint & Prettier**
 
@@ -224,7 +224,7 @@
 
 - [x] User profile screen
 - [ ] Theme toggle (light/dark)
-- [ ] Language selector
+- [x] Language selector
 - [x] Logout functionality
 - [ ] Delete account option
 
@@ -236,12 +236,12 @@
 
 #### **4.1 i18n Setup (Week 6)**
 
-- [ ] Install react-i18next
-- [ ] Create translation structure (`/locales/en`, `/locales/es`, etc.)
-- [ ] Define translation keys for all UI text
-- [ ] Set up language detection & persistence
-- [ ] Create language switcher component
-- [ ] Add at least 2 languages (English + 1 more)
+- [x] Install react-i18next
+- [x] Create translation structure (`/locales/en`, `/locales/de`)
+- [x] Define translation keys for all UI text
+- [x] Set up language detection (device language detection)
+- [x] Create language switcher component (in profile settings)
+- [x] Add at least 2 languages (English + German)
 
 ---
 

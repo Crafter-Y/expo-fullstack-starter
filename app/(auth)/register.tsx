@@ -1,6 +1,7 @@
 import { authClient } from "@/lib/auth-client";
 import { useRouter } from "expo-router";
 import { useEffect, useRef, useState } from "react";
+import { useTranslation } from "react-i18next";
 import {
   Keyboard,
   KeyboardAvoidingView,
@@ -13,6 +14,7 @@ import {
 } from "react-native";
 
 export default function RegisterScreen() {
+  const { t } = useTranslation();
   const router = useRouter();
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
@@ -48,17 +50,17 @@ export default function RegisterScreen() {
 
   const handleRegister = async () => {
     if (!name || !email || !password || !confirmPassword) {
-      setError("Please fill in all fields");
+      setError(t("errors.fillAllFields"));
       return;
     }
 
     if (password !== confirmPassword) {
-      setError("Passwords do not match");
+      setError(t("errors.passwordsDontMatch"));
       return;
     }
 
     if (password.length < 8) {
-      setError("Password must be at least 8 characters");
+      setError(t("errors.passwordTooShort"));
       return;
     }
 
@@ -73,13 +75,13 @@ export default function RegisterScreen() {
       });
 
       if (result.error) {
-        setError(result.error.message || "Registration failed");
+        setError(result.error.message || t("errors.registrationFailed"));
       } else {
         // Navigate to main app
         router.replace("/");
       }
     } catch (err) {
-      setError("An unexpected error occurred");
+      setError(t("errors.unexpectedError"));
       console.error("Registration error:", err);
     } finally {
       setLoading(false);
@@ -98,7 +100,7 @@ export default function RegisterScreen() {
         scrollEnabled={keyboardVisible}
       >
         <Text className="mb-8 text-center text-3xl font-bold text-gray-900 dark:text-white">
-          Create Account
+          {t("auth.createAccount")}
         </Text>
 
         {error ? (
@@ -109,11 +111,11 @@ export default function RegisterScreen() {
 
         <View className="mb-4">
           <Text className="mb-2 text-sm font-medium text-gray-700 dark:text-gray-300">
-            Name
+            {t("auth.name")}
           </Text>
           <TextInput
             className="rounded-lg border border-gray-300 bg-white px-4 py-3 text-gray-900 dark:border-gray-600 dark:bg-gray-800 dark:text-white"
-            placeholder="John Doe"
+            placeholder={t("auth.namePlaceholder")}
             placeholderTextColor="#9CA3AF"
             inputMode="text"
             autoComplete="name"
@@ -127,12 +129,12 @@ export default function RegisterScreen() {
 
         <View className="mb-4">
           <Text className="mb-2 text-sm font-medium text-gray-700 dark:text-gray-300">
-            Email
+            {t("auth.email")}
           </Text>
           <TextInput
             ref={emailRef}
             className="rounded-lg border border-gray-300 bg-white px-4 py-3 text-gray-900 dark:border-gray-600 dark:bg-gray-800 dark:text-white"
-            placeholder="your@email.com"
+            placeholder={t("auth.emailPlaceholder")}
             placeholderTextColor="#9CA3AF"
             onChangeText={setEmail}
             autoCapitalize="none"
@@ -148,12 +150,12 @@ export default function RegisterScreen() {
 
         <View className="mb-4">
           <Text className="mb-2 text-sm font-medium text-gray-700 dark:text-gray-300">
-            Password
+            {t("auth.password")}
           </Text>
           <TextInput
             ref={passwordRef}
             className="rounded-lg border border-gray-300 bg-white px-4 py-3 text-gray-900 dark:border-gray-600 dark:bg-gray-800 dark:text-white"
-            placeholder="••••••••"
+            placeholder={t("auth.passwordPlaceholder")}
             placeholderTextColor="#9CA3AF"
             onChangeText={setPassword}
             secureTextEntry
@@ -171,12 +173,12 @@ export default function RegisterScreen() {
 
         <View className="mb-6">
           <Text className="mb-2 text-sm font-medium text-gray-700 dark:text-gray-300">
-            Confirm Password
+            {t("auth.confirmPassword")}
           </Text>
           <TextInput
             ref={confirmPasswordRef}
             className="rounded-lg border border-gray-300 bg-white px-4 py-3 text-gray-900 dark:border-gray-600 dark:bg-gray-800 dark:text-white"
-            placeholder="••••••••"
+            placeholder={t("auth.passwordPlaceholder")}
             placeholderTextColor="#9CA3AF"
             inputMode="text"
             autoCorrect={false}
@@ -197,17 +199,17 @@ export default function RegisterScreen() {
           disabled={loading}
         >
           <Text className="text-center text-base font-semibold text-white">
-            {loading ? "Creating account..." : "Sign Up"}
+            {loading ? t("auth.creatingAccount") : t("auth.signUp")}
           </Text>
         </Pressable>
 
         <View className="flex-row justify-center">
           <Text className="text-gray-600 dark:text-gray-400">
-            Already have an account?{" "}
+            {t("auth.alreadyHaveAccount")}{" "}
           </Text>
           <Pressable onPress={() => router.push("/login")}>
             <Text className="font-semibold text-blue-600 dark:text-blue-400">
-              Sign In
+              {t("auth.signIn")}
             </Text>
           </Pressable>
         </View>

@@ -1,6 +1,8 @@
 import { CategoryModal } from "@/components/CategoryModal";
 import { trpc } from "@/lib/trpc-client";
+import type { TFunction } from "i18next";
 import { memo, useEffect, useMemo, useRef, useState } from "react";
+import { useTranslation } from "react-i18next";
 import {
   FlatList,
   Pressable,
@@ -19,6 +21,7 @@ import Animated, {
 // Memoized form component to prevent unnecessary re-renders
 const CreateTodoForm = memo(
   ({
+    t,
     error,
     title,
     description,
@@ -35,6 +38,7 @@ const CreateTodoForm = memo(
     onSubmit,
     titleInputRef,
   }: {
+    t: TFunction<"translation", undefined>;
     error: string;
     title: string;
     description: string;
@@ -88,7 +92,7 @@ const CreateTodoForm = memo(
         <TextInput
           ref={titleInputRef}
           className="rounded-lg border border-gray-300 bg-white px-4 py-3 text-base text-gray-900 dark:border-gray-600 dark:bg-gray-900 dark:text-white"
-          placeholder="What needs to be done?"
+          placeholder={t("todos.whatToDo")}
           placeholderTextColor="#9CA3AF"
           value={title}
           onChangeText={onTitleChange}
@@ -104,7 +108,7 @@ const CreateTodoForm = memo(
             {/* Description Input */}
             <TextInput
               className="min-h-[80px] rounded-lg border border-gray-300 bg-white px-4 py-3 text-base text-gray-900 dark:border-gray-600 dark:bg-gray-900 dark:text-white"
-              placeholder="Add more details..."
+              placeholder={t("todos.addDetails")}
               placeholderTextColor="#9CA3AF"
               value={description}
               onChangeText={onDescriptionChange}
@@ -132,7 +136,7 @@ const CreateTodoForm = memo(
                       : "text-gray-700 dark:text-gray-300"
                   }`}
                 >
-                  No Category
+                  {t("todos.noCategory")}
                 </Text>
               </Pressable>
 
@@ -180,7 +184,9 @@ const CreateTodoForm = memo(
               disabled={createTodoPending || !title.trim()}
             >
               <Text className="text-center text-base font-semibold text-white">
-                {createTodoPending ? "Creating..." : "Create Todo"}
+                {createTodoPending
+                  ? t("todos.creating")
+                  : t("todos.createTodo")}
               </Text>
             </Pressable>
           </View>
@@ -193,6 +199,7 @@ const CreateTodoForm = memo(
 CreateTodoForm.displayName = "CreateTodoForm";
 
 export default function TodosScreen() {
+  const { t } = useTranslation();
   const [showCategoryModal, setShowCategoryModal] = useState(false);
   const [selectedCategoryId, setSelectedCategoryId] = useState<
     string | null | "uncategorized"
@@ -250,12 +257,12 @@ export default function TodosScreen() {
 
   const handleSubmit = () => {
     if (!title.trim()) {
-      setError("Title is required");
+      setError(t("errors.titleRequired"));
       return;
     }
 
     if (title.length > 200) {
-      setError("Title must be less than 200 characters");
+      setError(t("errors.titleTooLong"));
       return;
     }
 
@@ -316,7 +323,7 @@ export default function TodosScreen() {
                   : "text-gray-700 dark:text-gray-300"
               }`}
             >
-              All ({todos?.length || 0})
+              {t("todos.all")} ({todos?.length || 0})
             </Text>
           </Pressable>
 
@@ -336,7 +343,8 @@ export default function TodosScreen() {
                   : "text-gray-700 dark:text-gray-300"
               }`}
             >
-              Uncategorized ({todos?.filter((t) => !t.categoryId).length || 0})
+              {t("todos.uncategorized")} (
+              {todos?.filter((t) => !t.categoryId).length || 0})
             </Text>
           </Pressable>
 
@@ -377,7 +385,7 @@ export default function TodosScreen() {
             className="ml-1 mr-8 rounded-full border border-dashed border-gray-400 bg-white px-4 py-2 dark:border-gray-500 dark:bg-gray-700"
           >
             <Text className="text-sm font-medium text-gray-600 dark:text-gray-300">
-              + Add
+              {t("todos.add")}
             </Text>
           </Pressable>
         </ScrollView>
@@ -389,6 +397,7 @@ export default function TodosScreen() {
         contentContainerClassName="p-4 native:pb-28"
         ListHeaderComponent={
           <CreateTodoForm
+            t={t}
             error={error}
             title={title}
             description={description}
@@ -478,7 +487,7 @@ export default function TodosScreen() {
         ListEmptyComponent={
           <View className="flex-1 items-center justify-center py-12">
             <Text className="text-center text-gray-500 dark:text-gray-400">
-              No todos yet. Create your first one!
+              {t("todos.noTodos")}
             </Text>
           </View>
         }

@@ -1,7 +1,9 @@
 import { Stack } from "expo-router";
+import { useTranslation } from "react-i18next";
 import { Platform, useColorScheme } from "react-native";
 
 export default function TodosLayout() {
+  const { t } = useTranslation();
   const colorScheme = useColorScheme();
   const isDark = colorScheme === "dark";
 
@@ -24,7 +26,7 @@ export default function TodosLayout() {
       <Stack.Screen
         name="index"
         options={{
-          title: "Todos",
+          title: t("navigation.todos"),
         }}
       />
     </Stack>

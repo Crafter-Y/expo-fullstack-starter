@@ -1,7 +1,9 @@
 import { Stack } from "expo-router";
+import { useTranslation } from "react-i18next";
 import { Platform, useColorScheme } from "react-native";
 
 export default function ProfileLayout() {
+  const { t } = useTranslation();
   const colorScheme = useColorScheme();
   const isDark = colorScheme === "dark";
 
@@ -24,7 +26,7 @@ export default function ProfileLayout() {
       <Stack.Screen
         name="index"
         options={{
-          title: "Profile",
+          title: t("navigation.profile"),
         }}
       />
     </Stack>

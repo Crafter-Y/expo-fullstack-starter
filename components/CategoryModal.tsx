@@ -1,5 +1,6 @@
 import { trpc } from "@/lib/trpc-client";
 import { useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 import {
   Modal,
   Pressable,
@@ -38,6 +39,7 @@ export function CategoryModal({
   category,
   onClose,
 }: CategoryModalProps) {
+  const { t } = useTranslation();
   const [name, setName] = useState(category?.name || "");
   const [color, setColor] = useState(category?.color || PRESET_COLORS[0]);
   const [icon, setIcon] = useState(category?.icon || PRESET_ICONS[0]);
@@ -51,7 +53,7 @@ export function CategoryModal({
       handleClose();
     },
     onError: (err) => {
-      setError(err.message || "Failed to create category");
+      setError(err.message || t("errors.createCategoryFailed"));
     },
   });
 
@@ -62,7 +64,7 @@ export function CategoryModal({
       handleClose();
     },
     onError: (err) => {
-      setError(err.message || "Failed to update category");
+      setError(err.message || t("errors.updateCategoryFailed"));
     },
   });
 
@@ -76,12 +78,12 @@ export function CategoryModal({
 
   const handleSubmit = () => {
     if (!name.trim()) {
-      setError("Name is required");
+      setError(t("errors.nameRequired"));
       return;
     }
 
     if (name.length > 100) {
-      setError("Name must be less than 100 characters");
+      setError(t("errors.nameTooLong"));
       return;
     }
 
@@ -133,7 +135,9 @@ export function CategoryModal({
             <View className="border-b border-gray-200 px-6 pb-4 pt-6 dark:border-gray-700">
               <View className="flex-row items-center justify-between">
                 <Text className="text-xl font-bold text-gray-900 dark:text-white">
-                  {category ? "Edit Category" : "Create Category"}
+                  {category
+                    ? t("category.editCategory")
+                    : t("category.createCategory")}
                 </Text>
                 <Pressable
                   onPress={handleClose}
@@ -158,11 +162,11 @@ export function CategoryModal({
               {/* Name Input */}
               <View className="mb-4">
                 <Text className="mb-2 text-sm font-medium text-gray-700 dark:text-gray-300">
-                  Name *
+                  {t("category.name")} *
                 </Text>
                 <TextInput
                   className="rounded-lg border border-gray-300 bg-white px-4 py-3 text-gray-900 dark:border-gray-600 dark:bg-gray-900 dark:text-white"
-                  placeholder="Work, Personal, Shopping..."
+                  placeholder={t("category.namePlaceholder")}
                   placeholderTextColor="#9CA3AF"
                   value={name}
                   onChangeText={setName}
@@ -177,7 +181,7 @@ export function CategoryModal({
               {/* Icon Selection */}
               <View className="mb-4">
                 <Text className="mb-2 text-sm font-medium text-gray-700 dark:text-gray-300">
-                  Icon
+                  {t("category.icon")}
                 </Text>
                 <View className="flex-row flex-wrap gap-2">
                   {PRESET_ICONS.map((presetIcon) => (
@@ -200,7 +204,7 @@ export function CategoryModal({
               {/* Color Selection */}
               <View className="mb-6">
                 <Text className="mb-2 text-sm font-medium text-gray-700 dark:text-gray-300">
-                  Color
+                  {t("category.color")}
                 </Text>
                 <View className="flex-row flex-wrap gap-2">
                   {PRESET_COLORS.map((presetColor) => (
@@ -231,7 +235,7 @@ export function CategoryModal({
                   disabled={isPending}
                 >
                   <Text className="text-center text-base font-semibold text-gray-700 dark:text-gray-300">
-                    Cancel
+                    {t("todos.cancel")}
                   </Text>
                 </Pressable>
 
@@ -245,11 +249,11 @@ export function CategoryModal({
                   <Text className="text-center text-base font-semibold text-white">
                     {isPending
                       ? category
-                        ? "Updating..."
-                        : "Creating..."
+                        ? t("category.updating")
+                        : t("category.creating")
                       : category
-                        ? "Update"
-                        : "Create"}
+                        ? t("todos.update")
+                        : t("todos.create")}
                   </Text>
                 </Pressable>
               </View>

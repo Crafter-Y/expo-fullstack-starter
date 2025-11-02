@@ -7,6 +7,7 @@ import {
 import { useRouter } from "expo-router";
 import { Drawer } from "expo-router/drawer";
 import { useEffect } from "react";
+import { useTranslation } from "react-i18next";
 import {
   Image,
   Text,
@@ -32,6 +33,7 @@ const CustomDrawer = (props: DrawerContentComponentProps) => {
 };
 
 export default function TabsLayout() {
+  const { t } = useTranslation();
   const dimensions = useWindowDimensions();
   const colorScheme = useColorScheme();
   const router = useRouter();
@@ -47,7 +49,9 @@ export default function TabsLayout() {
   if (isPending) {
     return (
       <View className="flex-1 items-center justify-center bg-white dark:bg-gray-900">
-        <Text className="text-gray-500 dark:text-gray-400">Loading...</Text>
+        <Text className="text-gray-500 dark:text-gray-400">
+          {t("common.loading")}
+        </Text>
       </View>
     );
   }
@@ -90,15 +94,15 @@ export default function TabsLayout() {
       <Drawer.Screen
         name="(todos)"
         options={{
-          drawerLabel: "Todos",
-          title: "Todos",
+          drawerLabel: t("navigation.todos"),
+          title: t("navigation.todos"),
         }}
       />
       <Drawer.Screen
         name="profile"
         options={{
-          drawerLabel: "Profile",
-          title: "Profile",
+          drawerLabel: t("navigation.profile"),
+          title: t("navigation.profile"),
         }}
       />
     </Drawer>
