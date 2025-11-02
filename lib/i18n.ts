@@ -9,9 +9,11 @@ import en from "@/locales/en/translation.json";
 // Get device locale
 const deviceLanguage = Localization.getLocales()[0]?.languageCode || "en";
 
-// Determine initial language (English default, German if device is German)
-const initialLanguage = deviceLanguage === "de" ? "de" : "en";
+// Determine device-based language (English default, German if device is German)
+const deviceBasedLanguage = deviceLanguage === "de" ? "de" : "en";
 
+// Initialize i18n with device language
+// Note: The actual persisted language will be loaded by Zustand and synced via useLanguage hook
 // eslint-disable-next-line import/no-named-as-default-member
 i18n.use(initReactI18next).init({
   resources: {
@@ -22,8 +24,8 @@ i18n.use(initReactI18next).init({
       translation: de,
     },
   },
-  lng: initialLanguage, // default language
-  fallbackLng: "en", // fallback language
+  lng: deviceBasedLanguage,
+  fallbackLng: "en",
   interpolation: {
     escapeValue: false, // react already safes from xss
   },

@@ -31,8 +31,11 @@
 
 #### **0.4 Zustand Setup**
 
-- [ ] Install Zustand (`zustand`)
-- [ ] Install AsyncStorage for persistence (`@react-native-async-storage/async-storage`)
+- [x] Install Zustand (`zustand`)
+- [x] Install AsyncStorage for persistence (`@react-native-async-storage/async-storage`)
+- [x] Create preferences store for language and theme
+- [x] Integrate with i18n for language persistence
+- [x] Create custom hooks for easy usage
 
 #### **0.5 i18next Setup**
 
@@ -170,12 +173,12 @@
 
 #### **2.3 State Management (Week 3)**
 
-- [ ] Set up Zustand stores:
-  - Auth store (user, session)
-  - UI store (theme, preferences)
-  - Optional: Todo store for optimistic updates
-- [ ] Configure AsyncStorage persistence
-- [ ] Create custom hooks for store access
+- [x] Set up Zustand stores:
+  - ~~Auth store (user, session)~~ (handled by Better Auth)
+  - Preferences store (language, theme)
+  - ~~Todo store for optimistic updates~~ (handled by tRPC React Query)
+- [x] Configure AsyncStorage persistence
+- [x] Create custom hooks for store access (`useLanguage`)
 
 #### **2.4 tRPC Client Setup (Week 3)**
 

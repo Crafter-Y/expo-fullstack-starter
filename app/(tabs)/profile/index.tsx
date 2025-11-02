@@ -1,27 +1,23 @@
 import { authClient } from "@/lib/auth-client";
+import { useLanguage } from "@/lib/hooks/useLanguage";
 import { useRouter } from "expo-router";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Pressable, Text, View } from "react-native";
 
 export default function ProfileScreen() {
-  const { t, i18n } = useTranslation();
+  const { t } = useTranslation();
   const router = useRouter();
   const { data: session, isPending } = authClient.useSession();
   const [loggingOut, setLoggingOut] = useState(false);
 
   const user = session?.user;
 
-  const currentLanguage = i18n.language;
-
-  const handleLanguageChange = () => {
-    // Toggle between English and German
-    const newLanguage = currentLanguage === "en" ? "de" : "en";
-    i18n.changeLanguage(newLanguage);
-  };
+  // Use custom hook for language management with persistence
+  const { language, toggleLanguage } = useLanguage();
 
   const getLanguageLabel = () => {
-    return currentLanguage === "en" ? "English" : "Deutsch";
+    return language === "en" ? "English" : "Deutsch";
   };
 
   const handleLogout = async () => {
@@ -82,7 +78,7 @@ export default function ProfileScreen() {
 
           <Pressable
             className="mb-2 rounded-lg border border-gray-200 bg-white p-4 active:bg-gray-50 dark:border-gray-700 dark:bg-gray-800 dark:active:bg-gray-700"
-            onPress={handleLanguageChange}
+            onPress={toggleLanguage}
           >
             <Text className="text-base text-gray-900 dark:text-white">
               {t("profile.language")}
