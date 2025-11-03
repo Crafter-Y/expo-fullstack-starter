@@ -1,5 +1,6 @@
 import { authClient } from "@/lib/auth-client";
 import { useLanguage } from "@/lib/hooks/useLanguage";
+import { useTheme } from "@/lib/hooks/useTheme";
 import { useRouter } from "expo-router";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
@@ -13,11 +14,20 @@ export default function ProfileScreen() {
 
   const user = session?.user;
 
-  // Use custom hook for language management with persistence
+  // Use custom hooks for language and theme management with persistence
   const { language, toggleLanguage } = useLanguage();
+  const { theme, cycleTheme } = useTheme();
 
   const getLanguageLabel = () => {
     return language === "en" ? "English" : "Deutsch";
+  };
+
+  const getThemeLabel = () => {
+    return theme === "light"
+      ? t("profile.themeLight")
+      : theme === "dark"
+        ? t("profile.themeDark")
+        : t("profile.themeSystem");
   };
 
   const handleLogout = async () => {
@@ -67,12 +77,15 @@ export default function ProfileScreen() {
             {t("profile.settings")}
           </Text>
 
-          <Pressable className="mb-2 rounded-lg border border-gray-200 bg-white p-4 active:bg-gray-50 dark:border-gray-700 dark:bg-gray-800 dark:active:bg-gray-700">
+          <Pressable
+            className="mb-2 rounded-lg border border-gray-200 bg-white p-4 active:bg-gray-50 dark:border-gray-700 dark:bg-gray-800 dark:active:bg-gray-700"
+            onPress={cycleTheme}
+          >
             <Text className="text-base text-gray-900 dark:text-white">
               {t("profile.theme")}
             </Text>
             <Text className="mt-1 text-sm text-gray-500 dark:text-gray-400">
-              {t("profile.themeValue")}
+              {getThemeLabel()}
             </Text>
           </Pressable>
 

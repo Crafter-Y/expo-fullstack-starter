@@ -65,7 +65,9 @@
     "notSet": "Nicht festgelegt",
     "settings": "Einstellungen",
     "theme": "Design",
-    "themeValue": "Systemstandard",
+    "themeLight": "Hell",
+    "themeDark": "Dunkel",
+    "themeSystem": "System",
     "language": "Sprache",
     "signOut": "Abmelden",
     "signingOut": "Abmeldung läuft..."

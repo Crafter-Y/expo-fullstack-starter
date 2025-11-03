@@ -1,6 +1,8 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import * as Localization from "expo-localization";
 import i18n from "i18next";
+import { colorScheme } from "nativewind";
+import { Platform } from "react-native";
 import { create } from "zustand";
 import { createJSONStorage, persist } from "zustand/middleware";
 
@@ -36,7 +38,19 @@ export const usePreferencesStore = create<PreferencesState>()(
           i18n.changeLanguage(language);
         }
       },
-      setTheme: (theme) => set({ theme }),
+      setTheme: (theme) => {
+        set({ theme });
+        // Update NativeWind color scheme
+        if (Platform.OS === "web" && theme === "system") {
+          // On web, when system mode is selected, check actual system preference
+          const isDark = window.matchMedia(
+            "(prefers-color-scheme: dark)"
+          ).matches;
+          colorScheme.set(isDark ? "dark" : "light");
+        } else {
+          colorScheme.set(theme);
+        }
+      },
     }),
     {
       name: "preferences-storage", // unique name for AsyncStorage key
@@ -46,6 +60,18 @@ export const usePreferencesStore = create<PreferencesState>()(
         if (state?.language && i18n.language !== state.language) {
           // eslint-disable-next-line import/no-named-as-default-member
           i18n.changeLanguage(state.language);
+        }
+        // After rehydration, sync NativeWind with the loaded theme
+        if (state?.theme) {
+          if (Platform.OS === "web" && state.theme === "system") {
+            // On web, when system mode is selected, check actual system preference
+            const isDark = window.matchMedia(
+              "(prefers-color-scheme: dark)"
+            ).matches;
+            colorScheme.set(isDark ? "dark" : "light");
+          } else {
+            colorScheme.set(state.theme);
+          }
         }
       },
     }

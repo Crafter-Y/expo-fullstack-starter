@@ -35,7 +35,9 @@
 - [x] Install AsyncStorage for persistence (`@react-native-async-storage/async-storage`)
 - [x] Create preferences store for language and theme
 - [x] Integrate with i18n for language persistence
-- [x] Create custom hooks for easy usage
+- [x] Integrate with NativeWind for theme persistence
+- [x] Create custom hooks for easy usage (`useLanguage`, `useTheme`)
+- [x] Configure Babel for `import.meta` transformation (Zustand v5 compatibility)
 
 #### **0.5 i18next Setup**
 
@@ -148,11 +150,13 @@
 
 - [x] Install and configure NativeWind v4
 - [x] Set up Tailwind config with custom theme
+- [x] Configure class-based dark mode
+- [x] Implement theme switching (light/dark/system)
+- [x] Persist theme preference with Zustand + AsyncStorage
 - [ ] Create design tokens (colors, spacing, typography)
 - [ ] Build base component library:
   - Button, Input, Card, Text, Container
   - Loading states, Error boundaries
-  - Theme provider (light/dark mode)
 
 #### **2.2 Navigation & Routing (Week 2-3)**
 
@@ -178,7 +182,8 @@
   - Preferences store (language, theme)
   - ~~Todo store for optimistic updates~~ (handled by tRPC React Query)
 - [x] Configure AsyncStorage persistence
-- [x] Create custom hooks for store access (`useLanguage`)
+- [x] Create custom hooks for store access (`useLanguage`, `useTheme`)
+- [x] Implement onRehydrateStorage callbacks for syncing external state
 
 #### **2.4 tRPC Client Setup (Week 3)**
 
@@ -226,8 +231,8 @@
 #### **3.4 Profile & Settings (Week 5)**
 
 - [x] User profile screen
-- [ ] Theme toggle (light/dark)
-- [x] Language selector
+- [x] Theme toggle (light/dark/system)
+- [x] Language selector (English/German with persistence)
 - [x] Logout functionality
 - [ ] Delete account option
 
@@ -245,6 +250,8 @@
 - [x] Set up language detection (device language detection)
 - [x] Create language switcher component (in profile settings)
 - [x] Add at least 2 languages (English + German)
+- [x] Persist language preference with Zustand + AsyncStorage
+- [x] Automatic i18n synchronization with store
 
 ---
 

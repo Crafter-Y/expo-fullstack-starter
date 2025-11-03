@@ -6,15 +6,10 @@ import {
 } from "@react-navigation/drawer";
 import { useRouter } from "expo-router";
 import { Drawer } from "expo-router/drawer";
+import { useColorScheme } from "nativewind";
 import { useEffect } from "react";
 import { useTranslation } from "react-i18next";
-import {
-  Image,
-  Text,
-  useColorScheme,
-  useWindowDimensions,
-  View,
-} from "react-native";
+import { Image, Text, useWindowDimensions, View } from "react-native";
 
 const CustomDrawer = (props: DrawerContentComponentProps) => {
   return (
@@ -35,7 +30,7 @@ const CustomDrawer = (props: DrawerContentComponentProps) => {
 export default function TabsLayout() {
   const { t } = useTranslation();
   const dimensions = useWindowDimensions();
-  const colorScheme = useColorScheme();
+  const { colorScheme } = useColorScheme();
   const router = useRouter();
   const { data: session, isPending } = authClient.useSession();
 
