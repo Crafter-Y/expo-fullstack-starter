@@ -2,126 +2,141 @@
 
 ## Architecture Overview
 
-This is a **monolithic full-stack Expo app** where frontend and backend live in the same codebase. The backend runs as Expo API routes (`/app/api/`), providing type-safe RPC via tRPC.
-
-**Key Pattern**: Type safety flows from database → tRPC procedures → React hooks automatically. No manual API client code or type definitions needed.
-
-### Data Flow
-
-```
-Prisma Schema → tRPC Router → React Query Hooks → UI Components
-      ↑                           ↓
-   MySQL DB              Better Auth Session
-```
+This is a **monolithic full-stack Expo app** where frontend and backend coexist. The backend runs as Expo API routes (`/app/api/`), providing type-safe RPC via tRPC. Type safety flows automatically: `Prisma Schema → tRPC Router → React Query Hooks → UI`.
 
 ## Critical Patterns
 
-### 1. Authentication Architecture
+### 1. Authentication Flow
 
-**Server-side** (`/lib/auth.ts`):
+**Session Management**: Better Auth with Prisma adapter. Sessions stored in SecureStore (native) or cookies (web).
 
-- Better Auth configured with Prisma adapter for MySQL
-- Uses `expo()` plugin for mobile-first authentication
-- Session management happens automatically via cookies/SecureStore
+**URL Scheme Requirement**: The scheme in `app.json` (`"expofullstackstarter"`) must match `trustedOrigins` in `/lib/auth.ts`. Cookies are manually forwarded on native via headers in `TRPCProvider.tsx`:
 
-**Client-side** (`/lib/auth-client.ts`):
+```typescript
+headers() {
+  const cookies = authClient.getCookie();
+  if (cookies) headers.set("Cookie", cookies);
+}
+```
 
-- Uses `expoClient` plugin with SecureStore for secure session caching
-- URL scheme from `app.json` must match `trustedOrigins` in server config
-- Cookie forwarding in tRPC client (`TRPCProvider.tsx`) enables authenticated requests
-
-**Protected Routes**: Use `protectedProcedure` in tRPC routers - it throws `UNAUTHORIZED` if no session exists.
+**Protected Routes**: Use `protectedProcedure` in tRPC routers. It throws `UNAUTHORIZED` if no session exists and injects `ctx.user` (guaranteed to exist in procedure body).
 
 ### 2. tRPC API Layer
 
-**Creating New Endpoints** (example: `/lib/routers/todo.ts`):
+**Router Pattern** (see `/lib/routers/todo.ts`):
 
 ```typescript
-// Always use protectedProcedure for user-scoped data
 export const myRouter = router({
   getData: protectedProcedure
-    .input(z.object({ id: z.string() })) // Zod validation required
+    .input(z.object({ id: z.string() })) // Zod validation mandatory
     .query(async ({ ctx, input }) => {
-      // ctx.user is typed and guaranteed to exist
       return prisma.model.findMany({
-        where: { userId: ctx.user.id }, // Always scope by userId!
+        where: { userId: ctx.user.id }, // ALWAYS scope by userId
       });
     }),
 });
 ```
 
-**Register in** `/lib/routers/_app.ts`:
+Register in `/lib/routers/_app.ts`:
 
 ```typescript
 export const appRouter = router({
-  todo: todoRouter,
   myRouter: myRouter, // Add here
 });
 ```
 
-**Client Usage**: Hooks are auto-generated from router types:
+**Client Usage**: Auto-generated hooks from router types:
 
 ```typescript
-const { data, isLoading } = trpc.myRouter.getData.useQuery({ id: "123" });
+const { data } = trpc.myRouter.getData.useQuery({ id: "123" });
 ```
 
-### 3. Database Access
+### 3. Optimistic Updates Pattern
 
-- **Single Prisma instance**: Import from `/lib/prisma.ts` (singleton pattern prevents connection exhaustion)
-- **Always filter by userId**: Every user-scoped query must include `where: { userId: ctx.user.id }`
-- **Migrations**: Run `npx prisma migrate dev --name description` after schema changes
-- **Relations**: Use `include` for nested data (e.g., `include: { category: true }`)
-
-### 4. Optimistic Updates Pattern
-
-See `/app/(tabs)/(todos)/index.tsx` for the canonical example:
+**Canonical Example** (`/app/(tabs)/(todos)/index.tsx`):
 
 ```typescript
 const mutation = trpc.todo.toggleComplete.useMutation({
   onMutate: async ({ id }) => {
-    await utils.todo.getAll.cancel();  // Cancel in-flight queries
+    await utils.todo.getAll.cancel();
     const previousData = utils.todo.getAll.getData();
-    utils.todo.getAll.setData(undefined, (old) => /* update optimistically */);
-    return { previousData };  // Rollback data
+    utils.todo.getAll.setData(undefined, (old) =>
+      old?.map((t) => (t.id === id ? { ...t, completed: !t.completed } : t))
+    );
+    return { previousData };
   },
-  onError: (err, variables, context) => {
-    utils.todo.getAll.setData(undefined, context?.previousData);  // Rollback
+  onError: (_, __, context) => {
+    utils.todo.getAll.setData(undefined, context?.previousData);
   },
-  onSettled: () => {
-    utils.todo.getAll.invalidate();  // Refetch from server
-  },
+  onSettled: () => utils.todo.getAll.invalidate(),
 });
 ```
 
-### 5. Styling with NativeWind
+**Key Steps**: Cancel in-flight queries → save previous data → optimistically update → rollback on error → refetch on settle.
 
-- Use `className` prop with Tailwind utilities: `className="flex-1 bg-gray-50 dark:bg-gray-900"`
-- Dark mode: Prefix with `dark:` (e.g., `dark:text-white`)
-- **Important**: Use `contentContainerClassName` for FlatList/ScrollView, not `className`
-- Platform-specific styles: Use inline `style` prop sparingly for dynamic values
+### 4. State Management with Zustand
+
+**Persistence Pattern** (`/lib/stores/preferences.ts`):
+
+```typescript
+export const usePreferencesStore = create<State>()(
+  persist(
+    (set) => ({
+      language: "en",
+      setLanguage: (language) => {
+        set({ language });
+        i18n.changeLanguage(language); // Sync external state
+      },
+    }),
+    {
+      storage: createJSONStorage(() => AsyncStorage),
+      onRehydrateStorage: () => (state) => {
+        // Re-sync external state after hydration
+        if (state?.language) i18n.changeLanguage(state.language);
+      },
+    }
+  )
+);
+```
+
+**Critical**: When persisting state that controls external systems (i18n, NativeWind), update external state in both the setter AND `onRehydrateStorage` to handle app restarts.
+
+### 5. Database Access Rules
+
+- **Single Prisma Instance**: Always import from `/lib/prisma.ts` (singleton prevents connection exhaustion)
+- **User Scoping**: EVERY user-owned query MUST include `where: { userId: ctx.user.id }`
+- **Relations**: Use compound where clauses: `where: { id: input.id, userId: ctx.user.id }`
+- **Includes**: Fetch related data with `include: { category: true }`
+
+### 6. Styling with NativeWind v4
+
+- Use `className` prop: `className="bg-gray-50 dark:bg-gray-900"`
+- FlatList/ScrollView: Use `contentContainerClassName` instead of `className`
+- Dynamic colors: Use inline `style` prop (e.g., `style={{ color: category.color }}`)
+- Dark mode: Prefix utilities with `dark:` (e.g., `dark:text-white`)
 
 ## Development Workflows
 
 ### Starting Development
 
-```bash
+```powershell
 bun install
-docker compose up -d  # Start MySQL + observability stack
+docker compose up -d  # MySQL + observability
 bun start
 ```
 
 ### Database Migrations
 
-```bash
-# After changing prisma/schema.prisma:
+```powershell
+# After editing prisma/schema.prisma:
 npx prisma migrate dev --name add_field_name
 npx prisma generate  # Updates TypeScript types
 ```
 
 ### Better Auth Schema Updates
 
-```bash
-# After adding Better Auth features (OAuth, 2FA, etc.):
+```powershell
+# After adding Better Auth features:
 bunx @better-auth/cli generate
 npx prisma migrate dev --name update_auth
 ```
@@ -129,84 +144,95 @@ npx prisma migrate dev --name update_auth
 ### Environment Setup
 
 - Copy `.env.example` to `.env`
-- **Critical**: `BETTER_AUTH_SECRET` must be 32+ random characters
-- `EXPO_PUBLIC_API_URL` defaults to `http://localhost:8081` for local dev
-- Database URL format: `mysql://user:password@host:port/database`
+- **Critical**: `BETTER_AUTH_SECRET` must be 32+ characters (generate: `openssl rand -base64 32`)
+- `EXPO_PUBLIC_API_URL`: `http://localhost:8081` (default for local dev)
+- `DATABASE_URL`: `mysql://root:password@localhost:3306/todoapp` (default Docker setup)
 
-## File Organization Conventions
+## File Organization
 
 ### API Routes (`/app/api/`)
 
-- `[...auth]+api.ts`: Better Auth endpoints (login, register, session)
-- `[trpc]+api.ts`: tRPC endpoint handler (all RPC calls go here)
+- `auth/[...auth]+api.ts`: Better Auth endpoints (all auth operations)
+- `trpc/[trpc]+api.ts`: tRPC handler (all RPC calls route here)
 
 ### Routers (`/lib/routers/`)
 
-- One router per domain entity (e.g., `todo.ts`, `category.ts`)
-- Export typed router, import in `_app.ts`
+- One file per domain entity (`todo.ts`, `category.ts`)
+- Export typed router, register in `_app.ts`
 
 ### Screens (`/app/`)
 
-- `(auth)/`: Unauthenticated routes (login, register)
-- `(tabs)/`: Main app navigation with bottom tabs
-- Use `_layout.tsx` for nested navigation configuration
-
-### Components (`/components/`)
-
-- Modals should accept `visible` and `onClose` props
-- Use `Pressable` instead of `TouchableOpacity` (better performance)
+- `(auth)/`: Public routes (login, register)
+- `(tabs)/`: Protected app content with bottom tabs
+- `_layout.tsx` files define navigation structure
 
 ## Common Pitfalls
 
-1. **Forgetting userId scoping**: Always add `where: { userId: ctx.user.id }` in protected queries
-2. **Metro config**: `unstable_enablePackageExports: true` is required for Better Auth to work
-3. **Session cookies**: On native, cookies are manually forwarded via headers in `TRPCProvider.tsx`
-4. **Query invalidation**: Use `utils.routerName.procedureName.invalidate()` after mutations
-5. **Zod schemas**: Input validation is mandatory - never accept untyped input
-
-## Testing Strategy (Per TECHSTACK.md)
-
-- **Unit tests**: Mock Prisma with Prismock for tRPC procedure testing
-- **E2E tests**: Maestro for critical flows (auth, CRUD operations)
-- **Visual regression**: Storybook + Lost Pixel (future)
-- **Test protected procedures**: Mock `ctx.user` in tRPC context
+1. **Missing userId filter**: All protected queries need `where: { userId: ctx.user.id }`
+2. **Metro config**: Must have `unstable_enablePackageExports: true` for Better Auth
+3. **Cookie forwarding**: Native platforms require manual cookie forwarding in `TRPCProvider.tsx`
+4. **URL scheme mismatch**: `app.json` scheme must match `trustedOrigins` in `/lib/auth.ts`
+5. **Forgetting invalidation**: After mutations, call `utils.routerName.procedureName.invalidate()`
 
 ## Adding New Features
 
 ### New Data Model
 
-1. Add model to `prisma/schema.prisma` with `userId` relation
-2. Run migration: `npx prisma migrate dev --name add_model`
-3. Create router in `/lib/routers/model.ts` with CRUD operations
-4. Register router in `/lib/routers/_app.ts`
-5. Create UI components and hook up `trpc.model.*` queries/mutations
+1. Add model to `prisma/schema.prisma` with `userId` foreign key
+2. Run `npx prisma migrate dev --name add_model`
+3. Create router in `/lib/routers/model.ts` with CRUD procedures
+4. Register in `/lib/routers/_app.ts`
+5. Use auto-generated `trpc.model.*` hooks in components
 
-### New Auth Provider (OAuth)
+### New tRPC Router
 
-1. Update `/lib/auth.ts` with Better Auth provider config
-2. Run `bunx @better-auth/cli generate` to update schema
-3. Add provider buttons to `/app/(auth)/login.tsx`
-4. Test redirect URLs match `trustedOrigins` + URL scheme
+1. Create `/lib/routers/feature.ts`:
 
-## Dependencies to Know
+```typescript
+export const featureRouter = router({
+  list: protectedProcedure.query(async ({ ctx }) => {
+    return prisma.feature.findMany({ where: { userId: ctx.user.id } });
+  }),
+});
+```
 
-- **Expo Router**: File-based routing (folders = route segments, `_layout.tsx` = navigation containers)
-- **React Query**: Powers tRPC caching (stale time, refetch logic in `TRPCProvider.tsx`)
-- **Better Auth**: Handles sessions via cookies (SecureStore on mobile, httpOnly on web)
-- **NativeWind v4**: Requires React Native 0.78+ and specific babel config
+2. Register in `/lib/routers/_app.ts`:
+
+```typescript
+export const appRouter = router({
+  feature: featureRouter,
+});
+```
+
+3. Use in components: `trpc.feature.list.useQuery()`
+
+### New OAuth Provider
+
+1. Update `/lib/auth.ts` with provider config
+2. Run `bunx @better-auth/cli generate`
+3. Run migration: `npx prisma migrate dev --name add_oauth`
+4. Add provider button to `/app/(auth)/login.tsx`
+
+## Key Dependencies
+
+- **Expo Router**: File-based routing (folders = routes, `_layout.tsx` = containers)
+- **Better Auth**: Session management via cookies/SecureStore
+- **tRPC**: Type-safe API layer with React Query integration
+- **Prisma**: ORM with MySQL (adapter for Better Auth)
+- **NativeWind v4**: Tailwind CSS for React Native (requires RN 0.78+)
+- **Zustand**: Client state (theme, language) with AsyncStorage persistence
 
 ## Debugging Tips
 
-- **tRPC errors**: Check browser/metro console for detailed error messages with codes
-- **Auth issues**: Verify `BETTER_AUTH_SECRET` is set and scheme matches `app.json`
-- **Database connection**: Ensure Docker MySQL is running (`docker compose ps`)
-- **Type errors**: Run `npx prisma generate` after schema changes to update types
-- **Missing session**: Check that cookies are forwarded in `TRPCProvider` headers
+- **tRPC errors**: Check Metro console for error codes and messages
+- **Auth failures**: Verify `BETTER_AUTH_SECRET` is set and URL scheme matches
+- **DB connection**: Ensure Docker MySQL is running (`docker compose ps`)
+- **Type mismatches**: Run `npx prisma generate` after schema changes
+- **Missing session**: Check cookie forwarding in `TRPCProvider.tsx` headers
 
-## Current State (Per ROADMAP.md)
+## Project Status
 
-✅ **Completed**: Backend foundation, auth, tRPC, todo CRUD, categories, styling  
-🚧 **In Progress**: Testing infrastructure, observability  
-📋 **Planned**: i18n, offline support, advanced features
+✅ **Working**: Auth, tRPC, todos CRUD, categories, i18n, theme switching  
+🚧 **Planned**: Testing (Jest, Storybook, Maestro), observability (OTel)
 
-Focus on maintaining type safety and following established patterns for consistency.
+**Focus**: Maintain end-to-end type safety. All data flows through tRPC with Zod validation.
