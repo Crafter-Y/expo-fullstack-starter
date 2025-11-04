@@ -3,12 +3,14 @@ import { forwardRef } from "react";
 import { useTranslation } from "react-i18next";
 import { Text, TextInput, TextInputProps, View } from "react-native";
 
+type FormTextInputType = "name" | "email" | "password";
+
 interface BaseTextInputProps extends TextInputProps {
   placeholder: TranslationKey;
 }
 
 interface FormTextInputProps extends TextInputProps {
-  type: "name" | "email" | "password";
+  type: FormTextInputType;
   placeholder: TranslationKey;
   label: TranslationKey;
 }

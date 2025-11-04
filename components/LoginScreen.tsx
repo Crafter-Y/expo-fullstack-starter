@@ -1,7 +1,7 @@
-import { useRouter } from "expo-router";
 import { useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Pressable, Text, TextInput, View } from "react-native";
+import { Button } from "./Button";
 import { ErrorMessage } from "./elements/ErrorMessage";
 import { FormTextInput } from "./elements/FormTextInput";
 
@@ -9,11 +9,16 @@ interface LoginScreenProps {
   error: ErrorState;
   loading: boolean;
   onLogin: (email: string, password: string) => Promise<void>;
+  register: () => void;
 }
 
-export function LoginScreen({ error, loading, onLogin }: LoginScreenProps) {
+export function LoginScreen({
+  error,
+  loading,
+  onLogin,
+  register,
+}: LoginScreenProps) {
   const { t } = useTranslation();
-  const router = useRouter();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const passwordRef = useRef<TextInput>(null);
@@ -52,21 +57,19 @@ export function LoginScreen({ error, loading, onLogin }: LoginScreenProps) {
         label="auth.password"
       />
 
-      <Pressable
-        className={`mb-4 rounded-lg py-3 ${loading ? "bg-blue-400" : "bg-blue-600 active:bg-blue-700"}`}
+      <Button
+        className="mb-4"
+        type="primary"
         onPress={handleSubmit}
         disabled={loading}
-      >
-        <Text className="text-center text-base font-semibold text-white">
-          {loading ? t("auth.signingIn") : t("auth.signIn")}
-        </Text>
-      </Pressable>
+        t={loading ? "auth.signingIn" : "auth.signIn"}
+      />
 
       <View className="flex-row justify-center">
         <Text className="text-gray-600 dark:text-gray-400">
           {t("auth.dontHaveAccount")}{" "}
         </Text>
-        <Pressable onPress={() => router.push("/register")}>
+        <Pressable onPress={register}>
           <Text className="font-semibold text-blue-600 dark:text-blue-400">
             {t("auth.signUp")}
           </Text>

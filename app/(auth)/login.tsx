@@ -42,7 +42,12 @@ export default function Login() {
 
   return (
     <AuthWrapper>
-      <LoginScreen error={error} loading={loading} onLogin={handleLogin} />
+      <LoginScreen
+        error={error}
+        loading={loading}
+        onLogin={handleLogin}
+        register={() => router.push("/register")}
+      />
     </AuthWrapper>
   );
 }
