@@ -1,7 +1,7 @@
 import { CategoryModal } from "@/components/CategoryModal";
+import CreateTodoForm from "@/components/CreateTodoForm";
 import { trpc } from "@/lib/trpc-client";
-import type { TFunction } from "i18next";
-import { memo, useEffect, useMemo, useRef, useState } from "react";
+import { useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import {
   FlatList,
@@ -9,194 +9,8 @@ import {
   RefreshControl,
   ScrollView,
   Text,
-  TextInput,
   View,
 } from "react-native";
-import Animated, {
-  useAnimatedStyle,
-  useSharedValue,
-  withTiming,
-} from "react-native-reanimated";
-
-// Memoized form component to prevent unnecessary re-renders
-const CreateTodoForm = memo(
-  ({
-    t,
-    error,
-    title,
-    description,
-    createCategoryId,
-    isFormExpanded,
-    shouldShowExpandedFields,
-    createTodoPending,
-    categories,
-    onTitleChange,
-    onDescriptionChange,
-    onCategoryChange,
-    onFocus,
-    onBlur,
-    onSubmit,
-    titleInputRef,
-  }: {
-    t: TFunction<"translation", undefined>;
-    error: string;
-    title: string;
-    description: string;
-    createCategoryId: string | undefined;
-    isFormExpanded: boolean;
-    shouldShowExpandedFields: boolean;
-    createTodoPending: boolean;
-    categories:
-      | {
-          id: string;
-          name: string;
-          icon: string | null;
-          color: string | null;
-        }[]
-      | undefined;
-    onTitleChange: (text: string) => void;
-    onDescriptionChange: (text: string) => void;
-    onCategoryChange: (id: string | undefined) => void;
-    onFocus: () => void;
-    onBlur: () => void;
-    onSubmit: () => void;
-    titleInputRef: React.RefObject<TextInput | null>;
-  }) => {
-    const expandedProgress = useSharedValue(0);
-
-    useEffect(() => {
-      expandedProgress.value = withTiming(shouldShowExpandedFields ? 1 : 0, {
-        duration: shouldShowExpandedFields ? 300 : 200,
-      });
-    }, [shouldShowExpandedFields, expandedProgress]);
-
-    const animatedStyle = useAnimatedStyle(() => {
-      return {
-        maxHeight: expandedProgress.value * 500,
-        opacity: expandedProgress.value,
-        overflow: "hidden",
-      };
-    });
-
-    return (
-      <View className="mb-4">
-        {error ? (
-          <View className="mb-3 rounded-lg bg-red-100 p-3 dark:bg-red-900/30">
-            <Text className="text-sm text-red-700 dark:text-red-400">
-              {error}
-            </Text>
-          </View>
-        ) : null}
-
-        {/* Title Input - Always Visible */}
-        <TextInput
-          ref={titleInputRef}
-          className="rounded-lg border border-gray-300 bg-white px-4 py-3 text-base text-gray-900 dark:border-gray-600 dark:bg-gray-900 dark:text-white"
-          placeholder={t("todos.whatToDo")}
-          placeholderTextColor="#9CA3AF"
-          value={title}
-          onChangeText={onTitleChange}
-          onFocus={onFocus}
-          onBlur={onBlur}
-          editable={!createTodoPending}
-          maxLength={200}
-        />
-
-        {/* Expanded Fields - Animated */}
-        <Animated.View style={animatedStyle}>
-          <View className="mt-3 gap-3">
-            {/* Description Input */}
-            <TextInput
-              className="min-h-[80px] rounded-lg border border-gray-300 bg-white px-4 py-3 text-base text-gray-900 dark:border-gray-600 dark:bg-gray-900 dark:text-white"
-              placeholder={t("todos.addDetails")}
-              placeholderTextColor="#9CA3AF"
-              value={description}
-              onChangeText={onDescriptionChange}
-              multiline
-              textAlignVertical="top"
-              editable={!createTodoPending}
-            />
-
-            {/* Category Selection */}
-            <View className="flex-row flex-wrap gap-2">
-              {/* None option */}
-              <Pressable
-                onPress={() => onCategoryChange(undefined)}
-                className={`rounded-lg border px-3 py-2 ${
-                  !createCategoryId
-                    ? "border-blue-600 bg-blue-50 dark:border-blue-500 dark:bg-blue-900/30"
-                    : "border-gray-300 bg-white dark:border-gray-600 dark:bg-gray-900"
-                }`}
-                disabled={createTodoPending}
-              >
-                <Text
-                  className={`text-sm font-medium ${
-                    !createCategoryId
-                      ? "text-blue-600 dark:text-blue-400"
-                      : "text-gray-700 dark:text-gray-300"
-                  }`}
-                >
-                  {t("todos.noCategory")}
-                </Text>
-              </Pressable>
-
-              {/* Category options */}
-              {categories?.map((category) => (
-                <Pressable
-                  key={category.id}
-                  onPress={() => onCategoryChange(category.id)}
-                  className={`flex-row items-center rounded-lg border px-3 py-2 ${
-                    createCategoryId === category.id
-                      ? "border-blue-600 bg-blue-50 dark:border-blue-500 dark:bg-blue-900/30"
-                      : "border-gray-300 bg-white dark:border-gray-600 dark:bg-gray-900"
-                  }`}
-                  disabled={createTodoPending}
-                >
-                  {category.icon ? (
-                    <Text className="mr-2 text-sm">{category.icon}</Text>
-                  ) : null}
-                  <Text
-                    className={`text-sm font-medium ${
-                      createCategoryId === category.id
-                        ? "text-blue-600 dark:text-blue-400"
-                        : "text-gray-700 dark:text-gray-300"
-                    }`}
-                    style={
-                      category.color && createCategoryId !== category.id
-                        ? { color: category.color }
-                        : undefined
-                    }
-                  >
-                    {category.name}
-                  </Text>
-                </Pressable>
-              ))}
-            </View>
-
-            {/* Action Button */}
-            <Pressable
-              onPress={onSubmit}
-              className={`rounded-lg py-3 ${
-                createTodoPending
-                  ? "bg-blue-400"
-                  : "bg-blue-600 active:bg-blue-700"
-              }`}
-              disabled={createTodoPending || !title.trim()}
-            >
-              <Text className="text-center text-base font-semibold text-white">
-                {createTodoPending
-                  ? t("todos.creating")
-                  : t("todos.createTodo")}
-              </Text>
-            </Pressable>
-          </View>
-        </Animated.View>
-      </View>
-    );
-  }
-);
-
-CreateTodoForm.displayName = "CreateTodoForm";
 
 export default function TodosScreen() {
   const { t } = useTranslation();
@@ -205,22 +19,7 @@ export default function TodosScreen() {
     string | null | "uncategorized"
   >(null);
 
-  // Create form state
-  const [title, setTitle] = useState("");
-  const [description, setDescription] = useState("");
-  const [createCategoryId, setCreateCategoryId] = useState<
-    string | undefined
-  >();
-  const [isFormExpanded, setIsFormExpanded] = useState(false);
-  const [error, setError] = useState("");
-  const titleInputRef = useRef<TextInput>(null);
-
-  // Handle keyboard dismiss
-  const handleBlur = () => {
-    if (title.trim().length === 0) {
-      setIsFormExpanded(false);
-    }
-  };
+  const [error, setError] = useState<ErrorState>(null);
 
   const { data: todos, isLoading, refetch } = trpc.todo.getAll.useQuery();
   const { data: categories } = trpc.category.getAll.useQuery();
@@ -238,40 +37,37 @@ export default function TodosScreen() {
     return todos.filter((todo) => todo.categoryId === selectedCategoryId);
   }, [todos, selectedCategoryId]);
 
-  // Determine if form should be expanded (focused or has content)
-  const shouldShowExpandedFields = isFormExpanded || title.trim().length > 0;
+  const createTodoMutation = trpc.todo.create.useMutation();
 
-  const createTodo = trpc.todo.create.useMutation({
-    onSuccess: () => {
-      utils.todo.getAll.invalidate();
-      setTitle("");
-      setDescription("");
-      setCreateCategoryId(undefined);
-      setError("");
-      setIsFormExpanded(false);
-    },
-    onError: (err) => {
-      setError(err.message || "Failed to create todo");
-    },
-  });
-
-  const handleSubmit = () => {
+  const createTodo = async (
+    title: string,
+    description: string,
+    createCategoryId?: string
+  ): Promise<boolean> => {
     if (!title.trim()) {
       setError(t("errors.titleRequired"));
-      return;
+      return false;
     }
 
     if (title.length > 200) {
       setError(t("errors.titleTooLong"));
-      return;
+      return false;
     }
 
-    setError("");
-    createTodo.mutate({
-      title: title.trim(),
-      description: description.trim() || undefined,
-      categoryId: createCategoryId,
-    });
+    try {
+      await createTodoMutation.mutateAsync({
+        title: title.trim(),
+        description: description.trim() || undefined,
+        categoryId: createCategoryId,
+      });
+
+      utils.todo.getAll.invalidate();
+      setError(null);
+      return true;
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Failed to create todo");
+      return false;
+    }
   };
 
   const toggleComplete = trpc.todo.toggleComplete.useMutation({
@@ -394,25 +190,13 @@ export default function TodosScreen() {
       <FlatList
         data={filteredTodos}
         keyExtractor={(item) => item.id}
-        contentContainerClassName="p-4 native:pb-28"
+        contentContainerClassName="p-4 native:pb-28 w-full max-w-2xl mx-auto"
         ListHeaderComponent={
           <CreateTodoForm
-            t={t}
             error={error}
-            title={title}
-            description={description}
-            createCategoryId={createCategoryId}
-            isFormExpanded={isFormExpanded}
-            shouldShowExpandedFields={shouldShowExpandedFields}
-            createTodoPending={createTodo.isPending}
             categories={categories}
-            onTitleChange={setTitle}
-            onDescriptionChange={setDescription}
-            onCategoryChange={setCreateCategoryId}
-            onFocus={() => setIsFormExpanded(true)}
-            onBlur={handleBlur}
-            onSubmit={handleSubmit}
-            titleInputRef={titleInputRef}
+            createTodo={createTodo}
+            className="mb-4"
           />
         }
         refreshControl={

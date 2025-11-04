@@ -44,6 +44,7 @@ export function LoginScreen({
         returnKeyType="next"
         placeholder="auth.emailPlaceholder"
         label="auth.email"
+        containerClassName="mb-4"
       />
 
       <FormTextInput
@@ -55,6 +56,7 @@ export function LoginScreen({
         returnKeyType="done"
         placeholder="auth.passwordPlaceholder"
         label="auth.password"
+        containerClassName="mb-4"
       />
 
       <Button

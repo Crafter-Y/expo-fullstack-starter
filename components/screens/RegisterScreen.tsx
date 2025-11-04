@@ -54,6 +54,7 @@ export function RegisterScreen({
         returnKeyType="next"
         placeholder="auth.namePlaceholder"
         label="auth.name"
+        containerClassName="mb-4"
       />
 
       <FormTextInput
@@ -66,6 +67,7 @@ export function RegisterScreen({
         returnKeyType="next"
         placeholder="auth.emailPlaceholder"
         label="auth.email"
+        containerClassName="mb-4"
       />
 
       <FormTextInput
@@ -78,6 +80,7 @@ export function RegisterScreen({
         returnKeyType="next"
         placeholder="auth.passwordPlaceholder"
         label="auth.password"
+        containerClassName="mb-4"
       />
 
       <FormTextInput
@@ -89,6 +92,7 @@ export function RegisterScreen({
         returnKeyType="done"
         placeholder="auth.passwordPlaceholder"
         label="auth.confirmPassword"
+        containerClassName="mb-4"
       />
 
       <Button

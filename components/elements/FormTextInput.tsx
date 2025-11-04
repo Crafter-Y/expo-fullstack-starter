@@ -3,7 +3,7 @@ import { forwardRef } from "react";
 import { useTranslation } from "react-i18next";
 import { Text, TextInput, TextInputProps, View } from "react-native";
 
-type FormTextInputType = "name" | "email" | "password";
+type FormTextInputType = "name" | "email" | "password" | "text";
 
 interface BaseTextInputProps extends TextInputProps {
   placeholder: TranslationKey;
@@ -12,7 +12,8 @@ interface BaseTextInputProps extends TextInputProps {
 interface FormTextInputProps extends TextInputProps {
   type: FormTextInputType;
   placeholder: TranslationKey;
-  label: TranslationKey;
+  label?: TranslationKey;
+  containerClassName?: string;
 }
 
 const BaseTextInput = forwardRef<TextInput, BaseTextInputProps>(
@@ -34,7 +35,7 @@ const BaseTextInput = forwardRef<TextInput, BaseTextInputProps>(
 BaseTextInput.displayName = "BaseTextInput";
 
 export const FormTextInput = forwardRef<TextInput, FormTextInputProps>(
-  ({ type, label, ...props }, ref) => {
+  ({ type, label, containerClassName, ...props }, ref) => {
     const { t } = useTranslation();
 
     const getTypeSpecificProps = () => {
@@ -43,8 +44,6 @@ export const FormTextInput = forwardRef<TextInput, FormTextInputProps>(
           return {
             inputMode: "text" as const,
             autoComplete: "name" as const,
-            returnKeyType: "next" as const,
-            submitBehavior: "submit" as const,
           };
         case "email":
           return {
@@ -62,14 +61,20 @@ export const FormTextInput = forwardRef<TextInput, FormTextInputProps>(
             keyboardType: "visible-password" as const,
             secureTextEntry: true,
           };
+        case "text":
+          return {
+            inputMode: "text" as const,
+          };
       }
     };
 
     return (
-      <View className="mb-4">
-        <Text className="mb-2 text-sm font-medium text-gray-700 dark:text-gray-300">
-          {t(label)}
-        </Text>
+      <View className={containerClassName}>
+        {label && (
+          <Text className="mb-2 text-sm font-medium text-gray-700 dark:text-gray-300">
+            {t(label)}
+          </Text>
+        )}
         <BaseTextInput ref={ref} {...props} {...getTypeSpecificProps()} />
       </View>
     );
