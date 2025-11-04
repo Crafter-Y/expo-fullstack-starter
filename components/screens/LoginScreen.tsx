@@ -1,9 +1,9 @@
 import { useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Pressable, Text, TextInput, View } from "react-native";
-import { Button } from "./Button";
-import { ErrorMessage } from "./elements/ErrorMessage";
-import { FormTextInput } from "./elements/FormTextInput";
+import { Button } from "../elements/Button";
+import { ErrorMessage } from "../elements/ErrorMessage";
+import { FormTextInput } from "../elements/FormTextInput";
 
 interface LoginScreenProps {
   error: ErrorState;
