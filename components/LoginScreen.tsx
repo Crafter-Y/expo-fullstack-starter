@@ -3,6 +3,7 @@ import { useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Pressable, Text, TextInput, View } from "react-native";
 import { ErrorMessage } from "./elements/ErrorMessage";
+import { FormTextInput } from "./elements/FormTextInput";
 
 interface LoginScreenProps {
   error: ErrorState;
@@ -29,49 +30,27 @@ export function LoginScreen({ error, loading, onLogin }: LoginScreenProps) {
 
       <ErrorMessage error={error} />
 
-      <View className="mb-4">
-        <Text className="mb-2 text-sm font-medium text-gray-700 dark:text-gray-300">
-          {t("auth.email")}
-        </Text>
-        <TextInput
-          className="rounded-lg border border-gray-300 bg-white px-4 py-3 text-gray-900 dark:border-gray-600 dark:bg-gray-800 dark:text-white"
-          placeholder={t("auth.emailPlaceholder")}
-          placeholderTextColor="#9CA3AF"
-          value={email}
-          onChangeText={setEmail}
-          autoCapitalize="none"
-          keyboardType="email-address"
-          inputMode="email"
-          autoComplete="email"
-          editable={!loading}
-          returnKeyType="next"
-          onSubmitEditing={() => passwordRef.current?.focus()}
-          submitBehavior="submit"
-        />
-      </View>
+      <FormTextInput
+        type="email"
+        onChangeText={setEmail}
+        editable={!loading}
+        onSubmitEditing={() => passwordRef.current?.focus()}
+        submitBehavior="submit"
+        returnKeyType="next"
+        placeholder="auth.emailPlaceholder"
+        label="auth.email"
+      />
 
-      <View className="mb-6">
-        <Text className="mb-2 text-sm font-medium text-gray-700 dark:text-gray-300">
-          {t("auth.password")}
-        </Text>
-        <TextInput
-          ref={passwordRef}
-          className="rounded-lg border border-gray-300 bg-white px-4 py-3 text-gray-900 dark:border-gray-600 dark:bg-gray-800 dark:text-white"
-          placeholder={t("auth.passwordPlaceholder")}
-          placeholderTextColor="#9CA3AF"
-          value={password}
-          inputMode="text"
-          autoCorrect={false}
-          autoCapitalize="none"
-          autoComplete="password"
-          keyboardType="visible-password"
-          onChangeText={setPassword}
-          secureTextEntry
-          editable={!loading}
-          returnKeyType="done"
-          onSubmitEditing={handleSubmit}
-        />
-      </View>
+      <FormTextInput
+        ref={passwordRef}
+        type="password"
+        onChangeText={setPassword}
+        editable={!loading}
+        onSubmitEditing={handleSubmit}
+        returnKeyType="done"
+        placeholder="auth.passwordPlaceholder"
+        label="auth.password"
+      />
 
       <Pressable
         className={`mb-4 rounded-lg py-3 ${loading ? "bg-blue-400" : "bg-blue-600 active:bg-blue-700"}`}
