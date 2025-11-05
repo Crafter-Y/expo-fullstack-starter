@@ -1,7 +1,7 @@
 import { Button } from "@/components/elements/Button";
-import CategorySelectorBadge from "@/components/elements/CategorySelectorBadge";
 import { ErrorMessage } from "@/components/elements/ErrorMessage";
 import { FormTextInput } from "@/components/elements/FormTextInput";
+import CategorySelectorBadge from "@/components/todos/CategorySelectorBadge";
 import { RouterOutput } from "@/lib/routers/_app";
 import React, { useEffect, useState } from "react";
 import { View, ViewProps } from "react-native";

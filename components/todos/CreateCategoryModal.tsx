@@ -34,7 +34,7 @@ interface CategoryModalProps {
   onClose: () => void;
 }
 
-export function CategoryModal({
+export function CreateCategoryModal({
   visible,
   category,
   onClose,

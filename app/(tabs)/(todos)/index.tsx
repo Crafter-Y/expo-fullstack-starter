@@ -1,6 +1,6 @@
-import { CategoryModal } from "@/components/CategoryModal";
-import CreateTodoForm from "@/components/CreateTodoForm";
-import CategorySelectorBadge from "@/components/elements/CategorySelectorBadge";
+import CategorySelectorBadge from "@/components/todos/CategorySelectorBadge";
+import { CreateCategoryModal } from "@/components/todos/CreateCategoryModal";
+import CreateTodoForm from "@/components/todos/CreateTodoForm";
 import { trpc } from "@/lib/trpc-client";
 import { useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
@@ -250,7 +250,7 @@ export default function TodosScreen() {
         }
       />
 
-      <CategoryModal
+      <CreateCategoryModal
         visible={showCategoryModal}
         onClose={() => setShowCategoryModal(false)}
       />

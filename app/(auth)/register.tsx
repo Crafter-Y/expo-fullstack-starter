@@ -1,5 +1,5 @@
 import { AuthWrapper } from "@/components/AuthWrapper";
-import { RegisterScreen } from "@/components/screens/RegisterScreen";
+import { RegisterScreen } from "@/components/auth/RegisterScreen";
 import { authClient } from "@/lib/auth-client";
 import { useRouter } from "expo-router";
 import { useState } from "react";

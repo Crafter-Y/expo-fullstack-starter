@@ -8,8 +8,19 @@ export const todoRouter = router({
     return await prisma.todo.findMany({
       where: { userId: ctx.user.id },
       orderBy: { createdAt: "desc" },
-      include: {
-        category: true,
+      select: {
+        id: true,
+        categoryId: true,
+        completed: true,
+        title: true,
+        description: true,
+        category: {
+          select: {
+            icon: true,
+            color: true,
+            name: true,
+          },
+        },
       },
     });
   }),
