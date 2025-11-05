@@ -8,7 +8,11 @@ export const categoryRouter = router({
     return await prisma.category.findMany({
       where: { userId: ctx.user.id },
       orderBy: { name: "asc" },
-      include: {
+      select: {
+        name: true,
+        id: true,
+        color: true,
+        icon: true,
         _count: {
           select: { todos: true },
         },

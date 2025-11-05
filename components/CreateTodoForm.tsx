@@ -1,9 +1,10 @@
 import { Button } from "@/components/elements/Button";
+import CategorySelectorBadge from "@/components/elements/CategorySelectorBadge";
 import { ErrorMessage } from "@/components/elements/ErrorMessage";
 import { FormTextInput } from "@/components/elements/FormTextInput";
 import { RouterOutput } from "@/lib/routers/_app";
 import React, { useEffect, useState } from "react";
-import { Pressable, Text, View, ViewProps } from "react-native";
+import { View, ViewProps } from "react-native";
 import Animated, {
   useAnimatedStyle,
   useSharedValue,
@@ -106,34 +107,13 @@ export default function CreateTodoForm({
 
           <View className="flex-row flex-wrap gap-2">
             {categories?.map((category) => (
-              <Pressable
+              <CategorySelectorBadge
+                category={category}
                 key={category.id}
-                onPress={() => setCreateCategoryId(category.id)}
-                className={`flex-row items-center rounded-lg border px-3 py-2 ${
-                  createCategoryId === category.id
-                    ? "border-blue-600 bg-blue-50 dark:border-blue-500 dark:bg-blue-900/30"
-                    : "border-gray-300 bg-white dark:border-gray-600 dark:bg-gray-900"
-                }`}
+                selectedCategory={createCategoryId}
+                setSelectedCategory={setCreateCategoryId}
                 disabled={createTodoPending}
-              >
-                {category.icon ? (
-                  <Text className="mr-2 text-sm">{category.icon}</Text>
-                ) : null}
-                <Text
-                  className={`text-sm font-medium ${
-                    createCategoryId === category.id
-                      ? "text-blue-600 dark:text-blue-400"
-                      : "text-gray-700 dark:text-gray-300"
-                  }`}
-                  style={
-                    category.color && createCategoryId !== category.id
-                      ? { color: category.color }
-                      : undefined
-                  }
-                >
-                  {category.name}
-                </Text>
-              </Pressable>
+              />
             ))}
           </View>
 

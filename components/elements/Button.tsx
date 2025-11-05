@@ -25,7 +25,10 @@ const BaseButton = ({
 
   return (
     <Pressable className={`rounded-lg ${className}`} {...props}>
-      <Text className={`text-center text-base font-semibold ${textClassName}`}>
+      <Text
+        className={`text-center text-base font-semibold ${textClassName}`}
+        selectable={false}
+      >
         {i18n(t)}
       </Text>
     </Pressable>
