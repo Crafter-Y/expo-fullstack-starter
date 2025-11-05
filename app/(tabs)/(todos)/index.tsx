@@ -1,5 +1,6 @@
 import { CategoryModal } from "@/components/CategoryModal";
 import CreateTodoForm from "@/components/CreateTodoForm";
+import CategorySelectorBadge from "@/components/elements/CategorySelectorBadge";
 import { trpc } from "@/lib/trpc-client";
 import { useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
@@ -16,8 +17,8 @@ export default function TodosScreen() {
   const { t } = useTranslation();
   const [showCategoryModal, setShowCategoryModal] = useState(false);
   const [selectedCategoryId, setSelectedCategoryId] = useState<
-    string | null | "uncategorized"
-  >(null);
+    string | "all" | "uncategorized"
+  >("all");
 
   const [error, setError] = useState<ErrorState>(null);
 
@@ -28,7 +29,7 @@ export default function TodosScreen() {
   // Filter todos based on selected category
   const filteredTodos = useMemo(() => {
     if (!todos) return [];
-    if (!selectedCategoryId) return todos;
+    if (selectedCategoryId === "all") return todos;
 
     if (selectedCategoryId === "uncategorized") {
       return todos.filter((todo) => !todo.categoryId);
@@ -102,83 +103,55 @@ export default function TodosScreen() {
           horizontal
           showsHorizontalScrollIndicator={false}
           className="px-4"
+          contentContainerClassName="gap-2"
         >
           {/* All Todos Badge */}
-          <Pressable
-            onPress={() => setSelectedCategoryId(null)}
-            className={`mx-1 rounded-full px-4 py-2 ${
-              selectedCategoryId === null
-                ? "bg-blue-600"
-                : "border border-gray-300 bg-white dark:border-gray-600 dark:bg-gray-700"
-            }`}
-          >
-            <Text
-              className={`text-sm font-medium ${
-                selectedCategoryId === null
-                  ? "text-white"
-                  : "text-gray-700 dark:text-gray-300"
-              }`}
-            >
-              {t("todos.all")} ({todos?.length || 0})
-            </Text>
-          </Pressable>
+          <CategorySelectorBadge
+            type="base"
+            category={{
+              id: "all",
+              name: t("todos.all"),
+              color: null,
+              icon: null,
+              _count: {
+                todos: todos?.length || 0,
+              },
+            }}
+            selectedCategory={selectedCategoryId}
+            setSelectedCategory={() => setSelectedCategoryId("all")}
+          />
 
           {/* Uncategorized Badge */}
-          <Pressable
-            onPress={() => setSelectedCategoryId("uncategorized")}
-            className={`mx-1 rounded-full px-4 py-2 ${
-              selectedCategoryId === "uncategorized"
-                ? "bg-blue-600"
-                : "border border-gray-300 bg-white dark:border-gray-600 dark:bg-gray-700"
-            }`}
-          >
-            <Text
-              className={`text-sm font-medium ${
-                selectedCategoryId === "uncategorized"
-                  ? "text-white"
-                  : "text-gray-700 dark:text-gray-300"
-              }`}
-            >
-              {t("todos.uncategorized")} (
-              {todos?.filter((t) => !t.categoryId).length || 0})
-            </Text>
-          </Pressable>
+          <CategorySelectorBadge
+            type="base"
+            category={{
+              id: "uncategorized",
+              name: t("todos.uncategorized"),
+              color: null,
+              icon: null,
+              _count: {
+                todos: todos?.filter((t) => !t.categoryId).length || 0,
+              },
+            }}
+            selectedCategory={selectedCategoryId}
+            setSelectedCategory={() => setSelectedCategoryId("uncategorized")}
+          />
 
           {/* Category Badges */}
           {categories?.map((category) => (
-            <Pressable
+            <CategorySelectorBadge
               key={category.id}
-              onPress={() => setSelectedCategoryId(category.id)}
-              className={`mx-1 flex-row items-center rounded-full px-4 py-2 ${
-                selectedCategoryId === category.id
-                  ? "bg-blue-600"
-                  : "border border-gray-300 bg-white dark:border-gray-600 dark:bg-gray-700"
-              }`}
-            >
-              {category.icon ? (
-                <Text className="mr-1 text-sm">{category.icon}</Text>
-              ) : null}
-              <Text
-                className={`text-sm font-medium ${
-                  selectedCategoryId === category.id ? "text-white" : ""
-                }`}
-                style={
-                  selectedCategoryId === category.id
-                    ? undefined
-                    : category.color
-                      ? { color: category.color }
-                      : undefined
-                }
-              >
-                {category.name} ({category._count.todos})
-              </Text>
-            </Pressable>
+              type="base"
+              category={category}
+              selectedCategory={selectedCategoryId}
+              setSelectedCategory={() => setSelectedCategoryId(category.id)}
+            />
           ))}
 
           {/* Add Category Button */}
           <Pressable
             onPress={() => setShowCategoryModal(true)}
-            className="ml-1 mr-8 rounded-full border border-dashed border-gray-400 bg-white px-4 py-2 dark:border-gray-500 dark:bg-gray-700"
+            className="mr-8 rounded-full border border-dashed border-gray-400 bg-white px-4 py-2 dark:border-gray-500 dark:bg-gray-700"
           >
             <Text className="text-sm font-medium text-gray-600 dark:text-gray-300">
               {t("todos.add")}

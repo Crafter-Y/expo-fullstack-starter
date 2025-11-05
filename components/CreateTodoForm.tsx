@@ -108,6 +108,7 @@ export default function CreateTodoForm({
           <View className="flex-row flex-wrap gap-2">
             {categories?.map((category) => (
               <CategorySelectorBadge
+                type="ghost"
                 category={category}
                 key={category.id}
                 selectedCategory={createCategoryId}
