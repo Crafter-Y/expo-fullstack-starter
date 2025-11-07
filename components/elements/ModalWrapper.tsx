@@ -1,6 +1,5 @@
 import { TranslationKey } from "@/lib/i18n";
 import { useEffect, useRef } from "react";
-import { useTranslation } from "react-i18next";
 import {
   Animated,
   Keyboard,
@@ -9,10 +8,9 @@ import {
   Platform,
   Pressable,
   ScrollView,
-  Text,
   TouchableWithoutFeedback,
-  View,
 } from "react-native";
+import { ModalHeader } from "./ModalHeader";
 
 interface ModalWrapperProps {
   visible: boolean;
@@ -27,8 +25,6 @@ export function ModalWrapper({
   title,
   children,
 }: ModalWrapperProps) {
-  const { t } = useTranslation();
-
   const backdropAnim = useRef(new Animated.Value(0)).current;
 
   useEffect(() => {
@@ -46,7 +42,7 @@ export function ModalWrapper({
 
   const backgroundColor = backdropAnim.interpolate({
     inputRange: [0, 1],
-    outputRange: ["rgba(0, 0, 0, 0)", "rgba(0, 0, 0, 0.5)"],
+    outputRange: ["rgba(0, 0, 0, 0)", "rgba(0, 0, 0, 0.3)"],
   });
 
   const handleClose = () => {
@@ -81,22 +77,7 @@ export function ModalWrapper({
               className="max-h-[90%] w-full cursor-default rounded-t-3xl bg-white dark:bg-gray-800 xl:max-w-2xl xl:rounded-b-3xl"
               behavior={Platform.OS === "ios" ? "padding" : "height"}
             >
-              {/* Header */}
-              <View className="border-b border-gray-200 px-6 pb-4 pt-6 dark:border-gray-700">
-                <View className="flex-row items-center justify-between">
-                  <Text className="cursor-text text-xl font-bold text-gray-900 dark:text-white">
-                    {t(title)}
-                  </Text>
-                  <Pressable
-                    onPress={onClose}
-                    className="rounded-full p-2 active:bg-gray-100 dark:active:bg-gray-700"
-                  >
-                    <Text className="text-xl text-gray-500 dark:text-gray-400">
-                      ✕
-                    </Text>
-                  </Pressable>
-                </View>
-              </View>
+              <ModalHeader title={title} onClose={onClose} />
 
               <ScrollView className="cursor-auto px-6 py-4">
                 {children}

@@ -1,7 +1,9 @@
 import { RouterOutput } from "@/lib/routers/_app";
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { Pressable, Text, TextInput, View } from "react-native";
+import { Pressable, Text, View } from "react-native";
+import { ErrorMessage } from "../elements/ErrorMessage";
+import { FormTextInput } from "../elements/FormTextInput";
 
 export const PRESET_COLORS = [
   "#EF4444", // red
@@ -18,7 +20,7 @@ export const PRESET_ICONS = ["📋", "🏠", "💼", "🎯", "🛒", "💪", "�
 interface CreateCategoryModalProps {
   category?: RouterOutput["category"]["getAll"][number];
   visible: boolean;
-  error: string;
+  error: ErrorState;
   isPending: boolean;
   onSubmit: (name: string, color: string, icon: string) => void;
   onCancel: () => void;
@@ -56,32 +58,21 @@ export function CreateCategoryModal({
 
   return (
     <>
-      {error ? (
-        <View className="mb-4 rounded-lg bg-red-100 p-3 dark:bg-red-900/30">
-          <Text className="text-sm text-red-700 dark:text-red-400">
-            {error}
-          </Text>
-        </View>
-      ) : null}
+      <ErrorMessage error={error} />
 
-      {/* Name Input */}
-      <View className="mb-4">
-        <Text className="mb-2 text-sm font-medium text-gray-700 dark:text-gray-300">
-          {t("category.name")} *
-        </Text>
-        <TextInput
-          className="rounded-lg border border-gray-300 bg-white px-4 py-3 text-gray-900 dark:border-gray-600 dark:bg-gray-900 dark:text-white"
-          placeholder={t("category.namePlaceholder")}
-          placeholderTextColor="#9CA3AF"
-          value={name}
-          onChangeText={setName}
-          editable={!isPending}
-          maxLength={100}
-        />
-        <Text className="mt-1 text-xs text-gray-500 dark:text-gray-400">
-          {name.length}/100
-        </Text>
-      </View>
+      <FormTextInput
+        type="text"
+        label="category.name"
+        placeholder="category.namePlaceholder"
+        value={name}
+        onChangeText={setName}
+        editable={!isPending}
+        maxLength={100}
+        containerClassName="mb-1"
+      />
+      <Text className="mb-4 text-xs text-gray-500 dark:text-gray-400">
+        {name.length}/100
+      </Text>
 
       {/* Icon Selection */}
       <View className="mb-4">

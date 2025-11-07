@@ -22,7 +22,7 @@ export default function TodosScreen() {
   >("all");
 
   const [error, setError] = useState<ErrorState>(null);
-  const [categoryError, setCategoryError] = useState("");
+  const [categoryError, setCategoryError] = useState<ErrorState>(null);
 
   const { data: todos, isLoading, refetch } = trpc.todo.getAll.useQuery();
   const { data: categories } = trpc.category.getAll.useQuery();
@@ -109,7 +109,7 @@ export default function TodosScreen() {
 
   const handleCloseCategoryModal = () => {
     setShowCategoryModal(false);
-    setCategoryError("");
+    setCategoryError(null);
   };
 
   const handleCreateCategory = (name: string, color: string, icon: string) => {
@@ -123,7 +123,7 @@ export default function TodosScreen() {
       return;
     }
 
-    setCategoryError("");
+    setCategoryError(null);
 
     createCategoryMutation.mutate({
       name: name.trim(),
