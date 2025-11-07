@@ -1,3 +1,4 @@
+import { Button } from "@/components/elements/Button";
 import { authClient } from "@/lib/auth-client";
 import { useLanguage } from "@/lib/hooks/useLanguage";
 import { useTheme } from "@/lib/hooks/useTheme";
@@ -102,15 +103,14 @@ export default function ProfileScreen() {
           </Pressable>
         </View>
 
-        <Pressable
-          className={`mt-6 rounded-lg border border-gray-200 bg-white p-4 dark:border-gray-700 dark:bg-gray-800 ${loggingOut ? "opacity-50" : "active:bg-gray-50 dark:active:bg-gray-700"}`}
+        <Button
+          type="ghost"
+          t={loggingOut ? "profile.signingOut" : "profile.signOut"}
           onPress={handleLogout}
           disabled={loggingOut}
-        >
-          <Text className="text-center text-base text-red-600 dark:text-red-400">
-            {loggingOut ? t("profile.signingOut") : t("profile.signOut")}
-          </Text>
-        </Pressable>
+          className="mt-6"
+          textClassName="text-red-600 dark:text-red-400"
+        />
       </View>
     </View>
   );

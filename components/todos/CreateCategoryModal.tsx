@@ -1,3 +1,4 @@
+import { Button } from "@/components/elements/Button";
 import { RouterOutput } from "@/lib/routers/_app";
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
@@ -125,33 +126,29 @@ export function CreateCategoryModal({
 
       {/* Action Buttons */}
       <View className="mb-4 flex-row gap-3">
-        <Pressable
+        <Button
+          type="ghost"
+          t="todos.cancel"
+          disabled={isPending}
           onPress={onCancel}
-          className="flex-1 rounded-lg border border-gray-300 py-3 active:bg-gray-50 dark:border-gray-600 dark:active:bg-gray-700"
-          disabled={isPending}
-        >
-          <Text className="text-center text-base font-semibold text-gray-700 dark:text-gray-300">
-            {t("todos.cancel")}
-          </Text>
-        </Pressable>
+          className="flex-1"
+        />
 
-        <Pressable
-          onPress={handleSubmit}
-          className={`flex-1 rounded-lg py-3 ${
-            isPending ? "bg-blue-400" : "bg-blue-600 active:bg-blue-700"
-          }`}
-          disabled={isPending}
-        >
-          <Text className="text-center text-base font-semibold text-white">
-            {isPending
+        <Button
+          type="primary"
+          t={
+            isPending
               ? category
-                ? t("category.updating")
-                : t("category.creating")
+                ? "category.updating"
+                : "category.creating"
               : category
-                ? t("todos.update")
-                : t("todos.create")}
-          </Text>
-        </Pressable>
+                ? "todos.update"
+                : "todos.create"
+          }
+          disabled={isPending}
+          onPress={handleSubmit}
+          className="flex-1"
+        />
       </View>
     </>
   );
