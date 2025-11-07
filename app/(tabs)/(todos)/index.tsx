@@ -1,3 +1,4 @@
+import { ModalWrapper } from "@/components/elements/ModalWrapper";
 import CategorySelectorBadge from "@/components/todos/CategorySelectorBadge";
 import { CreateCategoryModal } from "@/components/todos/CreateCategoryModal";
 import CreateTodoForm from "@/components/todos/CreateTodoForm";
@@ -21,6 +22,7 @@ export default function TodosScreen() {
   >("all");
 
   const [error, setError] = useState<ErrorState>(null);
+  const [categoryError, setCategoryError] = useState("");
 
   const { data: todos, isLoading, refetch } = trpc.todo.getAll.useQuery();
   const { data: categories } = trpc.category.getAll.useQuery();
@@ -94,6 +96,41 @@ export default function TodosScreen() {
       utils.todo.getAll.invalidate();
     },
   });
+
+  const createCategoryMutation = trpc.category.create.useMutation({
+    onSuccess: () => {
+      utils.category.getAll.invalidate();
+      handleCloseCategoryModal();
+    },
+    onError: (err) => {
+      setCategoryError(err.message || t("errors.createCategoryFailed"));
+    },
+  });
+
+  const handleCloseCategoryModal = () => {
+    setShowCategoryModal(false);
+    setCategoryError("");
+  };
+
+  const handleCreateCategory = (name: string, color: string, icon: string) => {
+    if (!name.trim()) {
+      setCategoryError(t("errors.nameRequired"));
+      return;
+    }
+
+    if (name.length > 100) {
+      setCategoryError(t("errors.nameTooLong"));
+      return;
+    }
+
+    setCategoryError("");
+
+    createCategoryMutation.mutate({
+      name: name.trim(),
+      color,
+      icon,
+    });
+  };
 
   return (
     <View className="flex-1 bg-gray-50 dark:bg-gray-900">
@@ -250,10 +287,19 @@ export default function TodosScreen() {
         }
       />
 
-      <CreateCategoryModal
+      <ModalWrapper
         visible={showCategoryModal}
-        onClose={() => setShowCategoryModal(false)}
-      />
+        onClose={handleCloseCategoryModal}
+        title="category.createCategory"
+      >
+        <CreateCategoryModal
+          visible={showCategoryModal}
+          error={categoryError}
+          isPending={createCategoryMutation.isPending}
+          onSubmit={handleCreateCategory}
+          onCancel={handleCloseCategoryModal}
+        />
+      </ModalWrapper>
     </View>
   );
 }
