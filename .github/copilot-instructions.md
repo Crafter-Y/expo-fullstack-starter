@@ -160,11 +160,64 @@ npx prisma migrate dev --name update_auth
 - One file per domain entity (`todo.ts`, `category.ts`)
 - Export typed router, register in `_app.ts`
 
-### Screens (`/app/`)
+### App Structure (`/app/`)
 
-- `(auth)/`: Public routes (login, register)
-- `(tabs)/`: Protected app content with bottom tabs
-- `_layout.tsx` files define navigation structure
+```
+app/
+├── _layout.tsx              # Root layout (providers, navigation container)
+├── (auth)/                  # Public routes (unauthenticated users)
+│   ├── _layout.tsx          # Auth layout wrapper
+│   ├── login.tsx            # Login screen
+│   └── register.tsx         # Register screen
+├── (tabs)/                  # Protected routes (authenticated users)
+│   ├── _layout.native.tsx   # Native tab navigation
+│   ├── _layout.tsx          # Web tab navigation
+│   ├── (todos)/             # Todos feature
+│   │   ├── _layout.tsx      # Todos stack layout
+│   │   └── index.tsx        # Todos list screen
+│   └── profile/             # Profile feature
+│       ├── _layout.tsx      # Profile stack layout
+│       └── index.tsx        # Profile screen
+└── api/                     # API routes (backend)
+    ├── auth/
+    │   └── [...auth]+api.ts # Better Auth handler
+    └── trpc/
+        └── [trpc]+api.ts    # tRPC handler
+```
+
+**Route Organization Rules**:
+
+- Folders in parentheses `(name)` are route groups (don't appear in URL)
+- `_layout.tsx` defines the container for child routes
+- Platform-specific layouts: `_layout.native.tsx` (iOS/Android), `_layout.tsx` (web)
+- `index.tsx` is the default route for a folder
+- Files with `+api.ts` suffix are API endpoints (backend)
+
+### Components Structure (`/components/`)
+
+```
+components/
+├── AuthWrapper.tsx          # Session loader, redirects on auth state
+├── TRPCProvider.tsx         # tRPC + React Query setup with cookie forwarding
+├── auth/                    # Authentication screens (presentation)
+│   ├── LoginScreen.tsx      # Login form with OAuth buttons
+│   └── RegisterScreen.tsx   # Registration form
+├── elements/                # Reusable UI primitives
+│   ├── Button.tsx           # Styled button component
+│   ├── ErrorMessage.tsx     # Error display component
+│   └── FormTextInput.tsx    # Text input with label
+└── todos/                   # Todo feature components
+    ├── CategorySelectorBadge.tsx  # Category pill with color
+    ├── CreateCategoryModal.tsx    # Modal for new categories
+    └── CreateTodoForm.tsx         # Todo creation form
+```
+
+**Component Organization Rules**:
+
+- Root-level: Infrastructure components (providers, wrappers)
+- Feature folders: Domain-specific components (`auth/`, `todos/`)
+- `elements/`: Generic reusable UI components
+- Co-locate components with their feature when possible
 
 ## Common Pitfalls
 
