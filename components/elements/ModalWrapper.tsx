@@ -79,7 +79,7 @@ export function ModalWrapper({
             >
               <ModalHeader title={title} onClose={onClose} />
 
-              <ScrollView className="cursor-auto px-6 py-4">
+              <ScrollView className="native:pb-8 cursor-auto px-6 py-4">
                 {children}
               </ScrollView>
             </KeyboardAvoidingView>

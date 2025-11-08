@@ -2,7 +2,7 @@ import { TranslationKey } from "@/lib/i18n";
 import { useTranslation } from "react-i18next";
 import { Pressable, PressableProps, Text } from "react-native";
 
-type ButtonType = "primary" | "ghost";
+type ButtonType = "primary" | "ghost" | "destructive";
 
 interface BaseButtonProps extends PressableProps {
   t: TranslationKey;
@@ -55,6 +55,15 @@ export function Button({
         <BaseButton
           textClassName={`text-gray-700 dark:text-gray-300 ${textClassName}`}
           className={`border border-gray-200 bg-white p-4 dark:border-gray-700 dark:bg-gray-800 ${disabled ? "opacity-50" : "active:bg-gray-50 dark:active:bg-gray-700"} ${className}`}
+          {...props}
+        />
+      );
+    case "destructive":
+      return (
+        <BaseButton
+          textClassName={`text-white ${textClassName}`}
+          className={`p-4 ${disabled ? "bg-red-300" : "bg-red-500 active:bg-red-600"} ${className}`}
+          disabled={disabled}
           {...props}
         />
       );

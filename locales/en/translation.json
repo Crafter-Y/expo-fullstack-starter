@@ -48,7 +48,8 @@
     "description": "Description",
     "cancel": "Cancel",
     "create": "Create",
-    "update": "Update"
+    "update": "Update",
+    "delete": "Delete"
   },
   "category": {
     "createCategory": "Create Category",

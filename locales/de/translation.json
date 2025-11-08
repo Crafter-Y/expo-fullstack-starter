@@ -48,7 +48,8 @@
     "description": "Beschreibung",
     "cancel": "Abbrechen",
     "create": "Erstellen",
-    "update": "Aktualisieren"
+    "update": "Aktualisieren",
+    "delete": "Löschen"
   },
   "category": {
     "createCategory": "Kategorie erstellen",

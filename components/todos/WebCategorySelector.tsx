@@ -77,7 +77,7 @@ export function WebCategorySelector({
         onPress={onAddCategory}
         className="ml-4 mt-2 flex-row items-center rounded-lg border border-dashed border-gray-400 px-3 py-2 hover:bg-gray-50 active:bg-gray-100 dark:border-gray-500 dark:hover:bg-gray-800 dark:active:bg-gray-700"
       >
-        <Text className="ml-2 text-sm font-medium text-gray-600 dark:text-gray-400">
+        <Text className="text-sm font-medium text-gray-600 dark:text-gray-400">
           {t("todos.add")}
         </Text>
       </Pressable>

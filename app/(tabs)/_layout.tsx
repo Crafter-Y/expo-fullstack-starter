@@ -10,6 +10,7 @@ import {
 import { WebCategorySelector } from "@/components/todos/WebCategorySelector";
 import { authClient } from "@/lib/auth-client";
 import { useCreateCategory } from "@/lib/hooks/useCreateCategory";
+import { useDeleteCategory } from "@/lib/hooks/useDeleteCategory";
 import { useUpdateCategory } from "@/lib/hooks/useUpdateCategory";
 import { RouterOutput } from "@/lib/routers/_app";
 import { trpc } from "@/lib/trpc-client";
@@ -71,6 +72,20 @@ const CustomDrawer = (props: DrawerContentComponentProps) => {
     closeModal: closeUpdateModal,
     handleUpdateCategory,
   } = useUpdateCategory();
+
+  const { isPending: isDeleting, handleDeleteCategory: deleteCategory } =
+    useDeleteCategory();
+
+  const handleDeleteCategory = () => {
+    if (editingCategory) {
+      deleteCategory(editingCategory.id);
+      closeUpdateModal();
+      // Navigate to "all" if we deleted the currently selected category
+      if (selectedCategory === editingCategory.id) {
+        navigateToTodos("all");
+      }
+    }
+  };
 
   const handleEditCategory = (
     category: RouterOutput["category"]["getAll"][number]
@@ -149,8 +164,9 @@ const CustomDrawer = (props: DrawerContentComponentProps) => {
           }
           visible={isUpdateModalOpen}
           error={updateError}
-          isPending={isUpdating}
+          isPending={isUpdating || isDeleting}
           onSubmit={handleUpdateCategory}
+          onDelete={handleDeleteCategory}
           onCancel={closeUpdateModal}
         />
       </ModalWrapper>

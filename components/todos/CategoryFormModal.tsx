@@ -1,4 +1,5 @@
 import { Button } from "@/components/elements/Button";
+import { Divider } from "@/components/elements/Divider";
 import { RouterOutput } from "@/lib/routers/_app";
 import { useEffect, useState } from "react";
 import { Text, View } from "react-native";
@@ -25,6 +26,7 @@ interface CategoryFormModalProps {
   error: ErrorState;
   isPending: boolean;
   onSubmit: (name: string, color: string, icon: string) => void;
+  onDelete?: () => void;
   onCancel: () => void;
 }
 
@@ -34,6 +36,7 @@ export function CategoryFormModal({
   error,
   isPending,
   onSubmit,
+  onDelete,
   onCancel,
 }: CategoryFormModalProps) {
   const [name, setName] = useState(category?.name || "");
@@ -96,7 +99,7 @@ export function CategoryFormModal({
       />
 
       {/* Action Buttons */}
-      <View className="mb-4 flex-row gap-3">
+      <View className="flex-row gap-3">
         <Button
           type="ghost"
           t="todos.cancel"
@@ -121,6 +124,19 @@ export function CategoryFormModal({
           className="flex-1"
         />
       </View>
+
+      {/* Delete Button */}
+      {category && onDelete && (
+        <>
+          <Divider className="my-4" />
+          <Button
+            type="destructive"
+            t="todos.delete"
+            disabled={isPending}
+            onPress={onDelete}
+          />
+        </>
+      )}
     </>
   );
 }
