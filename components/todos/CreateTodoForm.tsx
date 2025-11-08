@@ -72,6 +72,14 @@ export default function CreateTodoForm({
     setCreateTodoPending(false);
   };
 
+  const setSelectedCategory = (categoryId: string | undefined) => {
+    if (createCategoryId === categoryId) {
+      setCreateCategoryId(undefined);
+    } else {
+      setCreateCategoryId(categoryId);
+    }
+  };
+
   return (
     <View {...props}>
       <ErrorMessage error={error} />
@@ -112,7 +120,7 @@ export default function CreateTodoForm({
                 category={category}
                 key={category.id}
                 selectedCategory={createCategoryId}
-                setSelectedCategory={setCreateCategoryId}
+                setSelectedCategory={setSelectedCategory}
                 disabled={createTodoPending}
               />
             ))}

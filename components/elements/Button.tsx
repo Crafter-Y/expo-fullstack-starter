@@ -3,6 +3,7 @@ import { useTranslation } from "react-i18next";
 import { Pressable, PressableProps, Text } from "react-native";
 
 type ButtonType = "primary" | "ghost" | "destructive";
+type ButtonSize = "small" | "regular";
 
 interface BaseButtonProps extends PressableProps {
   t: TranslationKey;
@@ -11,6 +12,7 @@ interface BaseButtonProps extends PressableProps {
 
 interface ButtonProps extends BaseButtonProps {
   type: ButtonType;
+  size?: ButtonSize;
 }
 
 const BaseButton = ({
@@ -38,14 +40,25 @@ export function Button({
   textClassName,
   className,
   disabled,
+  size = "regular",
   ...props
 }: ButtonProps) {
+  let sizeClassName;
+  switch (size) {
+    case "small":
+      sizeClassName = "py-1 px-2";
+      break;
+    case "regular":
+      sizeClassName = "p-4";
+      break;
+  }
+
   switch (type) {
     case "primary":
       return (
         <BaseButton
           textClassName={`text-white ${textClassName}`}
-          className={`p-4 ${disabled ? "bg-blue-400" : "bg-blue-600 active:bg-blue-700"} ${className}`}
+          className={`${disabled ? "bg-blue-400" : "bg-blue-600 active:bg-blue-700"} ${sizeClassName} ${className}`}
           disabled={disabled}
           {...props}
         />
@@ -54,7 +67,7 @@ export function Button({
       return (
         <BaseButton
           textClassName={`text-gray-700 dark:text-gray-300 ${textClassName}`}
-          className={`border border-gray-200 bg-white p-4 dark:border-gray-700 dark:bg-gray-800 ${disabled ? "opacity-50" : "active:bg-gray-50 dark:active:bg-gray-700"} ${className}`}
+          className={`border border-gray-200 bg-white dark:border-gray-700 dark:bg-gray-800 ${disabled ? "opacity-50" : "active:bg-gray-50 dark:active:bg-gray-700"} ${sizeClassName} ${className}`}
           {...props}
         />
       );
@@ -62,7 +75,7 @@ export function Button({
       return (
         <BaseButton
           textClassName={`text-white ${textClassName}`}
-          className={`p-4 ${disabled ? "bg-red-300" : "bg-red-500 active:bg-red-600"} ${className}`}
+          className={`${disabled ? "bg-red-300" : "bg-red-500 active:bg-red-600"} ${sizeClassName} ${className}`}
           disabled={disabled}
           {...props}
         />

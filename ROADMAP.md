@@ -111,7 +111,6 @@
   - Todo model (id, userId, title, description, completed, createdAt, updatedAt)
   - Categories model (optional: for organizing todos)
 - [x] Run Prisma migrations for app tables
-- [ ] Create seed script with sample data
 - [ ] Set up Prismock for testing
 - [x] Test database connection
 
@@ -220,11 +219,11 @@
 
 #### **3.3 Todo CRUD Operations (Week 5)**
 
-- [ ] Create todo modal/screen
+- [x] Create todo modal/screen
 - [ ] Edit todo modal/screen
 - [ ] Delete todo with confirmation
 - [x] Toggle complete with optimistic updates
-- [ ] Category assignment (optional)
+- [x] Category assignment (optional)
 - [ ] Due dates (optional)
 - [x] Loading states & error handling
 
