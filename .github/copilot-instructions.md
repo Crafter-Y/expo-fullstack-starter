@@ -115,6 +115,77 @@ export const usePreferencesStore = create<State>()(
 - Dynamic colors: Use inline `style` prop (e.g., `style={{ color: category.color }}`)
 - Dark mode: Prefix utilities with `dark:` (e.g., `dark:text-white`)
 
+### 7. Component Architecture Pattern
+
+**Separation of Concerns**: Route files contain business logic, components are presentation-only.
+
+**Route File Pattern** (`/app/(tabs)/profile/index.tsx`):
+
+- Contains all hooks (`useSession`, `useState`, custom hooks)
+- Manages business logic (handlers, state transformations)
+- Performs data fetching and mutations
+- Passes data and callbacks as props to presentation components
+
+**Presentation Component Pattern** (`/components/profile/ProfileScreen.tsx`):
+
+- Receives all data via props (no hooks except `useTranslation` for labels)
+- Pure rendering logic only
+- No state management or side effects
+- Accepts callbacks via props (`onPress`, `onSubmit`, etc.)
+
+**Example Structure**:
+
+```typescript
+// Route file (index.tsx) - Business Logic
+export default function ProfilePage() {
+  const { data: session } = authClient.useSession();
+  const [loading, setLoading] = useState(false);
+
+  const handleAction = async () => {
+    // Business logic here
+  };
+
+  return <ProfileScreen data={session} onAction={handleAction} />;
+}
+
+// Component file - Presentation Only
+interface ProfileScreenProps {
+  data?: Session;
+  onAction: () => void;
+}
+
+export function ProfileScreen({ data, onAction }: ProfileScreenProps) {
+  const { t } = useTranslation(); // Only i18n hook allowed
+  return <Button onPress={onAction}>{data?.name}</Button>;
+}
+```
+
+**When to Extract Components**:
+
+- Repeated UI patterns (4+ similar elements)
+- Clear visual/functional boundaries
+- Reusable across features
+
+### 8. Conditional Component Logic
+
+**Dynamic Container Pattern**: Use component type as variable for conditional rendering.
+
+```typescript
+// Example: ProfileInfoField - Pressable if interactive, View if static
+const Container = onPress ? Pressable : View;
+const containerClassName = onPress
+  ? "active:bg-gray-50 dark:active:bg-gray-700"  // Interactive states
+  : "bg-white dark:bg-gray-800";                  // Static styles
+
+return (
+  <Container className={containerClassName} onPress={onPress}>
+    {/* content */}
+  </Container>
+);
+```
+
+**Benefits**: Single component handles both static and interactive states without duplication.
+
 ## Development Workflows
 
 ### Starting Development
@@ -165,67 +236,57 @@ npx prisma migrate dev --name update_auth
 ```
 app/
 ├── _layout.tsx              # Root layout (providers, navigation container)
-├── (auth)/                  # Public routes (unauthenticated users)
-│   ├── _layout.tsx          # Auth layout wrapper
-│   ├── login.tsx            # Login screen
-│   └── register.tsx         # Register screen
-├── (tabs)/                  # Protected routes (authenticated users)
+├── (auth)/                  # Public routes (login, register)
+├── (tabs)/                  # Protected routes (todos, profile)
 │   ├── _layout.native.tsx   # Native tab navigation
 │   ├── _layout.tsx          # Web tab navigation
-│   ├── (todos)/             # Todos feature
-│   │   ├── _layout.tsx      # Todos stack layout
+│   ├── (todos)/
 │   │   └── index.tsx        # Todos list screen
-│   └── profile/             # Profile feature
-│       ├── _layout.tsx      # Profile stack layout
+│   └── profile/
 │       └── index.tsx        # Profile screen
-└── api/                     # API routes (backend)
-    ├── auth/
-    │   └── [...auth]+api.ts # Better Auth handler
-    └── trpc/
-        └── [trpc]+api.ts    # tRPC handler
+└── api/                     # Backend API routes
+    ├── auth/[...auth]+api.ts
+    └── trpc/[trpc]+api.ts
 ```
 
-**Route Organization Rules**:
+**Key Rules**:
 
-- Folders in parentheses `(name)` are route groups (don't appear in URL)
-- `_layout.tsx` defines the container for child routes
-- Platform-specific layouts: `_layout.native.tsx` (iOS/Android), `_layout.tsx` (web)
-- `index.tsx` is the default route for a folder
-- Files with `+api.ts` suffix are API endpoints (backend)
+- `(name)` folders are route groups (don't appear in URL)
+- `_layout.tsx` defines containers for child routes
+- `.native.tsx` for iOS/Android, `.tsx` for web
+- `+api.ts` suffix for API endpoints
 
 ### Components Structure (`/components/`)
 
 ```
 components/
-├── AuthWrapper.tsx          # Session loader, redirects on auth state
-├── TRPCProvider.tsx         # tRPC + React Query setup with cookie forwarding
-├── auth/                    # Authentication screens (presentation)
-│   ├── LoginScreen.tsx      # Login form with OAuth buttons
-│   └── RegisterScreen.tsx   # Registration form
-├── elements/                # Reusable UI primitives
-│   ├── Button.tsx           # Styled button component
-│   ├── ErrorMessage.tsx     # Error display component
-│   └── FormTextInput.tsx    # Text input with label
-└── todos/                   # Todo feature components
-    ├── CategorySelectorBadge.tsx  # Category pill with color
-    ├── CreateCategoryModal.tsx    # Modal for new categories
-    └── CreateTodoForm.tsx         # Todo creation form
+├── AuthWrapper.tsx          # Session loader, auth redirects
+├── TRPCProvider.tsx         # tRPC + React Query setup
+├── auth/                    # Auth UI (LoginScreen, RegisterScreen)
+├── elements/                # Generic reusable UI
+│   ├── Button, ErrorMessage, FormTextInput
+│   ├── FormIconSelector, FormColorSelector
+│   ├── LoadingScreen, ModalWrapper, ModalHeader
+├── profile/                 # Profile feature
+│   ├── ProfileScreen.tsx
+│   └── ProfileInfoField.tsx
+└── todos/                   # Todos feature
+    ├── CategorySelectorBadge, CreateCategoryModal
+    ├── CreateTodoForm, TodoItem
 ```
 
-**Component Organization Rules**:
+**Organization Rules**:
 
-- Root-level: Infrastructure components (providers, wrappers)
-- Feature folders: Domain-specific components (`auth/`, `todos/`)
-- `elements/`: Generic reusable UI components
-- Co-locate components with their feature when possible
+- Feature folders for domain components (`auth/`, `todos/`, `profile/`)
+- `elements/` for generic cross-feature components
 
 ## Common Pitfalls
 
 1. **Missing userId filter**: All protected queries need `where: { userId: ctx.user.id }`
-2. **Metro config**: Must have `unstable_enablePackageExports: true` for Better Auth
-3. **Cookie forwarding**: Native platforms require manual cookie forwarding in `TRPCProvider.tsx`
-4. **URL scheme mismatch**: `app.json` scheme must match `trustedOrigins` in `/lib/auth.ts`
-5. **Forgetting invalidation**: After mutations, call `utils.routerName.procedureName.invalidate()`
+2. **Cookie forwarding**: Native platforms require manual cookie forwarding in `TRPCProvider.tsx`
+3. **URL scheme mismatch**: `app.json` scheme must match `trustedOrigins` in `/lib/auth.ts`
+4. **Forgetting invalidation**: After mutations, call `utils.routerName.procedureName.invalidate()`
+5. **Business logic in components**: Keep hooks and state in route files, components should be presentation-only
 
 ## Adding New Features
 
@@ -237,55 +298,11 @@ components/
 4. Register in `/lib/routers/_app.ts`
 5. Use auto-generated `trpc.model.*` hooks in components
 
-### New tRPC Router
-
-1. Create `/lib/routers/feature.ts`:
-
-```typescript
-export const featureRouter = router({
-  list: protectedProcedure.query(async ({ ctx }) => {
-    return prisma.feature.findMany({ where: { userId: ctx.user.id } });
-  }),
-});
-```
-
-2. Register in `/lib/routers/_app.ts`:
-
-```typescript
-export const appRouter = router({
-  feature: featureRouter,
-});
-```
-
-3. Use in components: `trpc.feature.list.useQuery()`
-
-### New OAuth Provider
-
-1. Update `/lib/auth.ts` with provider config
-2. Run `bunx @better-auth/cli generate`
-3. Run migration: `npx prisma migrate dev --name add_oauth`
-4. Add provider button to `/app/(auth)/login.tsx`
-
 ## Key Dependencies
 
-- **Expo Router**: File-based routing (folders = routes, `_layout.tsx` = containers)
+- **Expo Router**: File-based routing
 - **Better Auth**: Session management via cookies/SecureStore
-- **tRPC**: Type-safe API layer with React Query integration
-- **Prisma**: ORM with MySQL (adapter for Better Auth)
-- **NativeWind v4**: Tailwind CSS for React Native (requires RN 0.78+)
-- **Zustand**: Client state (theme, language) with AsyncStorage persistence
-
-## Debugging Tips
-
-- **tRPC errors**: Check Metro console for error codes and messages
-- **Auth failures**: Verify `BETTER_AUTH_SECRET` is set and URL scheme matches
-- **DB connection**: Ensure Docker MySQL is running (`docker compose ps`)
-- **Type mismatches**: Run `npx prisma generate` after schema changes
-- **Missing session**: Check cookie forwarding in `TRPCProvider.tsx` headers
-
-## Project Status
-
-✅ **Working**: Auth, tRPC, todos CRUD, categories, i18n, theme switching  
-🚧 **Planned**: Testing (Jest, Storybook, Maestro), observability (OTel)
-
-**Focus**: Maintain end-to-end type safety. All data flows through tRPC with Zod validation.
+- **tRPC**: Type-safe API layer with React Query
+- **Prisma**: ORM with MySQL
+- **NativeWind v4**: Tailwind CSS for React Native
+- **Zustand**: Client state with AsyncStorage persistence
