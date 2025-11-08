@@ -2,6 +2,7 @@ import { ModalWrapper } from "@/components/elements/ModalWrapper";
 import CategorySelectorBadge from "@/components/todos/CategorySelectorBadge";
 import { CreateCategoryModal } from "@/components/todos/CreateCategoryModal";
 import CreateTodoForm from "@/components/todos/CreateTodoForm";
+import { TodoItem } from "@/components/todos/TodoItem";
 import { trpc } from "@/lib/trpc-client";
 import { useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
@@ -213,70 +214,10 @@ export default function TodosScreen() {
           <RefreshControl refreshing={isLoading} onRefresh={() => refetch()} />
         }
         renderItem={({ item }) => (
-          <Pressable
-            className="mb-3 rounded-lg border border-gray-200 bg-white p-4 active:bg-gray-50 dark:border-gray-700 dark:bg-gray-800 dark:active:bg-gray-700"
-            onPress={() => toggleComplete.mutate({ id: item.id })}
-          >
-            <View className="flex-row items-start">
-              <View
-                className={`mr-3 mt-1 h-5 w-5 rounded border-2 ${
-                  item.completed
-                    ? "border-blue-600 bg-blue-600"
-                    : "border-gray-300 dark:border-gray-600"
-                }`}
-              >
-                {item.completed ? (
-                  <Text className="text-center text-xs leading-4 text-white">
-                    ✓
-                  </Text>
-                ) : null}
-              </View>
-
-              <View className="flex-1">
-                <View className="flex-row items-center justify-between">
-                  <Text
-                    className={`flex-1 text-base font-semibold ${
-                      item.completed
-                        ? "text-gray-500 line-through dark:text-gray-400"
-                        : "text-gray-900 dark:text-white"
-                    }`}
-                  >
-                    {item.title}
-                  </Text>
-                  {item.category ? (
-                    <View className="ml-2 flex-row items-center rounded-full bg-gray-100 px-2 py-1 dark:bg-gray-700">
-                      {item.category.icon ? (
-                        <Text className="mr-1 text-xs">
-                          {item.category.icon}
-                        </Text>
-                      ) : null}
-                      <Text
-                        className="text-xs font-medium"
-                        style={
-                          item.category.color
-                            ? { color: item.category.color }
-                            : undefined
-                        }
-                      >
-                        {item.category.name}
-                      </Text>
-                    </View>
-                  ) : null}
-                </View>
-                {item.description ? (
-                  <Text
-                    className={`mt-1 text-sm ${
-                      item.completed
-                        ? "text-gray-400 dark:text-gray-500"
-                        : "text-gray-600 dark:text-gray-300"
-                    }`}
-                  >
-                    {item.description}
-                  </Text>
-                ) : null}
-              </View>
-            </View>
-          </Pressable>
+          <TodoItem
+            todo={item}
+            onToggleComplete={(id) => toggleComplete.mutate({ id })}
+          />
         )}
         ListEmptyComponent={
           <View className="flex-1 items-center justify-center py-12">

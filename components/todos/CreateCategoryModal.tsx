@@ -67,6 +67,8 @@ export function CreateCategoryModal({
         placeholder="category.namePlaceholder"
         value={name}
         onChangeText={setName}
+        onSubmitEditing={handleSubmit}
+        returnKeyType="done"
         editable={!isPending}
         maxLength={100}
         containerClassName="mb-1"
