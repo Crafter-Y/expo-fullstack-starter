@@ -19,7 +19,7 @@ export const PRESET_COLORS = [
 
 export const PRESET_ICONS = ["📋", "🏠", "💼", "🎯", "🛒", "💪", "📚", "🎨"];
 
-interface CreateCategoryModalProps {
+interface CategoryFormModalProps {
   category?: RouterOutput["category"]["getAll"][number];
   visible: boolean;
   error: ErrorState;
@@ -28,14 +28,14 @@ interface CreateCategoryModalProps {
   onCancel: () => void;
 }
 
-export function CreateCategoryModal({
+export function CategoryFormModal({
   category,
   visible,
   error,
   isPending,
   onSubmit,
   onCancel,
-}: CreateCategoryModalProps) {
+}: CategoryFormModalProps) {
   const [name, setName] = useState(category?.name || "");
   const [color, setColor] = useState(category?.color || PRESET_COLORS[0]);
   const [icon, setIcon] = useState(category?.icon || PRESET_ICONS[0]);

@@ -271,7 +271,7 @@ components/
 │   ├── ProfileScreen.tsx
 │   └── ProfileInfoField.tsx
 └── todos/                   # Todos feature
-    ├── CategorySelectorBadge, CreateCategoryModal
+    ├── CategorySelectorBadge, CategoryFormModal
     ├── CreateTodoForm, TodoItem
 ```
 

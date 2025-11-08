@@ -2,10 +2,16 @@ import type { CategoryFiler } from "@/app/(tabs)/(todos)";
 import { Divider } from "@/components/elements/Divider";
 import { LoadingScreen } from "@/components/elements/LoadingScreen";
 import { ModalWrapper } from "@/components/elements/ModalWrapper";
-import { CreateCategoryModal } from "@/components/todos/CreateCategoryModal";
+import {
+  CategoryFormModal,
+  PRESET_COLORS,
+  PRESET_ICONS,
+} from "@/components/todos/CategoryFormModal";
 import { WebCategorySelector } from "@/components/todos/WebCategorySelector";
 import { authClient } from "@/lib/auth-client";
 import { useCreateCategory } from "@/lib/hooks/useCreateCategory";
+import { useUpdateCategory } from "@/lib/hooks/useUpdateCategory";
+import { RouterOutput } from "@/lib/routers/_app";
 import { trpc } from "@/lib/trpc-client";
 import { MaterialIcons } from "@expo/vector-icons";
 import {
@@ -48,13 +54,34 @@ const CustomDrawer = (props: DrawerContentComponentProps) => {
   const { data: categories } = trpc.category.getAll.useQuery();
 
   const {
-    showModal: showCategoryModal,
-    error: categoryError,
-    isPending,
-    openModal,
-    closeModal,
+    showModal: showCreateModal,
+    error: createError,
+    isPending: isCreating,
+    openModal: openCreateModal,
+    closeModal: closeCreateModal,
     handleCreateCategory,
   } = useCreateCategory();
+
+  const {
+    isModalOpen: isUpdateModalOpen,
+    editingCategory,
+    error: updateError,
+    isPending: isUpdating,
+    openModal: openUpdateModal,
+    closeModal: closeUpdateModal,
+    handleUpdateCategory,
+  } = useUpdateCategory();
+
+  const handleEditCategory = (
+    category: RouterOutput["category"]["getAll"][number]
+  ) => {
+    openUpdateModal({
+      id: category.id,
+      name: category.name,
+      color: category.color || PRESET_COLORS[0],
+      icon: category.icon || PRESET_ICONS[0],
+    });
+  };
 
   const navigateToTodos = (categoryId: CategoryFiler) => {
     router.push({
@@ -82,21 +109,49 @@ const CustomDrawer = (props: DrawerContentComponentProps) => {
           selectedCategory={selectedCategory}
           isDark={isDark}
           onSelectCategory={navigateToTodos}
-          onAddCategory={openModal}
+          onAddCategory={openCreateModal}
+          onEditCategory={handleEditCategory}
         />
       </DrawerContentScrollView>
 
+      {/* Create Category Modal */}
       <ModalWrapper
-        visible={showCategoryModal}
-        onClose={closeModal}
+        visible={showCreateModal}
+        onClose={closeCreateModal}
         title="category.createCategory"
       >
-        <CreateCategoryModal
-          visible={showCategoryModal}
-          error={categoryError}
-          isPending={isPending}
+        <CategoryFormModal
+          visible={showCreateModal}
+          error={createError}
+          isPending={isCreating}
           onSubmit={handleCreateCategory}
-          onCancel={closeModal}
+          onCancel={closeCreateModal}
+        />
+      </ModalWrapper>
+
+      {/* Edit Category Modal */}
+      <ModalWrapper
+        visible={isUpdateModalOpen}
+        onClose={closeUpdateModal}
+        title="category.editCategory"
+      >
+        <CategoryFormModal
+          category={
+            editingCategory
+              ? {
+                  id: editingCategory.id,
+                  name: editingCategory.name,
+                  color: editingCategory.color,
+                  icon: editingCategory.icon,
+                  _count: { todos: 0 },
+                }
+              : undefined
+          }
+          visible={isUpdateModalOpen}
+          error={updateError}
+          isPending={isUpdating}
+          onSubmit={handleUpdateCategory}
+          onCancel={closeUpdateModal}
         />
       </ModalWrapper>
     </>

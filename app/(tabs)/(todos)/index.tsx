@@ -1,5 +1,5 @@
 import { ModalWrapper } from "@/components/elements/ModalWrapper";
-import { CreateCategoryModal } from "@/components/todos/CreateCategoryModal";
+import { CategoryFormModal } from "@/components/todos/CategoryFormModal";
 import CreateTodoForm from "@/components/todos/CreateTodoForm";
 import { NativeCategorySelector } from "@/components/todos/NativeCategorySelector";
 import { TodoItem } from "@/components/todos/TodoItem";
@@ -161,7 +161,7 @@ export default function TodosScreen() {
         onClose={closeModal}
         title="category.createCategory"
       >
-        <CreateCategoryModal
+        <CategoryFormModal
           visible={showCategoryModal}
           error={categoryError}
           isPending={categoryIsPending}

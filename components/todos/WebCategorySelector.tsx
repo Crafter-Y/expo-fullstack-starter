@@ -10,6 +10,9 @@ interface WebCategorySelectorProps {
   isDark: boolean;
   onSelectCategory: (categoryId: CategoryFiler) => void;
   onAddCategory: () => void;
+  onEditCategory?: (
+    category: RouterOutput["category"]["getAll"][number]
+  ) => void;
 }
 
 export function WebCategorySelector({
@@ -18,6 +21,7 @@ export function WebCategorySelector({
   isDark,
   onSelectCategory,
   onAddCategory,
+  onEditCategory,
 }: WebCategorySelectorProps) {
   const { t } = useTranslation();
 
@@ -62,7 +66,9 @@ export function WebCategorySelector({
           category={category}
           selectedCategory={selectedCategory}
           isDark={isDark}
+          showActions={true}
           onSelectCategory={onSelectCategory}
+          onEditCategory={onEditCategory}
         />
       ))}
 
