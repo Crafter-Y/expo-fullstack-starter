@@ -11,6 +11,9 @@ interface NativeCategorySelectorProps {
   selectedCategoryId: CategoryFiler;
   onSelectCategory: (categoryId: CategoryFiler) => void;
   onAddCategory: () => void;
+  onEditCategory?: (
+    category: RouterOutput["category"]["getAll"][number]
+  ) => void;
 }
 
 export function NativeCategorySelector({
@@ -20,6 +23,7 @@ export function NativeCategorySelector({
   selectedCategoryId,
   onSelectCategory,
   onAddCategory,
+  onEditCategory,
 }: NativeCategorySelectorProps) {
   const { t } = useTranslation();
 
@@ -71,6 +75,9 @@ export function NativeCategorySelector({
             category={category}
             selectedCategory={selectedCategoryId}
             setSelectedCategory={() => onSelectCategory(category.id)}
+            onLongPress={
+              onEditCategory ? () => onEditCategory(category) : undefined
+            }
           />
         ))}
 

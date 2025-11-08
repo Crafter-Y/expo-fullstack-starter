@@ -1,9 +1,15 @@
 import { ModalWrapper } from "@/components/elements/ModalWrapper";
-import { CategoryFormModal } from "@/components/todos/CategoryFormModal";
+import {
+  CategoryFormModal,
+  PRESET_COLORS,
+  PRESET_ICONS,
+} from "@/components/todos/CategoryFormModal";
 import CreateTodoForm from "@/components/todos/CreateTodoForm";
 import { NativeCategorySelector } from "@/components/todos/NativeCategorySelector";
 import { TodoItem } from "@/components/todos/TodoItem";
 import { useCreateCategory } from "@/lib/hooks/useCreateCategory";
+import { useUpdateCategory } from "@/lib/hooks/useUpdateCategory";
+import { RouterOutput } from "@/lib/routers/_app";
 import { trpc } from "@/lib/trpc-client";
 import { useLocalSearchParams } from "expo-router";
 import { useEffect, useMemo, useState } from "react";
@@ -41,6 +47,27 @@ export default function TodosScreen() {
     closeModal,
     handleCreateCategory,
   } = useCreateCategory();
+
+  const {
+    isModalOpen: isUpdateModalOpen,
+    editingCategory,
+    error: updateError,
+    isPending: isUpdating,
+    openModal: openUpdateModal,
+    closeModal: closeUpdateModal,
+    handleUpdateCategory,
+  } = useUpdateCategory();
+
+  const handleEditCategory = (
+    category: RouterOutput["category"]["getAll"][number]
+  ) => {
+    openUpdateModal({
+      id: category.id,
+      name: category.name,
+      color: category.color || PRESET_COLORS[0],
+      icon: category.icon || PRESET_ICONS[0],
+    });
+  };
 
   // Filter todos based on selected category
   const filteredTodos = useMemo(() => {
@@ -123,6 +150,7 @@ export default function TodosScreen() {
           selectedCategoryId={selectedCategoryId}
           onSelectCategory={setSelectedCategoryId}
           onAddCategory={openModal}
+          onEditCategory={handleEditCategory}
         />
       )}
 
@@ -167,6 +195,32 @@ export default function TodosScreen() {
           isPending={categoryIsPending}
           onSubmit={handleCreateCategory}
           onCancel={closeModal}
+        />
+      </ModalWrapper>
+
+      {/* Edit Category Modal */}
+      <ModalWrapper
+        visible={isUpdateModalOpen}
+        onClose={closeUpdateModal}
+        title="category.editCategory"
+      >
+        <CategoryFormModal
+          category={
+            editingCategory
+              ? {
+                  id: editingCategory.id,
+                  name: editingCategory.name,
+                  color: editingCategory.color,
+                  icon: editingCategory.icon,
+                  _count: { todos: 0 },
+                }
+              : undefined
+          }
+          visible={isUpdateModalOpen}
+          error={updateError}
+          isPending={isUpdating}
+          onSubmit={handleUpdateCategory}
+          onCancel={closeUpdateModal}
         />
       </ModalWrapper>
     </View>
