@@ -1,9 +1,10 @@
 import { Button } from "@/components/elements/Button";
 import { RouterOutput } from "@/lib/routers/_app";
 import { useEffect, useState } from "react";
-import { useTranslation } from "react-i18next";
-import { Pressable, Text, View } from "react-native";
+import { Text, View } from "react-native";
 import { ErrorMessage } from "../elements/ErrorMessage";
+import { FormColorSelector } from "../elements/FormColorSelector";
+import { FormIconSelector } from "../elements/FormIconSelector";
 import { FormTextInput } from "../elements/FormTextInput";
 
 export const PRESET_COLORS = [
@@ -35,7 +36,6 @@ export function CreateCategoryModal({
   onSubmit,
   onCancel,
 }: CreateCategoryModalProps) {
-  const { t } = useTranslation();
   const [name, setName] = useState(category?.name || "");
   const [color, setColor] = useState(category?.color || PRESET_COLORS[0]);
   const [icon, setIcon] = useState(category?.icon || PRESET_ICONS[0]);
@@ -75,54 +75,23 @@ export function CreateCategoryModal({
         {name.length}/100
       </Text>
 
-      {/* Icon Selection */}
-      <View className="mb-4">
-        <Text className="mb-2 text-sm font-medium text-gray-700 dark:text-gray-300">
-          {t("category.icon")}
-        </Text>
-        <View className="flex-row flex-wrap gap-2">
-          {PRESET_ICONS.map((presetIcon) => (
-            <Pressable
-              key={presetIcon}
-              onPress={() => setIcon(presetIcon)}
-              className={`h-12 w-12 items-center justify-center rounded-lg border ${
-                icon === presetIcon
-                  ? "border-blue-600 bg-blue-50 dark:border-blue-500 dark:bg-blue-900/30"
-                  : "border-gray-300 bg-white dark:border-gray-600 dark:bg-gray-900"
-              }`}
-              disabled={isPending}
-            >
-              <Text className="text-xl">{presetIcon}</Text>
-            </Pressable>
-          ))}
-        </View>
-      </View>
+      <FormIconSelector
+        label="category.icon"
+        icons={PRESET_ICONS}
+        selectedIcon={icon}
+        onSelectIcon={setIcon}
+        disabled={isPending}
+        containerClassName="mb-4"
+      />
 
-      {/* Color Selection */}
-      <View className="mb-6">
-        <Text className="mb-2 text-sm font-medium text-gray-700 dark:text-gray-300">
-          {t("category.color")}
-        </Text>
-        <View className="flex-row flex-wrap gap-2">
-          {PRESET_COLORS.map((presetColor) => (
-            <Pressable
-              key={presetColor}
-              onPress={() => setColor(presetColor)}
-              className={`h-12 w-12 items-center justify-center rounded-lg border ${
-                color === presetColor
-                  ? "border-gray-900 dark:border-white"
-                  : "border-gray-300 dark:border-gray-600"
-              }`}
-              style={{ backgroundColor: presetColor }}
-              disabled={isPending}
-            >
-              {color === presetColor ? (
-                <Text className="text-xl text-white">✓</Text>
-              ) : null}
-            </Pressable>
-          ))}
-        </View>
-      </View>
+      <FormColorSelector
+        label="category.color"
+        colors={PRESET_COLORS}
+        selectedColor={color}
+        onSelectColor={setColor}
+        disabled={isPending}
+        containerClassName="mb-6"
+      />
 
       {/* Action Buttons */}
       <View className="mb-4 flex-row gap-3">
