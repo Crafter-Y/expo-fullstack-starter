@@ -1,4 +1,5 @@
 import { Button } from "@/components/elements/Button";
+import { LoadingScreen } from "@/components/elements/LoadingScreen";
 import { authClient } from "@/lib/auth-client";
 import { useLanguage } from "@/lib/hooks/useLanguage";
 import { useTheme } from "@/lib/hooks/useTheme";
@@ -43,13 +44,7 @@ export default function ProfileScreen() {
   };
 
   if (isPending) {
-    return (
-      <View className="flex-1 items-center justify-center bg-gray-50 dark:bg-gray-900">
-        <Text className="text-gray-500 dark:text-gray-400">
-          {t("common.loading")}
-        </Text>
-      </View>
-    );
+    return <LoadingScreen />;
   }
 
   return (

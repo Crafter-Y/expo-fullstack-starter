@@ -1,3 +1,4 @@
+import { LoadingScreen } from "@/components/elements/LoadingScreen";
 import { authClient } from "@/lib/auth-client";
 import {
   DrawerContentComponentProps,
@@ -9,7 +10,7 @@ import { Drawer } from "expo-router/drawer";
 import { useColorScheme } from "nativewind";
 import { useEffect } from "react";
 import { useTranslation } from "react-i18next";
-import { Image, Text, useWindowDimensions, View } from "react-native";
+import { Image, useWindowDimensions, View } from "react-native";
 
 const CustomDrawer = (props: DrawerContentComponentProps) => {
   return (
@@ -42,13 +43,7 @@ export default function TabsLayout() {
   }, [session, isPending, router]);
 
   if (isPending) {
-    return (
-      <View className="flex-1 items-center justify-center bg-white dark:bg-gray-900">
-        <Text className="text-gray-500 dark:text-gray-400">
-          {t("common.loading")}
-        </Text>
-      </View>
-    );
+    return <LoadingScreen />;
   }
 
   const isLargeScreen = dimensions.width >= 768;
