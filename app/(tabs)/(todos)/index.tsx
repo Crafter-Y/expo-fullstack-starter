@@ -1,22 +1,14 @@
 import { ModalWrapper } from "@/components/elements/ModalWrapper";
-import CategorySelectorBadge from "@/components/todos/CategorySelectorBadge";
 import { CreateCategoryModal } from "@/components/todos/CreateCategoryModal";
 import CreateTodoForm from "@/components/todos/CreateTodoForm";
+import { NativeCategorySelector } from "@/components/todos/NativeCategorySelector";
 import { TodoItem } from "@/components/todos/TodoItem";
 import { useCreateCategory } from "@/lib/hooks/useCreateCategory";
 import { trpc } from "@/lib/trpc-client";
 import { useLocalSearchParams } from "expo-router";
 import { useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
-import {
-  FlatList,
-  Platform,
-  Pressable,
-  RefreshControl,
-  ScrollView,
-  Text,
-  View,
-} from "react-native";
+import { FlatList, Platform, RefreshControl, Text, View } from "react-native";
 
 export type CategoryFiler = string | "all" | "uncategorized";
 
@@ -122,67 +114,16 @@ export default function TodosScreen() {
   return (
     <View className="flex-1 bg-gray-50 dark:bg-gray-900">
       {Platform.OS !== "web" && (
-        <View className="border-b border-gray-200 bg-white py-3 dark:border-gray-700 dark:bg-gray-800">
-          <ScrollView
-            horizontal
-            showsHorizontalScrollIndicator={false}
-            className="px-4"
-            contentContainerClassName="gap-2"
-          >
-            {/* All Todos Badge */}
-            <CategorySelectorBadge
-              type="base"
-              category={{
-                id: "all",
-                name: t("todos.all"),
-                color: null,
-                icon: null,
-                _count: {
-                  todos: todos?.length || 0,
-                },
-              }}
-              selectedCategory={selectedCategoryId}
-              setSelectedCategory={() => setSelectedCategoryId("all")}
-            />
-
-            {/* Uncategorized Badge */}
-            <CategorySelectorBadge
-              type="base"
-              category={{
-                id: "uncategorized",
-                name: t("todos.uncategorized"),
-                color: null,
-                icon: null,
-                _count: {
-                  todos: todos?.filter((t) => !t.categoryId).length || 0,
-                },
-              }}
-              selectedCategory={selectedCategoryId}
-              setSelectedCategory={() => setSelectedCategoryId("uncategorized")}
-            />
-
-            {/* Category Badges */}
-            {categories?.map((category) => (
-              <CategorySelectorBadge
-                key={category.id}
-                type="base"
-                category={category}
-                selectedCategory={selectedCategoryId}
-                setSelectedCategory={() => setSelectedCategoryId(category.id)}
-              />
-            ))}
-
-            {/* Add Category Button */}
-            <Pressable
-              onPress={openModal}
-              className="mr-8 rounded-full border border-dashed border-gray-400 bg-white px-4 py-2 dark:border-gray-500 dark:bg-gray-700"
-            >
-              <Text className="text-sm font-medium text-gray-600 dark:text-gray-300">
-                {t("todos.add")}
-              </Text>
-            </Pressable>
-          </ScrollView>
-        </View>
+        <NativeCategorySelector
+          allTodosCount={todos?.length || 0}
+          uncategorizedTodosCount={
+            todos?.filter((t) => !t.categoryId).length || 0
+          }
+          categories={categories}
+          selectedCategoryId={selectedCategoryId}
+          onSelectCategory={setSelectedCategoryId}
+          onAddCategory={openModal}
+        />
       )}
 
       <FlatList

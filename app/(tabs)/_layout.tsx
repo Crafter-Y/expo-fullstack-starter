@@ -1,7 +1,9 @@
 import type { CategoryFiler } from "@/app/(tabs)/(todos)";
+import { Divider } from "@/components/elements/Divider";
 import { LoadingScreen } from "@/components/elements/LoadingScreen";
 import { ModalWrapper } from "@/components/elements/ModalWrapper";
 import { CreateCategoryModal } from "@/components/todos/CreateCategoryModal";
+import { WebCategorySelector } from "@/components/todos/WebCategorySelector";
 import { authClient } from "@/lib/auth-client";
 import { useCreateCategory } from "@/lib/hooks/useCreateCategory";
 import { trpc } from "@/lib/trpc-client";
@@ -14,21 +16,34 @@ import {
 import { useRouter } from "expo-router";
 import { Drawer } from "expo-router/drawer";
 import { useColorScheme } from "nativewind";
-import { useEffect } from "react";
+import { useEffect, useMemo } from "react";
 import { useTranslation } from "react-i18next";
-import {
-  Image,
-  Pressable,
-  Text,
-  useWindowDimensions,
-  View,
-} from "react-native";
+import { Image, useWindowDimensions, View } from "react-native";
 
 const CustomDrawer = (props: DrawerContentComponentProps) => {
-  const { t } = useTranslation();
   const router = useRouter();
   const { colorScheme } = useColorScheme();
   const isDark = colorScheme === "dark";
+
+  // Extract category from navigation state
+  const selectedCategory = useMemo(() => {
+    const state = props.state;
+    const currentRoute = state.routes[state.index];
+
+    // Check if we're on the todos route
+    if (currentRoute.name === "(todos)") {
+      // Access the nested route params
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const todosState = currentRoute.state as any;
+      if (todosState && todosState.index !== undefined) {
+        const todosRoute = todosState.routes[todosState.index];
+        const params = todosRoute.params as { category?: string };
+        return (params?.category as CategoryFiler) || "all";
+      }
+    }
+
+    return "all" as CategoryFiler;
+  }, [props.state]);
 
   const { data: categories } = trpc.category.getAll.useQuery();
 
@@ -60,63 +75,15 @@ const CustomDrawer = (props: DrawerContentComponentProps) => {
         </View>
         <DrawerItemList {...props} />
 
-        {/* Categories Section */}
-        <View className="mt-6 border-t border-gray-200 px-4 pt-4 dark:border-gray-700">
-          <Text className="mb-3 text-xs font-semibold uppercase text-gray-500 dark:text-gray-400">
-            {t("todos.categories")}
-          </Text>
+        <Divider className="my-4" />
 
-          {/* All Todos */}
-          <Pressable
-            onPress={() => navigateToTodos("all")}
-            className="mb-2 flex-row items-center rounded-lg px-3 py-2 active:bg-gray-100 dark:active:bg-gray-700"
-          >
-            <Text className="text-sm font-medium text-gray-700 dark:text-gray-300">
-              {t("todos.all")}
-            </Text>
-          </Pressable>
-
-          {/* Uncategorized */}
-          <Pressable
-            onPress={() => navigateToTodos("uncategorized")}
-            className="mb-2 flex-row items-center rounded-lg px-3 py-2 active:bg-gray-100 dark:active:bg-gray-700"
-          >
-            <Text className="text-sm font-medium text-gray-700 dark:text-gray-300">
-              {t("todos.uncategorized")}
-            </Text>
-          </Pressable>
-
-          {/* Category Items */}
-          {categories?.map((category) => (
-            <Pressable
-              key={category.id}
-              onPress={() => navigateToTodos(category.id)}
-              className="mb-2 flex-row rounded-lg px-3 py-2 active:bg-gray-100 dark:active:bg-gray-700"
-            >
-              {category.icon && (
-                <Text className="w-6 text-sm">{category.icon}</Text>
-              )}
-              <Text
-                className="text-sm font-medium"
-                style={{
-                  color: category.color || (isDark ? "#d1d5db" : "#374151"),
-                }}
-              >
-                {category.name}
-              </Text>
-            </Pressable>
-          ))}
-
-          {/* Add Category Button */}
-          <Pressable
-            onPress={openModal}
-            className="mt-2 flex-row items-center rounded-lg border border-dashed border-gray-400 px-3 py-2 dark:border-gray-500"
-          >
-            <Text className="ml-2 text-sm font-medium text-gray-600 dark:text-gray-400">
-              {t("todos.add")}
-            </Text>
-          </Pressable>
-        </View>
+        <WebCategorySelector
+          categories={categories}
+          selectedCategory={selectedCategory}
+          isDark={isDark}
+          onSelectCategory={navigateToTodos}
+          onAddCategory={openModal}
+        />
       </DrawerContentScrollView>
 
       <ModalWrapper
