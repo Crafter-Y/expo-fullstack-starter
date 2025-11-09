@@ -8,7 +8,9 @@ import CreateTodoForm from "@/components/todos/CreateTodoForm";
 import { NativeCategorySelector } from "@/components/todos/NativeCategorySelector";
 import { TodoItem } from "@/components/todos/TodoItem";
 import { useCreateCategory } from "@/lib/hooks/useCreateCategory";
+import { useDeleteTodo } from "@/lib/hooks/useDeleteTodo";
 import { useUpdateCategory } from "@/lib/hooks/useUpdateCategory";
+import { useUpdateTodo } from "@/lib/hooks/useUpdateTodo";
 import { RouterOutput } from "@/lib/routers/_app";
 import { trpc } from "@/lib/trpc-client";
 import { useLocalSearchParams } from "expo-router";
@@ -23,6 +25,9 @@ export default function TodosScreen() {
   const { category: categoryParam } = useLocalSearchParams<{
     category?: string;
   }>();
+  const { updateTodo } = useUpdateTodo();
+  const { deleteTodo } = useDeleteTodo();
+
   const [selectedCategoryId, setSelectedCategoryId] =
     useState<CategoryFiler>("all");
 
@@ -172,7 +177,10 @@ export default function TodosScreen() {
         renderItem={({ item }) => (
           <TodoItem
             todo={item}
+            categories={categories}
             onToggleComplete={(id) => toggleComplete.mutate({ id })}
+            onUpdateTodo={updateTodo}
+            onDeleteTodo={deleteTodo}
           />
         )}
         ListEmptyComponent={
