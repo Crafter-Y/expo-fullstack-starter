@@ -41,3 +41,9 @@ app-example
 # generated native folders
 /ios
 /android
+
+*storybook.log
+storybook-static
+
+# TODO: can be removed. just wanted to keep them in my workspace for reference
+stories/

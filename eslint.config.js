@@ -1,6 +1,7 @@
 const { defineConfig } = require("eslint/config");
 const expoConfig = require("eslint-config-expo/flat");
 const eslintPluginPrettierRecommended = require("eslint-plugin-prettier/recommended");
+const storybook = require("eslint-plugin-storybook");
 
 module.exports = defineConfig([
   expoConfig,
@@ -13,4 +14,5 @@ module.exports = defineConfig([
       "@typescript-eslint/no-explicit-any": "error",
     },
   },
+  ...storybook.configs['flat/recommended'],
 ]);
