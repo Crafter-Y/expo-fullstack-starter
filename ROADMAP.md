@@ -213,14 +213,13 @@
 - [x] Empty state component
 - [x] Pull-to-refresh
 - [x] Todo item component (title, description, checkbox)
-- [ ] Swipe actions (delete, edit)
 - [ ] Filter/sort options (all, active, completed)
 - [ ] Search functionality
 
 #### **3.3 Todo CRUD Operations (Week 5)**
 
 - [x] Create todo modal/screen
-- [ ] Edit todo modal/screen
+- [x] Edit todo modal/screen
 - [ ] Delete todo with confirmation
 - [x] Toggle complete with optimistic updates
 - [x] Category assignment (optional)

@@ -49,7 +49,9 @@
     "cancel": "Abbrechen",
     "create": "Erstellen",
     "update": "✓",
-    "delete": "Todo löschen"
+    "delete": "Todo löschen",
+    "deleteConfirmation": "Bist du sicher, dass du diese Aufgabe löschen möchtest?",
+    "confirmDelete": "Löschen"
   },
   "category": {
     "createCategory": "Kategorie erstellen",

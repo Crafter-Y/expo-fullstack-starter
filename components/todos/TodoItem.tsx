@@ -19,6 +19,7 @@ interface TodoItemProps {
     categoryId?: string | null
   ) => Promise<void>;
   onDeleteTodo: (id: string) => Promise<void>;
+  onOpenDeleteModal: (id: string, title: string) => void;
 }
 
 export function TodoItem({
@@ -27,6 +28,7 @@ export function TodoItem({
   onToggleComplete,
   onUpdateTodo,
   onDeleteTodo,
+  onOpenDeleteModal,
 }: TodoItemProps) {
   const [isHovered, setIsHovered] = useState(false);
   const [editing, setEditing] = useState(false);
@@ -39,7 +41,6 @@ export function TodoItem({
   );
   const [errorMessage, setErrorMessage] = useState<ErrorState>(null);
   const [isSaving, setIsSaving] = useState(false);
-  const [isDeleting, setIsDeleting] = useState(false);
   const { t } = useTranslation();
 
   useEffect(() => {
@@ -79,19 +80,8 @@ export function TodoItem({
     }
   };
 
-  const handleDelete = async () => {
-    setIsDeleting(true);
-    setErrorMessage(null);
-
-    try {
-      await onDeleteTodo(todo.id);
-    } catch (error) {
-      setErrorMessage(
-        error instanceof Error ? error.message : t("errors.unexpectedError")
-      );
-    } finally {
-      setIsDeleting(false);
-    }
+  const handleDeleteClick = () => {
+    onOpenDeleteModal(todo.id, todo.title);
   };
 
   const handleCancel = () => {
@@ -137,7 +127,7 @@ export function TodoItem({
                 size="small"
                 onPress={handleSave}
                 className="px-4"
-                disabled={isSaving || isDeleting}
+                disabled={isSaving}
               />
               <Button
                 t="todos.cancel"
@@ -145,14 +135,14 @@ export function TodoItem({
                 size="small"
                 onPress={handleCancel}
                 className="px-4"
-                disabled={isSaving || isDeleting}
+                disabled={isSaving}
               />
               <Button
                 t="todos.delete"
                 type="destructive"
                 size="small"
-                onPress={handleDelete}
-                disabled={isSaving || isDeleting}
+                onPress={handleDeleteClick}
+                disabled={isSaving}
               />
             </View>
           )}
@@ -201,7 +191,7 @@ export function TodoItem({
                     value={draftTitle}
                     onChangeText={(value) => setDraftTitle(value)}
                     className="px-3 py-2 text-base"
-                    editable={!isSaving && !isDeleting}
+                    editable={!isSaving}
                     maxLength={220}
                   />
                   <FormTextInput
@@ -210,7 +200,7 @@ export function TodoItem({
                     value={draftDescription}
                     onChangeText={(value) => setDraftDescription(value)}
                     className=" px-3 py-2 text-sm"
-                    editable={!isSaving && !isDeleting}
+                    editable={!isSaving}
                     multiline
                     numberOfLines={4}
                     textAlignVertical="top"
@@ -224,7 +214,7 @@ export function TodoItem({
                           key={category.id}
                           selectedCategory={draftCategoryId}
                           setSelectedCategory={setSelectedCategory}
-                          disabled={isSaving || isDeleting}
+                          disabled={isSaving}
                         />
                       ))}
                     </View>

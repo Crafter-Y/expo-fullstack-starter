@@ -6,6 +6,7 @@ import {
 } from "@/components/todos/CategoryFormModal";
 import CreateTodoForm from "@/components/todos/CreateTodoForm";
 import { NativeCategorySelector } from "@/components/todos/NativeCategorySelector";
+import { TodoDeleteModal } from "@/components/todos/TodoDeleteModal";
 import { TodoItem } from "@/components/todos/TodoItem";
 import { useCreateCategory } from "@/lib/hooks/useCreateCategory";
 import { useDeleteTodo } from "@/lib/hooks/useDeleteTodo";
@@ -26,10 +27,20 @@ export default function TodosScreen() {
     category?: string;
   }>();
   const { updateTodo } = useUpdateTodo();
-  const { deleteTodo } = useDeleteTodo();
+  const {
+    deleteTodo,
+    error: deleteError,
+    isPending: isDeleting,
+  } = useDeleteTodo();
 
   const [selectedCategoryId, setSelectedCategoryId] =
     useState<CategoryFiler>("all");
+
+  const [deleteModalOpen, setDeleteModalOpen] = useState(false);
+  const [todoToDelete, setTodoToDelete] = useState<{
+    id: string;
+    title: string;
+  } | null>(null);
 
   // Update selected category when URL param changes
   useEffect(() => {
@@ -143,6 +154,27 @@ export default function TodosScreen() {
     },
   });
 
+  const handleOpenDeleteModal = (id: string, title: string) => {
+    setTodoToDelete({ id, title });
+    setDeleteModalOpen(true);
+  };
+
+  const handleCloseDeleteModal = () => {
+    setDeleteModalOpen(false);
+    setTodoToDelete(null);
+  };
+
+  const handleConfirmDelete = async () => {
+    if (!todoToDelete) return;
+
+    try {
+      await deleteTodo(todoToDelete.id);
+      handleCloseDeleteModal();
+    } catch {
+      // Error is handled by the hook
+    }
+  };
+
   return (
     <View className="flex-1 bg-gray-50 dark:bg-gray-900">
       {Platform.OS !== "web" && (
@@ -181,6 +213,7 @@ export default function TodosScreen() {
             onToggleComplete={(id) => toggleComplete.mutate({ id })}
             onUpdateTodo={updateTodo}
             onDeleteTodo={deleteTodo}
+            onOpenDeleteModal={handleOpenDeleteModal}
           />
         )}
         ListEmptyComponent={
@@ -229,6 +262,22 @@ export default function TodosScreen() {
           isPending={isUpdating}
           onSubmit={handleUpdateCategory}
           onCancel={closeUpdateModal}
+        />
+      </ModalWrapper>
+
+      {/* Delete Todo Modal */}
+      <ModalWrapper
+        visible={deleteModalOpen}
+        onClose={handleCloseDeleteModal}
+        title="todos.delete"
+      >
+        <TodoDeleteModal
+          visible={deleteModalOpen}
+          todoTitle={todoToDelete?.title || ""}
+          error={deleteError}
+          isPending={isDeleting}
+          onConfirm={handleConfirmDelete}
+          onCancel={handleCloseDeleteModal}
         />
       </ModalWrapper>
     </View>

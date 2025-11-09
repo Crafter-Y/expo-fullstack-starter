@@ -49,7 +49,9 @@
     "cancel": "Cancel",
     "create": "Create",
     "update": "✓",
-    "delete": "Delete Todo"
+    "delete": "Delete Todo",
+    "deleteConfirmation": "Are you sure you want to delete this todo?",
+    "confirmDelete": "Delete"
   },
   "category": {
     "createCategory": "Create Category",
