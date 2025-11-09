@@ -20,21 +20,6 @@ export const categoryRouter = router({
     });
   }),
 
-  getById: protectedProcedure
-    .input(z.object({ id: z.string() }))
-    .query(async ({ ctx, input }) => {
-      const category = await prisma.category.findFirst({
-        where: { id: input.id, userId: ctx.user.id },
-        include: {
-          _count: {
-            select: { todos: true },
-          },
-        },
-      });
-      if (!category) throw new TRPCError({ code: "NOT_FOUND" });
-      return category;
-    }),
-
   create: protectedProcedure
     .input(
       z.object({

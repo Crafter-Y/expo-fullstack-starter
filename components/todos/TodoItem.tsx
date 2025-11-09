@@ -251,18 +251,16 @@ export function TodoItem({
         </View>
         {!editing && Platform.OS === "web" && (
           <View className="max-w-10 flex-1 items-center justify-center pt-2">
-            {isHovered && (
-              <Pressable
-                onPress={(e) => {
-                  e.stopPropagation();
-                  beginEditing();
-                }}
-                className="h-6 w-6 items-center justify-center rounded hover:bg-gray-200 active:bg-gray-300 dark:hover:bg-gray-600 dark:active:bg-gray-500"
-                style={{ opacity: isHovered ? 1 : 0 }}
-              >
-                <MaterialIcons name="edit" size={18} color="#6b7280" />
-              </Pressable>
-            )}
+            <Pressable
+              onPress={(e) => {
+                e.stopPropagation();
+                beginEditing();
+              }}
+              className="h-6 w-6 items-center justify-center rounded hover:bg-gray-200 active:bg-gray-300 dark:hover:bg-gray-600 dark:active:bg-gray-500"
+              style={{ opacity: isHovered ? 1 : 0 }}
+            >
+              <MaterialIcons name="edit" size={18} color="#6b7280" />
+            </Pressable>
           </View>
         )}
       </Pressable>

@@ -202,8 +202,8 @@
 
 - [x] Login screen with email/password
 - [x] Registration screen
-- [ ] Password reset flow
-- [ ] OAuth provider buttons (optional)
+- ~~[ ] Password reset flow~~ (beyond the scope)
+- ~~[ ] OAuth provider buttons (optional)~~ (beyond the scope)
 - [x] Loading & error states
 - [x] Form validation (client-side + server-side)
 
@@ -213,17 +213,17 @@
 - [x] Empty state component
 - [x] Pull-to-refresh
 - [x] Todo item component (title, description, checkbox)
-- [ ] Filter/sort options (all, active, completed)
-- [ ] Search functionality
+- [ ] Filter/sort options (all, active, completed) (beyond the scope for now)
+- [ ] Search functionality (beyond the scope for now)
 
 #### **3.3 Todo CRUD Operations (Week 5)**
 
 - [x] Create todo modal/screen
 - [x] Edit todo modal/screen
-- [ ] Delete todo with confirmation
+- [x] Delete todo with confirmation
 - [x] Toggle complete with optimistic updates
 - [x] Category assignment (optional)
-- [ ] Due dates (optional)
+- ~~[ ] Due dates (optional)~~ (beyond the scope)
 - [x] Loading states & error handling
 
 #### **3.4 Profile & Settings (Week 5)**
@@ -232,7 +232,7 @@
 - [x] Theme toggle (light/dark/system)
 - [x] Language selector (English/German with persistence)
 - [x] Logout functionality
-- [ ] Delete account option
+- [ ] Delete account option (beyond the scope for now)
 
 ---
 

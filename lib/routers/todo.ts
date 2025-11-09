@@ -25,19 +25,6 @@ export const todoRouter = router({
     });
   }),
 
-  getById: protectedProcedure
-    .input(z.object({ id: z.string() }))
-    .query(async ({ ctx, input }) => {
-      const todo = await prisma.todo.findFirst({
-        where: { id: input.id, userId: ctx.user.id },
-        include: {
-          category: true,
-        },
-      });
-      if (!todo) throw new TRPCError({ code: "NOT_FOUND" });
-      return todo;
-    }),
-
   create: protectedProcedure
     .input(
       z.object({
