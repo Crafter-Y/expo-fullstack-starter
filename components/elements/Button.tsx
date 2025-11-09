@@ -24,7 +24,11 @@ const BaseButton = ({
   const { t: i18n } = useTranslation();
 
   return (
-    <Pressable className={`rounded-lg ${className}`} {...props}>
+    <Pressable
+      className={`rounded-lg ${className}`}
+      {...props}
+      role={props.role ?? "button"}
+    >
       <Text
         className={`text-center text-base font-semibold ${textClassName}`}
         selectable={false}
