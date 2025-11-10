@@ -79,7 +79,7 @@ export function Button({
       return (
         <BaseButton
           textClassName={`text-white ${textClassName}`}
-          className={`${disabled ? "bg-red-300" : "bg-red-500 active:bg-red-600"} ${sizeClassName} ${className}`}
+          className={`${disabled ? "bg-red-300" : "bg-red-600 active:bg-red-700"} ${sizeClassName} ${className}`}
           disabled={disabled}
           {...props}
         />

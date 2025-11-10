@@ -4,7 +4,7 @@ import { Pressable, Text, View } from "react-native";
 
 interface FormIconSelectorProps {
   label: TranslationKey;
-  icons: readonly string[];
+  icons: string[];
   selectedIcon: string;
   onSelectIcon: (icon: string) => void;
   disabled?: boolean;
@@ -37,6 +37,9 @@ export function FormIconSelector({
                 : "border-gray-300 bg-white dark:border-gray-600 dark:bg-gray-900"
             }`}
             disabled={disabled}
+            role="radio"
+            aria-label={icon}
+            aria-checked={selectedIcon === icon}
           >
             <Text className="text-xl">{icon}</Text>
           </Pressable>

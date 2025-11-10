@@ -8,7 +8,6 @@ import { changeLanguage } from "i18next";
 import { colorScheme } from "nativewind";
 import { useEffect } from "react";
 import { View } from "react-native";
-import { translationKeyArgType } from "./translation-keys";
 
 const preview: Preview = {
   parameters: {
@@ -25,9 +24,6 @@ const preview: Preview = {
       // 'off' - skip a11y checks entirely
       test: "todo",
     },
-  },
-  argTypes: {
-    t: translationKeyArgType,
   },
 };
 

@@ -1,5 +1,6 @@
 import type { Meta, StoryObj } from "@storybook/react-native-web-vite";
 
+import { translationKeyArgType } from "@/.storybook/translation-keys";
 import { View } from "react-native";
 import { expect, fn, userEvent, within } from "storybook/test";
 
@@ -8,6 +9,9 @@ import { Button } from "./Button";
 const meta = {
   title: "elements/Button",
   component: Button,
+  argTypes: {
+    t: translationKeyArgType,
+  },
   decorators: [
     (Story) => (
       <View style={{ flex: 1, alignItems: "flex-start" }}>

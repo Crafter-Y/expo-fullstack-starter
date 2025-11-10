@@ -1,10 +1,11 @@
 import { TranslationKey } from "@/lib/i18n";
+import { Ionicons } from "@expo/vector-icons";
 import { useTranslation } from "react-i18next";
 import { Pressable, Text, View } from "react-native";
 
 interface FormColorSelectorProps {
   label: TranslationKey;
-  colors: readonly string[];
+  colors: string[];
   selectedColor: string;
   onSelectColor: (color: string) => void;
   disabled?: boolean;
@@ -38,9 +39,12 @@ export function FormColorSelector({
             }`}
             style={{ backgroundColor: color }}
             disabled={disabled}
+            role="radio"
+            aria-label={color}
+            aria-checked={selectedColor === color}
           >
             {selectedColor === color ? (
-              <Text className="text-xl text-white">✓</Text>
+              <Ionicons name="checkmark" size={24} color="white" />
             ) : null}
           </Pressable>
         ))}
