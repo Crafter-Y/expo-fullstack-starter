@@ -48,7 +48,9 @@ export const decorators: Decorator[] = [
     }, [theme]);
 
     return (
-      <View className={`flex-1 ${isInDocs ? "items-center" : ""}`}>
+      <View
+        className={`flex-1 ${isInDocs ? "-mx-[30px] -my-10 items-center px-7 py-10 dark:bg-gray-900" : "-m-4 h-screen p-4 dark:bg-gray-900"}`}
+      >
         <Story />
       </View>
     );
@@ -66,6 +68,20 @@ export const globalTypes = {
         { value: "en", title: "English" },
       ],
       showName: true,
+    },
+  },
+  theme: {
+    name: "Theme",
+    description: "Color scheme for components",
+    defaultValue: "light",
+    toolbar: {
+      icon: "circlehollow",
+      items: [
+        { value: "light", icon: "sun", title: "Light" },
+        { value: "dark", icon: "moon", title: "Dark" },
+      ],
+      showName: true,
+      dynamicTitle: true,
     },
   },
 };
