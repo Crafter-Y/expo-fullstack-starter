@@ -3,7 +3,12 @@ import { forwardRef } from "react";
 import { useTranslation } from "react-i18next";
 import { Text, TextInput, TextInputProps, View } from "react-native";
 
-type FormTextInputType = "name" | "email" | "password" | "text";
+type FormTextInputType =
+  | "name"
+  | "email"
+  | "password"
+  | "text"
+  | "new-password";
 
 interface BaseTextInputProps extends TextInputProps {
   placeholder: TranslationKey;
@@ -57,7 +62,16 @@ export const FormTextInput = forwardRef<TextInput, FormTextInputProps>(
             inputMode: "text" as const,
             autoCorrect: false,
             autoCapitalize: "none" as const,
-            autoComplete: "password" as const,
+            autoComplete: "current-password" as const,
+            keyboardType: "visible-password" as const,
+            secureTextEntry: true,
+          };
+        case "new-password":
+          return {
+            inputMode: "text" as const,
+            autoCorrect: false,
+            autoCapitalize: "none" as const,
+            autoComplete: "new-password" as const,
             keyboardType: "visible-password" as const,
             secureTextEntry: true,
           };

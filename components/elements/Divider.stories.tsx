@@ -9,7 +9,7 @@ const meta = {
   component: Divider,
   decorators: [
     (Story) => (
-      <View style={{ flex: 1 }}>
+      <View className="flex-1">
         <Text className="mb-2 text-gray-900 dark:text-gray-100">
           Content above divider
         </Text>

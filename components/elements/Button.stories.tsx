@@ -14,7 +14,7 @@ const meta = {
   },
   decorators: [
     (Story) => (
-      <View style={{ flex: 1, alignItems: "flex-start" }}>
+      <View className="flex-1 items-start">
         <Story />
       </View>
     ),

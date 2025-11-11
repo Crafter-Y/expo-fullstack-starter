@@ -72,7 +72,7 @@ export function RegisterScreen({
 
       <FormTextInput
         ref={passwordRef}
-        type="password"
+        type="new-password"
         onChangeText={setPassword}
         editable={!loading}
         onSubmitEditing={() => confirmPasswordRef.current?.focus()}
@@ -85,7 +85,7 @@ export function RegisterScreen({
 
       <FormTextInput
         ref={confirmPasswordRef}
-        type="password"
+        type="new-password"
         onChangeText={setConfirmPassword}
         editable={!loading}
         onSubmitEditing={handleSubmit}
