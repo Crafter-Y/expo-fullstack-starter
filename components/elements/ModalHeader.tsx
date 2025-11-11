@@ -1,4 +1,6 @@
 import { TranslationKey } from "@/lib/i18n";
+import { Ionicons } from "@expo/vector-icons";
+import { useColorScheme } from "nativewind";
 import { useTranslation } from "react-i18next";
 import { Pressable, Text, View } from "react-native";
 
@@ -9,6 +11,7 @@ interface ModalHeaderProps {
 
 export function ModalHeader({ title, onClose }: ModalHeaderProps) {
   const { t } = useTranslation();
+  const { colorScheme } = useColorScheme();
 
   return (
     <View className="border-b border-gray-200 pb-3 pl-6 pr-4 pt-4 dark:border-gray-700">
@@ -19,13 +22,13 @@ export function ModalHeader({ title, onClose }: ModalHeaderProps) {
         <Pressable
           onPress={onClose}
           className="h-10 w-10 items-center justify-center rounded-full active:bg-gray-100 dark:active:bg-gray-700"
+          role="button"
         >
-          <Text
-            className="text-xl text-gray-500 dark:text-gray-400"
-            selectable={false}
-          >
-            ✕
-          </Text>
+          <Ionicons
+            name="close"
+            size={24}
+            color={colorScheme === "dark" ? "#fff" : "#111827"}
+          />
         </Pressable>
       </View>
     </View>

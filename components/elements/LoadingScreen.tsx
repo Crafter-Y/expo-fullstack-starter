@@ -9,7 +9,7 @@ export function LoadingScreen() {
       <Text className="text-gray-500 dark:text-gray-400">
         {t("common.loading")}
       </Text>
-      <ActivityIndicator className="mt-2" />
+      <ActivityIndicator className="mt-2" aria-label="loading" />
     </View>
   );
 }

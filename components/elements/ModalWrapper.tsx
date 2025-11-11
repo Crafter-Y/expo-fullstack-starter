@@ -66,6 +66,7 @@ export function ModalWrapper({
       animationType="slide"
       transparent={true}
       onRequestClose={handleClose}
+      aria-label="popup"
     >
       <Animated.View style={{ backgroundColor, flex: 1 }}>
         <Pressable
