@@ -9,7 +9,7 @@ import { View } from "react-native";
 import { FormColorSelector } from "./FormColorSelector";
 
 const meta = {
-  title: "elements/FormColorSelector",
+  title: "todos/FormColorSelector",
   component: FormColorSelector,
   tags: ["autodocs"],
   args: {

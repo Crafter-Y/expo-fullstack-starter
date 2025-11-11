@@ -9,7 +9,7 @@ import { View } from "react-native";
 import { FormIconSelector } from "./FormIconSelector";
 
 const meta = {
-  title: "elements/FormIconSelector",
+  title: "todos/FormIconSelector",
   component: FormIconSelector,
   tags: ["autodocs"],
   args: {

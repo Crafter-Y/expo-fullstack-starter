@@ -4,9 +4,9 @@ import { RouterOutput } from "@/lib/routers/_app";
 import { useEffect, useState } from "react";
 import { Text, View } from "react-native";
 import { ErrorMessage } from "../elements/ErrorMessage";
-import { FormColorSelector } from "../elements/FormColorSelector";
-import { FormIconSelector } from "../elements/FormIconSelector";
 import { FormTextInput } from "../elements/FormTextInput";
+import { FormColorSelector } from "./FormColorSelector";
+import { FormIconSelector } from "./FormIconSelector";
 
 export const PRESET_COLORS = [
   "#EF4444", // red
