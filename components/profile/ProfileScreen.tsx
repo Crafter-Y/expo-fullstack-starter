@@ -1,4 +1,5 @@
 import { Button } from "@/components/elements/Button";
+import { Divider } from "@/components/elements/Divider";
 import { ProfileInfoField } from "@/components/profile/ProfileInfoField";
 import { useTranslation } from "react-i18next";
 import { Text } from "react-native";
@@ -6,8 +7,8 @@ import { Text } from "react-native";
 interface ProfileScreenProps {
   userName?: string;
   userEmail?: string;
-  themeLabel: string;
-  languageLabel: string;
+  theme: string;
+  language: string;
   loggingOut: boolean;
   onCycleTheme: () => void;
   onToggleLanguage: () => void;
@@ -17,8 +18,8 @@ interface ProfileScreenProps {
 export function ProfileScreen({
   userName,
   userEmail,
-  themeLabel,
-  languageLabel,
+  theme,
+  language,
   loggingOut,
   onCycleTheme,
   onToggleLanguage,
@@ -31,11 +32,13 @@ export function ProfileScreen({
       <ProfileInfoField
         label="profile.name"
         value={userName || t("profile.notSet")}
+        className="mb-4"
       />
 
       <ProfileInfoField
         label="profile.email"
         value={userEmail || t("profile.notSet")}
+        className="mb-4"
       />
 
       <Text className="mb-3 mt-6 text-sm font-semibold uppercase text-gray-500 dark:text-gray-400">
@@ -44,23 +47,26 @@ export function ProfileScreen({
 
       <ProfileInfoField
         label="profile.theme"
-        value={themeLabel}
+        value={theme}
         onPress={onCycleTheme}
+        className="mb-4"
       />
 
       <ProfileInfoField
         label="profile.language"
-        value={languageLabel}
+        value={language}
         onPress={onToggleLanguage}
       />
+
+      <Divider className="my-4" />
 
       <Button
         type="ghost"
         t={loggingOut ? "profile.signingOut" : "profile.signOut"}
         onPress={onLogout}
         disabled={loggingOut}
-        className="mt-6"
         textClassName="text-red-600 dark:text-red-400"
+        testID="profile-sign-out"
       />
     </>
   );

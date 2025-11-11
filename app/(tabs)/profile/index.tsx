@@ -20,11 +20,11 @@ export default function ProfilePage() {
   const { language, toggleLanguage } = useLanguage();
   const { theme, cycleTheme } = useTheme();
 
-  const getLanguageLabel = () => {
+  const getLanguage = () => {
     return language === "en" ? "English" : "Deutsch";
   };
 
-  const getThemeLabel = () => {
+  const getTheme = () => {
     return theme === "light"
       ? t("profile.themeLight")
       : theme === "dark"
@@ -53,8 +53,8 @@ export default function ProfilePage() {
         <ProfileScreen
           userName={user?.name}
           userEmail={user?.email}
-          themeLabel={getThemeLabel()}
-          languageLabel={getLanguageLabel()}
+          theme={getTheme()}
+          language={getLanguage()}
           loggingOut={loggingOut}
           onCycleTheme={cycleTheme}
           onToggleLanguage={toggleLanguage}
