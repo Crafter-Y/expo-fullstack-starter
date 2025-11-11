@@ -212,7 +212,6 @@ export default function TodosScreen() {
             categories={categories}
             onToggleComplete={(id) => toggleComplete.mutate({ id })}
             onUpdateTodo={updateTodo}
-            onDeleteTodo={deleteTodo}
             onOpenDeleteModal={handleOpenDeleteModal}
           />
         )}

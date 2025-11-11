@@ -32,21 +32,14 @@ export default function CreateTodoForm({
   const [createCategoryId, setCreateCategoryId] = useState<
     string | undefined
   >();
-  const [createTodoPending, setCreateTodoPending] = useState(false);
+  const [isPending, setPending] = useState(false);
 
   const expandedProgress = useSharedValue(0);
-  const [isFormExpanded, setIsFormExpanded] = useState(false);
-
-  // Handle keyboard dismiss
-  const handleBlur = () => {
-    if (title.trim().length === 0) {
-      setIsFormExpanded(false);
-    }
-  };
+  const [isFormExpanded, setFormExpanded] = useState(false);
 
   const shouldShowExpandedFields = isFormExpanded || title.trim().length > 0;
 
-  const animatedStyle = useAnimatedStyle(() => {
+  const containerStyle = useAnimatedStyle(() => {
     return {
       maxHeight: expandedProgress.value * 500,
       opacity: expandedProgress.value,
@@ -61,15 +54,15 @@ export default function CreateTodoForm({
   }, [shouldShowExpandedFields, expandedProgress]);
 
   const onSubmit = async () => {
-    setCreateTodoPending(true);
+    setPending(true);
     let successful = await createTodo(title, description, createCategoryId);
     if (successful) {
       setTitle("");
       setDescription("");
       setCreateCategoryId(undefined);
-      setIsFormExpanded(false);
+      setFormExpanded(false);
     }
-    setCreateTodoPending(false);
+    setPending(false);
   };
 
   const setSelectedCategory = (categoryId: string | undefined) => {
@@ -77,6 +70,12 @@ export default function CreateTodoForm({
       setCreateCategoryId(undefined);
     } else {
       setCreateCategoryId(categoryId);
+    }
+  };
+
+  const handleBlur = () => {
+    if (title.trim().length === 0) {
+      setFormExpanded(false);
     }
   };
 
@@ -90,15 +89,15 @@ export default function CreateTodoForm({
         placeholder="todos.whatToDo"
         onChangeText={setTitle}
         value={title}
-        onFocus={() => setIsFormExpanded(true)}
+        onFocus={() => setFormExpanded(true)}
         onBlur={handleBlur}
-        editable={!createTodoPending}
+        editable={!isPending}
         maxLength={200}
         className="dark:bg-gray-900"
       />
 
       {/* Expanded Fields - Animated */}
-      <Animated.View style={animatedStyle}>
+      <Animated.View style={containerStyle}>
         <View className="mt-3 gap-3">
           <FormTextInput
             type="text"
@@ -106,11 +105,11 @@ export default function CreateTodoForm({
             placeholder="todos.addDetails"
             onChangeText={setDescription}
             value={description}
-            onFocus={() => setIsFormExpanded(true)}
+            onFocus={() => setFormExpanded(true)}
             onBlur={handleBlur}
             multiline
             textAlignVertical="top"
-            editable={!createTodoPending}
+            editable={!isPending}
           />
 
           <View className="flex-row flex-wrap gap-2">
@@ -121,7 +120,7 @@ export default function CreateTodoForm({
                 key={category.id}
                 selectedCategory={createCategoryId}
                 setSelectedCategory={setSelectedCategory}
-                disabled={createTodoPending}
+                disabled={isPending}
               />
             ))}
           </View>
@@ -129,8 +128,8 @@ export default function CreateTodoForm({
           <Button
             type="primary"
             onPress={onSubmit}
-            disabled={createTodoPending || !title.trim()}
-            t={createTodoPending ? "todos.creating" : "todos.createTodo"}
+            disabled={isPending || !title.trim()}
+            t={isPending ? "todos.creating" : "todos.createTodo"}
           />
         </View>
       </Animated.View>

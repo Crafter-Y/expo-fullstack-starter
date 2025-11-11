@@ -18,7 +18,6 @@ interface TodoItemProps {
     description: string,
     categoryId?: string | null
   ) => Promise<void>;
-  onDeleteTodo: (id: string) => Promise<void>;
   onOpenDeleteModal: (id: string, title: string) => void;
 }
 
@@ -27,10 +26,15 @@ export function TodoItem({
   categories,
   onToggleComplete,
   onUpdateTodo,
-  onDeleteTodo,
   onOpenDeleteModal,
 }: TodoItemProps) {
+  const { t } = useTranslation();
+
   const [isHovered, setIsHovered] = useState(false);
+
+  const [errorMessage, setErrorMessage] = useState<ErrorState>(null);
+  const [isSaving, setIsSaving] = useState(false);
+
   const [editing, setEditing] = useState(false);
   const [draftTitle, setDraftTitle] = useState(todo.title);
   const [draftDescription, setDraftDescription] = useState(
@@ -39,9 +43,6 @@ export function TodoItem({
   const [draftCategoryId, setDraftCategoryId] = useState<string | undefined>(
     todo.categoryId ?? undefined
   );
-  const [errorMessage, setErrorMessage] = useState<ErrorState>(null);
-  const [isSaving, setIsSaving] = useState(false);
-  const { t } = useTranslation();
 
   useEffect(() => {
     if (!editing) {
