@@ -72,8 +72,12 @@ export function ModalWrapper({
         <Pressable
           className="flex-1 items-center justify-end xl:justify-center"
           onPress={handleClose}
+          testID="modal-backdrop"
         >
-          <TouchableWithoutFeedback onPress={headerPress}>
+          <TouchableWithoutFeedback
+            onPress={headerPress}
+            testID="modal-header-wrapper"
+          >
             <KeyboardAvoidingView
               className="max-h-[90%] w-full cursor-default rounded-t-3xl bg-white dark:bg-gray-800 xl:max-w-2xl xl:rounded-b-3xl"
               behavior={Platform.OS === "ios" ? "padding" : "height"}

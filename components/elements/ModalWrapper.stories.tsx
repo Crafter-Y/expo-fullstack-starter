@@ -1,7 +1,7 @@
 import type { Meta, StoryObj } from "@storybook/react-native-web-vite";
 
 import { useState } from "react";
-import { Text, View } from "react-native";
+import { Keyboard, Text, View } from "react-native";
 import { expect, fn, screen, userEvent, within } from "storybook/test";
 import { Button } from "./Button";
 import { ModalWrapper } from "./ModalWrapper";
@@ -123,5 +123,133 @@ export const InitiallyOpen: Story = {
         </Text>
       </View>
     ),
+  },
+};
+
+export const BackdropClose: Story = {
+  args: {
+    title: "category.editCategory",
+    visible: false,
+    children: (
+      <View className="gap-4">
+        <Text className="text-gray-900 dark:text-white">
+          Click outside the modal (on the backdrop) to close it.
+        </Text>
+      </View>
+    ),
+  },
+  play: async ({ args, canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    // Open the modal
+    const openButton = canvas.getByRole("button");
+    await userEvent.click(openButton);
+
+    // Wait for modal animation
+    await new Promise((resolve) => setTimeout(resolve, 300));
+
+    // Find the backdrop
+    const backdrop = screen.getByTestId("modal-backdrop");
+
+    // Click the backdrop
+    await userEvent.click(backdrop);
+
+    // Verify onClose was called
+    await expect(args.onClose).toHaveBeenCalledTimes(1);
+  },
+};
+
+export const KeyboardDismissOnBackdrop: Story = {
+  args: {
+    title: "category.editCategory",
+    visible: false,
+    children: (
+      <View className="gap-4">
+        <Text className="text-gray-900 dark:text-white">
+          When keyboard is visible, clicking backdrop should dismiss keyboard
+          instead of closing modal.
+        </Text>
+      </View>
+    ),
+  },
+  play: async ({ args, canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    // Mock Keyboard.isVisible to return true
+    const isVisibleMock = fn(() => true);
+    const dismissMock = fn();
+    Keyboard.isVisible = isVisibleMock;
+    Keyboard.dismiss = dismissMock;
+
+    // Open the modal
+    const openButton = canvas.getByRole("button");
+    await userEvent.click(openButton);
+
+    // Wait for modal animation
+    await new Promise((resolve) => setTimeout(resolve, 300));
+
+    // Find the backdrop
+    const backdrop = screen.getByTestId("modal-backdrop");
+
+    // Click the backdrop (should dismiss keyboard, not close modal)
+    await userEvent.click(backdrop);
+
+    // Verify Keyboard.dismiss was called
+    await expect(dismissMock).toHaveBeenCalledTimes(1);
+
+    // Verify onClose was NOT called (keyboard was dismissed instead)
+    await expect(args.onClose).not.toHaveBeenCalled();
+
+    // Now mock keyboard as hidden
+    isVisibleMock.mockReturnValue(false);
+
+    // Click backdrop again (should close modal now)
+    await userEvent.click(backdrop);
+
+    // Verify onClose was called
+    await expect(args.onClose).toHaveBeenCalledTimes(1);
+  },
+};
+
+export const KeyboardDismissOnHeader: Story = {
+  args: {
+    title: "category.editCategory",
+    visible: false,
+    children: (
+      <View className="gap-4">
+        <Text className="text-gray-900 dark:text-white">
+          When keyboard is visible, clicking the header should dismiss the
+          keyboard.
+        </Text>
+      </View>
+    ),
+  },
+  play: async ({ args, canvasElement }) => {
+    // Mock Keyboard API
+    const isVisibleMock = fn(() => true);
+    const dismissMock = fn();
+    Keyboard.isVisible = isVisibleMock;
+    Keyboard.dismiss = dismissMock;
+
+    const canvas = within(canvasElement);
+
+    // Open the modal
+    const openButton = canvas.getByRole("button");
+    await userEvent.click(openButton);
+
+    // Wait for modal animation
+    await new Promise((resolve) => setTimeout(resolve, 300));
+
+    // Find the header area (testID added to modal header wrapper)
+    const header = screen.getByTestId("modal-header-wrapper");
+
+    // Click the header (should dismiss keyboard)
+    await userEvent.click(header);
+
+    // Verify Keyboard.dismiss was called
+    await expect(dismissMock).toHaveBeenCalledTimes(1);
+
+    // Verify onClose was NOT called
+    await expect(args.onClose).not.toHaveBeenCalled();
   },
 };

@@ -22,7 +22,7 @@ interface FormTextInputProps extends TextInputProps {
 }
 
 const BaseTextInput = forwardRef<TextInput, BaseTextInputProps>(
-  ({ className, placeholder, ...props }, ref) => {
+  ({ className, placeholder, editable, ...props }, ref) => {
     const { t } = useTranslation();
 
     return (
@@ -31,6 +31,8 @@ const BaseTextInput = forwardRef<TextInput, BaseTextInputProps>(
         placeholderTextColor="#9CA3AF"
         placeholder={t(placeholder)}
         ref={ref}
+        editable={editable}
+        aria-disabled={editable === false}
         {...props}
       />
     );

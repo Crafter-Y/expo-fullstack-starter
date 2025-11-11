@@ -45,6 +45,7 @@ export function LoginScreen({
         placeholder="auth.emailPlaceholder"
         label="auth.email"
         containerClassName="mb-4"
+        testID="login-email"
       />
 
       <FormTextInput
@@ -57,6 +58,7 @@ export function LoginScreen({
         placeholder="auth.passwordPlaceholder"
         label="auth.password"
         containerClassName="mb-4"
+        testID="login-password"
       />
 
       <Button
@@ -71,7 +73,7 @@ export function LoginScreen({
         <Text className="text-gray-600 dark:text-gray-400">
           {t("auth.dontHaveAccount")}{" "}
         </Text>
-        <Pressable onPress={register}>
+        <Pressable onPress={register} role="button">
           <Text className="font-semibold text-blue-600 dark:text-blue-400">
             {t("auth.signUp")}
           </Text>

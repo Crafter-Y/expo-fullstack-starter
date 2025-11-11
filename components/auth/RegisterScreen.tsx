@@ -55,6 +55,7 @@ export function RegisterScreen({
         placeholder="auth.namePlaceholder"
         label="auth.name"
         containerClassName="mb-4"
+        testID="register-name"
       />
 
       <FormTextInput
@@ -68,6 +69,7 @@ export function RegisterScreen({
         placeholder="auth.emailPlaceholder"
         label="auth.email"
         containerClassName="mb-4"
+        testID="register-email"
       />
 
       <FormTextInput
@@ -81,6 +83,7 @@ export function RegisterScreen({
         placeholder="auth.passwordPlaceholder"
         label="auth.password"
         containerClassName="mb-4"
+        testID="register-password"
       />
 
       <FormTextInput
@@ -93,6 +96,7 @@ export function RegisterScreen({
         placeholder="auth.passwordPlaceholder"
         label="auth.confirmPassword"
         containerClassName="mb-4"
+        testID="register-confirm-password"
       />
 
       <Button
@@ -107,7 +111,7 @@ export function RegisterScreen({
         <Text className="text-gray-600 dark:text-gray-400">
           {t("auth.alreadyHaveAccount")}{" "}
         </Text>
-        <Pressable onPress={login}>
+        <Pressable onPress={login} role="button">
           <Text
             className="font-semibold text-blue-600 dark:text-blue-400"
             selectable={false}

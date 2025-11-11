@@ -26,8 +26,8 @@ const BaseButton = ({
   return (
     <Pressable
       className={`rounded-lg ${className}`}
-      {...props}
       role={props.role ?? "button"}
+      {...props}
     >
       <Text
         className={`text-center text-base font-semibold ${textClassName}`}
@@ -72,6 +72,7 @@ export function Button({
         <BaseButton
           textClassName={`text-gray-700 dark:text-gray-300 ${textClassName}`}
           className={`border border-gray-200 bg-white dark:border-gray-700 dark:bg-gray-800 ${disabled ? "opacity-50" : "active:bg-gray-50 dark:active:bg-gray-700"} ${sizeClassName} ${className}`}
+          disabled={disabled}
           {...props}
         />
       );
