@@ -94,6 +94,7 @@ export default function CreateTodoForm({
         editable={!isPending}
         maxLength={200}
         className="dark:bg-gray-900"
+        testID="todo-form-title"
       />
 
       {/* Expanded Fields - Animated */}
@@ -110,6 +111,7 @@ export default function CreateTodoForm({
             multiline
             textAlignVertical="top"
             editable={!isPending}
+            testID="todo-form-description"
           />
 
           <View className="flex-row flex-wrap gap-2">

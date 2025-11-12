@@ -30,6 +30,9 @@ const BaseCategorySelectorBadge = ({
       key={category.id}
       onPress={() => setSelectedCategory(category.id)}
       className={`flex-row items-center border ${className}`}
+      role="radio"
+      aria-label={category.name}
+      aria-checked={selectedCategory === category.id}
       {...props}
     >
       {category.icon ? (
