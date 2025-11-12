@@ -109,7 +109,7 @@ export const WithoutCategories: Story = {
 
     args.createTodo.mockClear();
 
-    expect(canvas.queryByText("Home")).toBeNull();
+    expect(canvas.queryByText(SAMPLE_CATEGORIES[0].name)).toBeNull();
 
     const titleInput = canvas.getByPlaceholderText(
       "What needs to be done?"
