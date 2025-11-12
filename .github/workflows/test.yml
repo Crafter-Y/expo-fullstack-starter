@@ -32,5 +32,5 @@ jobs:
       - name: Install dependencies
         run: bun install
 
-      - name: Tun testsuite
+      - name: Run testsuite
         run: bun run test
