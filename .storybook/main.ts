@@ -22,9 +22,13 @@ const config: StorybookConfig = {
   framework: {
     name: "@storybook/react-native-web-vite",
     options: {
+      modulesToTranspile: ["react-native-reanimated", "nativewind"],
       pluginReactOptions: {
         babel: {
-          plugins: ["react-native-reanimated/plugin"],
+          plugins: [
+            "@babel/plugin-proposal-export-namespace-from",
+            "react-native-worklets/plugin",
+          ],
         },
         jsxImportSource: "nativewind",
       },
