@@ -44,6 +44,7 @@ app-example
 
 *storybook.log
 storybook-static
+coverage
 
 # TODO: can be removed. just wanted to keep them in my workspace for reference
 stories/
