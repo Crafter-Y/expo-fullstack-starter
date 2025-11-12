@@ -4,12 +4,15 @@ on:
   push:
     branches: [master]
   pull_request:
-    branches: [master]
+    branches: ["**"]
 
 jobs:
   playwright:
     name: "Vitest"
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: write
     container:
       image: mcr.microsoft.com/playwright:v1.56.1-noble
     steps:
@@ -35,4 +38,14 @@ jobs:
         run: bun install
 
       - name: Run testsuite
-        run: bun run test
+        run: bun run test:coverage
+
+      - name: Report coverage
+        if: always() && github.event_name == 'pull_request' && github.base_ref == 'master'
+        uses: davelosert/vitest-coverage-report-action@v2
+
+      - name: Deploy codecoverage html
+        uses: rossjrw/pr-preview-action@v1
+        with:
+          source-dir: ./coverage/
+          umbrella-dir: coverage
