@@ -49,3 +49,12 @@ jobs:
         with:
           source-dir: ./coverage/
           umbrella-dir: coverage
+
+      - name: Build static storybook
+        run: bun run build-storybook
+
+      - name: Deploy storybook preview
+        uses: rossjrw/pr-preview-action@v1
+        with:
+          source-dir: ./storybook-static/
+          umbrella-dir: storybook
