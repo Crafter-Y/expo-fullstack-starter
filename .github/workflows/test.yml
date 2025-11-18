@@ -45,16 +45,40 @@ jobs:
         uses: davelosert/vitest-coverage-report-action@v2
 
       - name: Deploy codecoverage html
+        id: preview-coverage
         uses: rossjrw/pr-preview-action@v1
         with:
           source-dir: ./coverage/
           umbrella-dir: coverage
+          comment: false
 
       - name: Build static storybook
         run: bun run build-storybook
 
       - name: Deploy storybook preview
+        id: preview-storybook
         uses: rossjrw/pr-preview-action@v1
         with:
           source-dir: ./storybook-static/
           umbrella-dir: storybook
+          comment: false
+
+      - uses: marocchino/sticky-pull-request-comment@v2
+        if: steps.preview-storybook.outputs.deployment-action == 'deploy' && env.deployment_status == 'success'
+        with:
+          header: pr-preview
+          message: |
+            [PR Preview Action](https://github.com/rossjrw/pr-preview-action) ${{ steps.preview-storybook.outputs.action-version }}
+            :---:
+            | <p></p> :rocket: View preview at <br> ${{ steps.preview-storybook.outputs.preview-url }} <br> ${{ steps.preview-coverage.outputs.preview-url }} <br><br>
+            | <h6>Built to branch [`gh-pages`](${{ github.server_url }}/${{ github.repository }}/tree/gh-pages) at ${{ steps.preview-storybook.outputs.action-start-time }}. <br> Preview will be ready when the [GitHub Pages deployment](${{ github.server_url }}/${{ github.repository }}/deployments) is complete. <br><br> </h6>
+
+      - uses: marocchino/sticky-pull-request-comment@v2
+        if: steps.preview-storybook.outputs.deployment-action == 'remove' && env.deployment_status == 'success'
+        with:
+          header: pr-preview
+          message: |
+            [PR Preview Action](https://github.com/rossjrw/pr-preview-action) ${{ steps.preview-storybook.outputs.action-version }}
+            :---:
+            Preview removed because the pull request was closed.
+            ${{ steps.preview-storybook.outputs.action-start-time }}

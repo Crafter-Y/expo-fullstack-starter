@@ -77,10 +77,7 @@ const config: StorybookConfig = {
     return {
       ...config,
       ...customConfig,
-      plugins: [
-        ...(config.plugins || []),
-        ...(customConfig.plugins || []),
-      ],
+      plugins: [...(config.plugins || []), ...(customConfig.plugins || [])],
       resolve: {
         ...config.resolve,
         ...customConfig.resolve,
