@@ -9,7 +9,7 @@
     "web": "expo start --web",
     "lint": "tsc --noEmit && expo lint",
     "db:generate": "npx @better-auth/cli@latest generate",
-    "storybook": "storybook dev -p 6006",
+    "start:storybook": "storybook dev -p 6006",
     "build-storybook": "storybook build",
     "test": "vitest run",
     "test:coverage": "vitest run --coverage"
