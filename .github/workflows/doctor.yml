@@ -1,0 +1,34 @@
+name: Doctor
+
+on:
+  push:
+    branches: [master]
+  pull_request:
+    branches: ["**"]
+
+jobs:
+  doctor:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v5
+
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+
+      - name: Cache Bun dependencies
+        uses: actions/cache@v4
+        with:
+          path: ~/.bun/install/cache
+          key: ${{ runner.os }}-bun-${{ hashFiles('**/bun.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-bun-
+
+      - name: Run Expo Doctor
+        run: bunx expo-doctor
+
+      - name: Run Storybook Doctor
+        run: bunx storybook doctor
