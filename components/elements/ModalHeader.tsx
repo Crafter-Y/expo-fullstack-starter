@@ -23,6 +23,7 @@ export function ModalHeader({ title, onClose }: ModalHeaderProps) {
           onPress={onClose}
           className="h-10 w-10 items-center justify-center rounded-full active:bg-gray-100 dark:active:bg-gray-700"
           role="button"
+          aria-label={t("common.close")}
         >
           <Ionicons
             name="close"
