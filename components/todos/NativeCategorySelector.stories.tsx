@@ -144,7 +144,7 @@ export const LongFixedWidth: Story = {
       keys: "[/MouseLeft]",
       target: categoryButton,
     });
-    await expect(args.onEditCategory).toBe(undefined);
+    await expect(args.onEditCategory).toBeUndefined();
   },
 };
 
