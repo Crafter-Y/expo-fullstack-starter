@@ -38,6 +38,7 @@ export function NativeCategorySelector({
         {/* All Todos Badge */}
         <CategorySelectorBadge
           type="base"
+          testID="category-badge-all"
           category={{
             id: "all",
             name: t("todos.all"),
@@ -54,6 +55,7 @@ export function NativeCategorySelector({
         {/* Uncategorized Badge */}
         <CategorySelectorBadge
           type="base"
+          testID="category-badge-uncategorized"
           category={{
             id: "uncategorized",
             name: t("todos.uncategorized"),
@@ -72,6 +74,7 @@ export function NativeCategorySelector({
           <CategorySelectorBadge
             key={category.id}
             type="base"
+            testID={`category-badge-${category.id}`}
             category={category}
             selectedCategory={selectedCategoryId}
             setSelectedCategory={() => onSelectCategory(category.id)}
@@ -84,6 +87,7 @@ export function NativeCategorySelector({
         {/* Add Category Button */}
         <Pressable
           onPress={onAddCategory}
+          testID="add-category-button"
           className="mr-8 rounded-full border border-dashed border-gray-400 bg-white px-4 py-2 dark:border-gray-500 dark:bg-gray-700"
         >
           <Text className="text-sm font-medium text-gray-600 dark:text-gray-300">

@@ -77,7 +77,8 @@
     "signingOut": "Abmeldung läuft..."
   },
   "common": {
-    "loading": "Laden..."
+    "loading": "Laden...",
+    "close": "Schließen"
   },
   "navigation": {
     "todos": "Aufgaben",

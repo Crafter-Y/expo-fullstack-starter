@@ -77,7 +77,8 @@
     "signingOut": "Signing out..."
   },
   "common": {
-    "loading": "Loading..."
+    "loading": "Loading...",
+    "close": "Close"
   },
   "navigation": {
     "todos": "Todos",
