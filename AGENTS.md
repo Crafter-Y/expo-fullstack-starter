@@ -59,6 +59,7 @@ If anything is unclear, refer to TECHSTACK.md
 - Execute the testsuite with `bun test:coverage` a coverage report gets generated in `/coverage`
 - Make all tests (including a11y) pass
 - Ensure high test coverage
+- Ensure linting succeeds
 
 ### Commands
 
