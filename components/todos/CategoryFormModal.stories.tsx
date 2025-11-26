@@ -3,8 +3,12 @@ import type { Meta, StoryObj } from "@storybook/react-native-web-vite";
 import { View } from "react-native";
 import { expect, fn, userEvent, within } from "storybook/test";
 
-import { PRESET_COLORS, PRESET_ICONS, CategoryFormModal } from "./CategoryFormModal";
 import { RouterOutput } from "@/lib/routers/_app";
+import {
+  CategoryFormModal,
+  PRESET_COLORS,
+  PRESET_ICONS,
+} from "./CategoryFormModal";
 
 const SAMPLE_CATEGORY: RouterOutput["category"]["getAll"][number] = {
   id: "1",
@@ -24,6 +28,7 @@ const meta = {
     isPending: false,
     onSubmit: fn(),
     onCancel: fn(),
+    onDelete: fn(),
   },
   decorators: [
     (Story) => (
@@ -45,7 +50,9 @@ export const CreateCategory: Story = {
     args.onSubmit.mockClear();
     args.onCancel.mockClear();
 
-    const nameInput = canvas.getByTestId("category-name-input") as HTMLInputElement;
+    const nameInput = canvas.getByTestId(
+      "category-name-input"
+    ) as HTMLInputElement;
     const radioButtons = canvas.getAllByRole("radio");
     const iconButtons = radioButtons.slice(0, PRESET_ICONS.length);
     const colorButtons = radioButtons.slice(PRESET_ICONS.length);
@@ -75,7 +82,12 @@ export const EditCategory: Story = {
   play: async ({ args, canvasElement }) => {
     const canvas = within(canvasElement);
 
-    const nameInput = canvas.getByTestId("category-name-input") as HTMLInputElement;
+    args.onSubmit.mockClear();
+    args.onDelete?.mockClear();
+
+    const nameInput = canvas.getByTestId(
+      "category-name-input"
+    ) as HTMLInputElement;
     await expect(nameInput).toHaveValue(SAMPLE_CATEGORY.name);
 
     const radioButtons = canvas.getAllByRole("radio");
@@ -112,6 +124,10 @@ export const PendingState: Story = {
   },
   play: async ({ args, canvasElement }) => {
     const canvas = within(canvasElement);
+
+    args.onSubmit?.mockClear();
+    args.onDelete?.mockClear();
+    args.onCancel?.mockClear();
 
     const nameInput = canvas.getByTestId("category-name-input");
     await expect(nameInput).toHaveAttribute("aria-disabled", "true");
