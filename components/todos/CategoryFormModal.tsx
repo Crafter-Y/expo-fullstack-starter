@@ -68,6 +68,7 @@ export function CategoryFormModal({
         type="text"
         label="category.name"
         placeholder="category.namePlaceholder"
+        testID="category-name-input"
         value={name}
         onChangeText={setName}
         onSubmitEditing={handleSubmit}
@@ -103,6 +104,7 @@ export function CategoryFormModal({
         <Button
           type="ghost"
           t="todos.cancel"
+          testID="category-cancel-button"
           disabled={isPending}
           onPress={onCancel}
           className="flex-1"
@@ -119,6 +121,7 @@ export function CategoryFormModal({
                 ? "todos.update"
                 : "todos.create"
           }
+          testID="category-submit-button"
           disabled={isPending}
           onPress={handleSubmit}
           className="flex-1"
@@ -132,6 +135,7 @@ export function CategoryFormModal({
           <Button
             type="destructive"
             t="todos.delete"
+            testID="category-delete-button"
             disabled={isPending}
             onPress={onDelete}
           />
