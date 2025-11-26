@@ -70,7 +70,7 @@ export const WithActions: Story = {
     const canvas = within(canvasElement);
 
     args.onSelectCategory.mockClear();
-    args.onEditCategory.mockClear();
+    args.onEditCategory?.mockClear();
 
     const wrapper = canvas.getByTestId(
       `category-selector-entry-wrapper-${SAMPLE_CATEGORY.id}`
