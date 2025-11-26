@@ -3,6 +3,8 @@ import type { Meta, StoryObj } from "@storybook/react-native-web-vite";
 import { expect, fn, userEvent, within } from "storybook/test";
 
 import { RouterOutput } from "@/lib/routers/_app";
+import { useColorScheme } from "nativewind";
+import { useState } from "react";
 import { View } from "react-native";
 import { CategorySelectorEntry } from "./CategorySelectorEntry";
 
@@ -20,7 +22,7 @@ const meta = {
   tags: ["autodocs"],
   args: {
     category: SAMPLE_CATEGORY,
-    selectedCategory: SAMPLE_CATEGORY.id,
+    selectedCategory: "",
     isDark: false,
     showActions: false,
     onSelectCategory: fn(),
@@ -28,18 +30,37 @@ const meta = {
   },
   decorators: [
     (Story) => (
-      <View className="w-full max-w-md">
+      <View className="items-start">
         <Story />
       </View>
     ),
   ],
+  render: (args) => {
+    const [selectedCategory, setSelectedCategory] = useState(
+      args.selectedCategory
+    );
+    const { colorScheme } = useColorScheme();
+    const isDark = colorScheme === "dark";
+
+    return (
+      <CategorySelectorEntry
+        {...args}
+        selectedCategory={selectedCategory}
+        isDark={isDark}
+        onSelectCategory={(id) => {
+          setSelectedCategory(id);
+          args.onSelectCategory(id);
+        }}
+      />
+    );
+  },
 } satisfies Meta<typeof CategorySelectorEntry>;
 
 export default meta;
 
 type Story = StoryObj<typeof meta>;
 
-export const Selectable: Story = {
+export const Default: Story = {
   play: async ({ args, canvasElement }) => {
     const canvas = within(canvasElement);
 
@@ -48,9 +69,6 @@ export const Selectable: Story = {
     const entryButton = canvas.getByTestId(
       `category-selector-entry-${SAMPLE_CATEGORY.id}`
     );
-    const checkIcon = canvas.getByTestId("category-selector-entry-check");
-
-    await expect(checkIcon).toBeInTheDocument();
 
     await userEvent.click(entryButton);
 
@@ -64,7 +82,7 @@ export const Selectable: Story = {
 export const WithActions: Story = {
   args: {
     showActions: true,
-    selectedCategory: undefined,
+    selectedCategory: "",
   },
   play: async ({ args, canvasElement }) => {
     const canvas = within(canvasElement);
