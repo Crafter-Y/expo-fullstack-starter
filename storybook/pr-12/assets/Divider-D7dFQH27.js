@@ -1,0 +1,1 @@
+import{j as e,V as s}from"./iframe-CnBukXDy.js";function i({className:r}){return e.jsx(s,{className:`border-t border-gray-200 dark:border-gray-700 ${r||""}`})}i.__docgenInfo={description:"",methods:[],displayName:"Divider",props:{className:{required:!1,tsType:{name:"string"},description:""}}};export{i as D};
