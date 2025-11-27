@@ -643,7 +643,6 @@ export const MobileLongPressToEdit: Story = {
     await expect(args.onToggleComplete).toHaveBeenCalledTimes(1);
     await expect(args.onToggleComplete).toHaveBeenCalledWith("todo-1");
 
-    // Reset Platform.OS back to web for cleanup
-    Platform.OS = "web";
+    // useEffect cleanup in decorator will restore Platform.OS
   },
 };
