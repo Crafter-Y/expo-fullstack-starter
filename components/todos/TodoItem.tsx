@@ -129,6 +129,7 @@ export function TodoItem({
                 onPress={handleSave}
                 className="px-4"
                 disabled={isSaving}
+                testID="todo-item-save-button"
               />
               <Button
                 t="todos.cancel"
@@ -137,6 +138,7 @@ export function TodoItem({
                 onPress={handleCancel}
                 className="px-4"
                 disabled={isSaving}
+                testID="todo-item-cancel-button"
               />
               <Button
                 t="todos.delete"
@@ -144,6 +146,7 @@ export function TodoItem({
                 size="small"
                 onPress={handleDeleteClick}
                 disabled={isSaving}
+                testID="todo-item-delete-button"
               />
             </View>
           )}
@@ -194,6 +197,7 @@ export function TodoItem({
                     className="px-3 py-2 text-base"
                     editable={!isSaving}
                     maxLength={220}
+                    testID="todo-item-title-input"
                   />
                   <FormTextInput
                     type="text"
@@ -205,6 +209,7 @@ export function TodoItem({
                     multiline
                     numberOfLines={4}
                     textAlignVertical="top"
+                    testID="todo-item-description-input"
                   />
                   {categories && categories.length > 0 && (
                     <View className="flex-row flex-wrap gap-2">
@@ -259,6 +264,7 @@ export function TodoItem({
               }}
               className="h-6 w-6 items-center justify-center rounded hover:bg-gray-200 active:bg-gray-300 dark:hover:bg-gray-600 dark:active:bg-gray-500"
               style={{ opacity: isHovered ? 1 : 0 }}
+              testID="todo-item-edit-button"
             >
               <MaterialIcons name="edit" size={18} color="#6b7280" />
             </Pressable>
