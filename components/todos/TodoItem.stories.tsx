@@ -1,5 +1,6 @@
 import type { Meta, StoryObj } from "@storybook/react-native-web-vite";
-import { View } from "react-native";
+import { useEffect, useState } from "react";
+import { Platform, View } from "react-native";
 import { expect, fn, userEvent, waitFor, within } from "storybook/test";
 import { TodoItem } from "./TodoItem";
 
@@ -451,5 +452,198 @@ export const WithoutCategories: Story = {
     // Verify no category badges are displayed
     const categoryBadges = canvas.queryAllByRole("radio");
     await expect(categoryBadges.length).toBe(0);
+  },
+};
+
+export const UseEffectSyncsStateWhenTodoChanges: Story = {
+  render: (args) => {
+    const [todo, setTodo] = useState(args.todo);
+
+    return (
+      <TodoItem
+        {...args}
+        todo={todo}
+        onUpdateTodo={async (id, title, description, categoryId) => {
+          // After save, update the todo to simulate external change
+          setTodo({
+            ...todo,
+            title,
+            description,
+            categoryId: categoryId ?? null,
+          });
+          await args.onUpdateTodo(id, title, description, categoryId);
+        }}
+      />
+    );
+  },
+  play: async ({ args, canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    args.onUpdateTodo.mockClear();
+
+    // Verify initial title
+    const title = canvas.getByText("Buy groceries");
+    await expect(title).toBeInTheDocument();
+
+    // Enter edit mode
+    const editButton = canvas.getByTestId("todo-item-edit-button");
+    await userEvent.click(editButton);
+
+    // Wait for edit mode
+    await waitFor(() => {
+      const titleInput = canvas.getByTestId("todo-item-title-input");
+      expect(titleInput).toBeInTheDocument();
+    });
+
+    // Modify the title
+    const titleInput = canvas.getByTestId(
+      "todo-item-title-input"
+    ) as HTMLInputElement;
+    await userEvent.clear(titleInput);
+    await userEvent.type(titleInput, "Modified in edit mode");
+
+    // Save changes
+    const saveButton = canvas.getByTestId("todo-item-save-button");
+    await userEvent.click(saveButton);
+
+    // Wait for save to complete and exit edit mode
+    await waitFor(() => {
+      expect(args.onUpdateTodo).toHaveBeenCalledWith(
+        "todo-1",
+        "Modified in edit mode",
+        "Milk, eggs, and bread",
+        "cat-1"
+      );
+    });
+
+    // After exiting edit mode, verify new title is displayed
+    // This tests that useEffect syncs the state when todo prop changes
+    await waitFor(() => {
+      const updatedTitle = canvas.getByText("Modified in edit mode");
+      expect(updatedTitle).toBeInTheDocument();
+    });
+  },
+};
+
+export const UseEffectResetsStateOnCancel: Story = {
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    // Enter edit mode
+    const editButton = canvas.getByTestId("todo-item-edit-button");
+    await userEvent.click(editButton);
+
+    // Wait for edit mode
+    await waitFor(() => {
+      const titleInput = canvas.getByTestId("todo-item-title-input");
+      expect(titleInput).toBeInTheDocument();
+    });
+
+    // Modify all fields
+    const titleInput = canvas.getByTestId(
+      "todo-item-title-input"
+    ) as HTMLInputElement;
+    const descriptionInput = canvas.getByTestId(
+      "todo-item-description-input"
+    ) as HTMLTextAreaElement;
+
+    await userEvent.clear(titleInput);
+    await userEvent.type(titleInput, "Modified title");
+    await userEvent.clear(descriptionInput);
+    await userEvent.type(descriptionInput, "Modified description");
+
+    // Change category
+    const categoryBadges = canvas.getAllByRole("radio");
+    await userEvent.click(categoryBadges[1]); // Select second category
+
+    // Verify the modification took effect
+    await expect(titleInput.value).toBe("Modified title");
+    await expect(descriptionInput.value).toBe("Modified description");
+
+    // Cancel - this triggers handleCancel which resets state
+    const cancelButton = canvas.getByTestId("todo-item-cancel-button");
+    await userEvent.click(cancelButton);
+
+    // Verify we're back to display mode with original values
+    await waitFor(() => {
+      const originalTitle = canvas.getByText("Buy groceries");
+      expect(originalTitle).toBeInTheDocument();
+    });
+
+    // Verify the original description is also displayed
+    const originalDescription = canvas.getByText("Milk, eggs, and bread");
+    await expect(originalDescription).toBeInTheDocument();
+  },
+};
+
+export const ClickDoesNotToggleInEditMode: Story = {
+  play: async ({ args, canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    args.onToggleComplete.mockClear();
+
+    // Enter edit mode first
+    const editButton = canvas.getByTestId("todo-item-edit-button");
+    await userEvent.click(editButton);
+
+    // Wait for edit mode
+    await waitFor(() => {
+      const titleInput = canvas.getByTestId("todo-item-title-input");
+      expect(titleInput).toBeInTheDocument();
+    });
+
+    // Try to click on the pressable area (should not trigger toggle in edit mode)
+    const titleInput = canvas.getByTestId("todo-item-title-input");
+    await userEvent.click(titleInput);
+
+    // Verify onToggleComplete was NOT called
+    await expect(args.onToggleComplete).not.toHaveBeenCalled();
+  },
+};
+
+// This test must run last as it modifies Platform.OS
+export const MobileLongPressToEdit: Story = {
+  decorators: [
+    (Story) => {
+      // Mock Platform.OS to be 'ios' for this story
+      const originalOS = Platform.OS;
+      Platform.OS = "ios";
+
+      // Use useEffect for proper cleanup when component unmounts
+      useEffect(() => {
+        return () => {
+          Platform.OS = originalOS;
+        };
+      }, [originalOS]);
+
+      return (
+        <View className="w-full max-w-md">
+          <Story />
+        </View>
+      );
+    },
+  ],
+  play: async ({ args, canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    args.onToggleComplete.mockClear();
+
+    // On mobile (iOS), the edit button should NOT be visible
+    const editButton = canvas.queryByTestId("todo-item-edit-button");
+    await expect(editButton).toBeNull();
+
+    // Find the todo title
+    const title = canvas.getByText("Buy groceries");
+    await expect(title).toBeInTheDocument();
+
+    // A regular click should still trigger toggle (not edit mode)
+    await userEvent.click(title);
+
+    // Verify toggle was called
+    await expect(args.onToggleComplete).toHaveBeenCalledTimes(1);
+    await expect(args.onToggleComplete).toHaveBeenCalledWith("todo-1");
+
+    // Reset Platform.OS back to web for cleanup
+    Platform.OS = "web";
   },
 };
