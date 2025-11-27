@@ -1,5 +1,6 @@
 {
   "lockfileVersion": 1,
+  "configVersion": 0,
   "workspaces": {
     "": {
       "name": "expo-fullstack-starter",
@@ -63,8 +64,8 @@
         "eslint-config-expo": "~10.0.0",
         "eslint-config-prettier": "^10.1.8",
         "eslint-plugin-prettier": "^5.5.4",
-        "playwright": "1.57.0",
         "eslint-plugin-storybook": "10.1.0",
+        "playwright": "1.57.0",
         "prettier": "^3.6.2",
         "prettier-plugin-tailwindcss": "^0.5.11",
         "prisma": "^6.18.0",
