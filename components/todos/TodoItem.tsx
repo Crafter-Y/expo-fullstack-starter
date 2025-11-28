@@ -87,10 +87,6 @@ export function TodoItem({
 
   const handleCancel = () => {
     setEditing(false);
-    setErrorMessage(null);
-    setDraftTitle(todo.title);
-    setDraftDescription(todo.description ?? "");
-    setDraftCategoryId(todo.categoryId ?? undefined);
   };
 
   const setSelectedCategory = (categoryId: string | undefined) => {
@@ -243,7 +239,7 @@ export function TodoItem({
                     <Text
                       className={`mt-1 text-sm ${
                         todo.completed
-                          ? "text-gray-400 dark:text-gray-500"
+                          ? "text-gray-500 dark:text-gray-500"
                           : "text-gray-600 dark:text-gray-300"
                       }`}
                     >

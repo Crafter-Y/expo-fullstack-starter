@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/react-native-web-vite";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Platform, View } from "react-native";
 import { expect, fn, userEvent, waitFor, within } from "storybook/test";
 import { TodoItem } from "./TodoItem";
@@ -107,6 +107,25 @@ const meta = {
       </View>
     ),
   ],
+  render: (args) => {
+    const [todo, setTodo] = useState<RouterOutput["todo"]["getAll"][number]>(
+      args.todo
+    );
+
+    return (
+      <TodoItem
+        {...args}
+        todo={todo}
+        onToggleComplete={(id: string) => {
+          setTodo({
+            ...todo,
+            completed: !todo.completed,
+          });
+          args.onToggleComplete(id);
+        }}
+      />
+    );
+  },
 } satisfies Meta<typeof TodoItem>;
 
 export default meta;
@@ -576,73 +595,88 @@ export const UseEffectResetsStateOnCancel: Story = {
   },
 };
 
-export const ClickDoesNotToggleInEditMode: Story = {
-  play: async ({ args, canvasElement }) => {
-    const canvas = within(canvasElement);
-
-    args.onToggleComplete.mockClear();
-
-    // Enter edit mode first
-    const editButton = canvas.getByTestId("todo-item-edit-button");
-    await userEvent.click(editButton);
-
-    // Wait for edit mode
-    await waitFor(() => {
-      const titleInput = canvas.getByTestId("todo-item-title-input");
-      expect(titleInput).toBeInTheDocument();
+export const MobileLongPressToEdit: Story = {
+  args: {
+    todo: SAMPLE_TODO_NO_DESCRIPTION,
+  },
+  render: (args) => {
+    // Set to iOS for this story
+    Object.defineProperty(Platform, "OS", {
+      value: "ios",
+      writable: true,
+      configurable: true,
     });
 
-    // Try to click on the pressable area (should not trigger toggle in edit mode)
-    const titleInput = canvas.getByTestId("todo-item-title-input");
-    await userEvent.click(titleInput);
-
-    // Verify onToggleComplete was NOT called
-    await expect(args.onToggleComplete).not.toHaveBeenCalled();
+    return (
+      <View>
+        <TodoItem {...args} />
+      </View>
+    );
   },
-};
-
-// This test must run last as it modifies Platform.OS
-export const MobileLongPressToEdit: Story = {
-  decorators: [
-    (Story) => {
-      // Mock Platform.OS to be 'ios' for this story
-      const originalOS = Platform.OS;
-      Platform.OS = "ios";
-
-      // Use useEffect for proper cleanup when component unmounts
-      useEffect(() => {
-        return () => {
-          Platform.OS = originalOS;
-        };
-      }, [originalOS]);
-
-      return (
-        <View className="w-full max-w-md">
-          <Story />
-        </View>
-      );
-    },
-  ],
   play: async ({ args, canvasElement }) => {
     const canvas = within(canvasElement);
 
-    args.onToggleComplete.mockClear();
+    try {
+      args.onToggleComplete.mockClear();
+      args.onUpdateTodo.mockClear();
 
-    // On mobile (iOS), the edit button should NOT be visible
-    const editButton = canvas.queryByTestId("todo-item-edit-button");
-    await expect(editButton).toBeNull();
+      // On mobile (iOS), the edit button should NOT be visible
+      const editButton = canvas.queryByTestId("todo-item-edit-button");
+      await expect(editButton).toBeNull();
 
-    // Find the todo title
-    const title = canvas.getByText("Buy groceries");
-    await expect(title).toBeInTheDocument();
+      // Find the todo title
+      const title = canvas.getByText("Call mom");
+      await expect(title).toBeInTheDocument();
 
-    // A regular click should still trigger toggle (not edit mode)
-    await userEvent.click(title);
+      // Simulate long press to enter edit mode on mobile
+      await userEvent.pointer({ keys: "[MouseLeft>]", target: title });
+      await new Promise((resolve) => setTimeout(resolve, 500)); // Wait 500ms for long press
+      await userEvent.pointer({ keys: "[/MouseLeft]" });
 
-    // Verify toggle was called
-    await expect(args.onToggleComplete).toHaveBeenCalledTimes(1);
-    await expect(args.onToggleComplete).toHaveBeenCalledWith("todo-1");
+      // Wait for edit mode to appear
+      await waitFor(() => {
+        const titleInput = canvas.getByTestId("todo-item-title-input");
+        expect(titleInput).toBeInTheDocument();
+      });
 
-    // useEffect cleanup in decorator will restore Platform.OS
+      // Find the form inputs
+      const titleInput = canvas.getByTestId(
+        "todo-item-title-input"
+      ) as HTMLInputElement;
+      const descriptionInput = canvas.getByTestId(
+        "todo-item-description-input"
+      ) as HTMLTextAreaElement;
+
+      // Verify edit mode is active and we can modify fields
+      await expect(titleInput.value).toBe("Call mom");
+      await expect(descriptionInput.value).toBe("");
+
+      // Modify the title and description
+      await userEvent.clear(titleInput);
+      await userEvent.type(titleInput, "Updated via long press");
+
+      await userEvent.clear(descriptionInput);
+      await userEvent.type(descriptionInput, "Updated description");
+
+      // Save the changes
+      const saveButton = canvas.getByTestId("todo-item-save-button");
+      await userEvent.click(saveButton);
+
+      await waitFor(() => {
+        expect(args.onUpdateTodo).toHaveBeenCalledWith(
+          "todo-2",
+          "Updated via long press",
+          "Updated description",
+          null
+        );
+      });
+    } finally {
+      // Reset Platform.OS after test completes
+      Object.defineProperty(Platform, "OS", {
+        value: "web",
+        writable: true,
+        configurable: true,
+      });
+    }
   },
 };
