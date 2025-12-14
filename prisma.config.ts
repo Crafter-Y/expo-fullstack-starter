@@ -7,6 +7,7 @@ export default defineConfig({
     path: "prisma/migrations",
   },
   datasource: {
-    url: env("DATABASE_URL"),
+    // this is a hack. When the schema gets generated, the DATABASE_URL env var is not always available.
+    url: process.env.DATABASE_URL ? env("DATABASE_URL") : "",
   },
 });
