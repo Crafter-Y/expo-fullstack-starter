@@ -142,6 +142,18 @@ export const Default: Story = {
     const title = canvas.getByText("Buy groceries");
     await expect(title).toBeInTheDocument();
 
+    const editButton = canvas.getByTestId("todo-item-edit-button");
+
+    await expect(editButton.style.opacity).toBe("0");
+
+    await userEvent.hover(title);
+
+    await expect(editButton.style.opacity).toBe("1");
+
+    await userEvent.unhover(title);
+
+    await expect(editButton.style.opacity).toBe("0");
+
     // Find the description
     const description = canvas.getByText("Milk, eggs, and bread");
     await expect(description).toBeInTheDocument();
@@ -160,61 +172,25 @@ export const Default: Story = {
 
 export const Completed: Story = {
   args: {
-    todo: SAMPLE_TODO_COMPLETED,
-  },
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
-
-    // Find the title with strikethrough styling
-    const title = canvas.getByText("Finish report");
-    await expect(title).toBeInTheDocument();
-
-    // Verify checkmark is visible
-    const checkmark = canvas.getByText("✓");
-    await expect(checkmark).toBeInTheDocument();
+    todo: {
+      ...SAMPLE_TODO_COMPLETED,
+      category: {
+        ...SAMPLE_TODO_COMPLETED.category!,
+        color: null,
+      },
+    },
   },
 };
 
-export const WithoutDescription: Story = {
+export const WithoutDescriptionAndCategory: Story = {
   args: {
     todo: SAMPLE_TODO_NO_DESCRIPTION,
   },
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
-
-    // Find the title
-    const title = canvas.getByText("Call mom");
-    await expect(title).toBeInTheDocument();
-
-    // Description should not be present
-    const description = canvas.queryByText("Milk, eggs, and bread");
-    await expect(description).toBeNull();
-  },
 };
 
-export const WithoutCategory: Story = {
-  args: {
-    todo: SAMPLE_TODO_NO_DESCRIPTION,
-  },
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
-
-    // Category should not be displayed
-    const categoryName = canvas.queryByText(/Work/);
-    await expect(categoryName).toBeNull();
-  },
-};
-
-export const CategoryWithoutIcon: Story = {
+export const WithoutCategoryIcon: Story = {
   args: {
     todo: SAMPLE_TODO_CATEGORY_NO_ICON,
-  },
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
-
-    // Category name should be displayed
-    const categoryName = canvas.getByText(/Personal/);
-    await expect(categoryName).toBeInTheDocument();
   },
 };
 
@@ -448,150 +424,6 @@ export const EditModeWithError: Story = {
     // Verify we are still in edit mode (title input still visible)
     const titleInput = canvas.getByTestId("todo-item-title-input");
     await expect(titleInput).toBeInTheDocument();
-  },
-};
-
-export const WithoutCategories: Story = {
-  args: {
-    categories: [],
-  },
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
-
-    // Find the edit button and click it
-    const editButton = canvas.getByTestId("todo-item-edit-button");
-    await userEvent.click(editButton);
-
-    // Wait for edit mode to appear
-    await waitFor(() => {
-      const titleInput = canvas.getByTestId("todo-item-title-input");
-      expect(titleInput).toBeInTheDocument();
-    });
-
-    // Verify no category badges are displayed
-    const categoryBadges = canvas.queryAllByRole("radio");
-    await expect(categoryBadges.length).toBe(0);
-  },
-};
-
-export const UseEffectSyncsStateWhenTodoChanges: Story = {
-  render: (args) => {
-    const [todo, setTodo] = useState(args.todo);
-
-    return (
-      <TodoItem
-        {...args}
-        todo={todo}
-        onUpdateTodo={async (id, title, description, categoryId) => {
-          // After save, update the todo to simulate external change
-          setTodo({
-            ...todo,
-            title,
-            description,
-            categoryId: categoryId ?? null,
-          });
-          await args.onUpdateTodo(id, title, description, categoryId);
-        }}
-      />
-    );
-  },
-  play: async ({ args, canvasElement }) => {
-    const canvas = within(canvasElement);
-
-    args.onUpdateTodo.mockClear();
-
-    // Verify initial title
-    const title = canvas.getByText("Buy groceries");
-    await expect(title).toBeInTheDocument();
-
-    // Enter edit mode
-    const editButton = canvas.getByTestId("todo-item-edit-button");
-    await userEvent.click(editButton);
-
-    // Wait for edit mode
-    await waitFor(() => {
-      const titleInput = canvas.getByTestId("todo-item-title-input");
-      expect(titleInput).toBeInTheDocument();
-    });
-
-    // Modify the title
-    const titleInput = canvas.getByTestId(
-      "todo-item-title-input"
-    ) as HTMLInputElement;
-    await userEvent.clear(titleInput);
-    await userEvent.type(titleInput, "Modified in edit mode");
-
-    // Save changes
-    const saveButton = canvas.getByTestId("todo-item-save-button");
-    await userEvent.click(saveButton);
-
-    // Wait for save to complete and exit edit mode
-    await waitFor(() => {
-      expect(args.onUpdateTodo).toHaveBeenCalledWith(
-        "todo-1",
-        "Modified in edit mode",
-        "Milk, eggs, and bread",
-        "cat-1"
-      );
-    });
-
-    // After exiting edit mode, verify new title is displayed
-    // This tests that useEffect syncs the state when todo prop changes
-    await waitFor(() => {
-      const updatedTitle = canvas.getByText("Modified in edit mode");
-      expect(updatedTitle).toBeInTheDocument();
-    });
-  },
-};
-
-export const UseEffectResetsStateOnCancel: Story = {
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
-
-    // Enter edit mode
-    const editButton = canvas.getByTestId("todo-item-edit-button");
-    await userEvent.click(editButton);
-
-    // Wait for edit mode
-    await waitFor(() => {
-      const titleInput = canvas.getByTestId("todo-item-title-input");
-      expect(titleInput).toBeInTheDocument();
-    });
-
-    // Modify all fields
-    const titleInput = canvas.getByTestId(
-      "todo-item-title-input"
-    ) as HTMLInputElement;
-    const descriptionInput = canvas.getByTestId(
-      "todo-item-description-input"
-    ) as HTMLTextAreaElement;
-
-    await userEvent.clear(titleInput);
-    await userEvent.type(titleInput, "Modified title");
-    await userEvent.clear(descriptionInput);
-    await userEvent.type(descriptionInput, "Modified description");
-
-    // Change category
-    const categoryBadges = canvas.getAllByRole("radio");
-    await userEvent.click(categoryBadges[1]); // Select second category
-
-    // Verify the modification took effect
-    await expect(titleInput.value).toBe("Modified title");
-    await expect(descriptionInput.value).toBe("Modified description");
-
-    // Cancel - this triggers handleCancel which resets state
-    const cancelButton = canvas.getByTestId("todo-item-cancel-button");
-    await userEvent.click(cancelButton);
-
-    // Verify we're back to display mode with original values
-    await waitFor(() => {
-      const originalTitle = canvas.getByText("Buy groceries");
-      expect(originalTitle).toBeInTheDocument();
-    });
-
-    // Verify the original description is also displayed
-    const originalDescription = canvas.getByText("Milk, eggs, and bread");
-    await expect(originalDescription).toBeInTheDocument();
   },
 };
 

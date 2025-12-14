@@ -1,7 +1,6 @@
 import { RouterOutput } from "@/lib/routers/_app";
 import { MaterialIcons } from "@expo/vector-icons";
 import { useEffect, useState } from "react";
-import { useTranslation } from "react-i18next";
 import { Platform, Pressable, Text, View } from "react-native";
 import { Button } from "../elements/Button";
 import { ErrorMessage } from "../elements/ErrorMessage";
@@ -28,8 +27,6 @@ export function TodoItem({
   onUpdateTodo,
   onOpenDeleteModal,
 }: TodoItemProps) {
-  const { t } = useTranslation();
-
   const [isHovered, setIsHovered] = useState(false);
 
   const [errorMessage, setErrorMessage] = useState<ErrorState>(null);
@@ -73,9 +70,7 @@ export function TodoItem({
       );
       setEditing(false);
     } catch (error) {
-      setErrorMessage(
-        error instanceof Error ? error.message : t("errors.unexpectedError")
-      );
+      setErrorMessage((error as Error).message);
     } finally {
       setIsSaving(false);
     }
@@ -111,9 +106,11 @@ export function TodoItem({
             onToggleComplete(todo.id);
           }
         }}
-        onLongPress={() =>
-          Platform.OS !== "web" && !editing ? beginEditing() : {}
-        }
+        onLongPress={() => {
+          if (Platform.OS !== "web" && !editing) {
+            beginEditing();
+          }
+        }}
       >
         <View className="flex-1">
           {editing && (
@@ -154,11 +151,9 @@ export function TodoItem({
               ) : null}
               <Text
                 className="text-xs font-medium"
-                style={
-                  todo.category.color
-                    ? { color: todo.category.color }
-                    : undefined
-                }
+                style={{
+                  color: todo.category.color || undefined,
+                }}
               >
                 {todo.category.name} <Text className="color-gray-400">/</Text>
               </Text>
