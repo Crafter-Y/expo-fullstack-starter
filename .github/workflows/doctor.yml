@@ -32,6 +32,8 @@ jobs:
 
       - name: Run Expo Doctor
         run: bunx expo-doctor
+        # It may fail due to outdated dependencies. That is fine, but I still want to know
+        continue-on-error: true
 
       - name: Run Storybook Doctor
         run: bunx storybook doctor

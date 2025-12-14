@@ -1,7 +1,6 @@
 import { RouterOutput } from "@/lib/routers/_app";
 import { MaterialIcons } from "@expo/vector-icons";
 import { useEffect, useState } from "react";
-import { useTranslation } from "react-i18next";
 import { Platform, Pressable, Text, View } from "react-native";
 import { Button } from "../elements/Button";
 import { ErrorMessage } from "../elements/ErrorMessage";
@@ -28,8 +27,6 @@ export function TodoItem({
   onUpdateTodo,
   onOpenDeleteModal,
 }: TodoItemProps) {
-  const { t } = useTranslation();
-
   const [isHovered, setIsHovered] = useState(false);
 
   const [errorMessage, setErrorMessage] = useState<ErrorState>(null);
@@ -73,9 +70,7 @@ export function TodoItem({
       );
       setEditing(false);
     } catch (error) {
-      setErrorMessage(
-        error instanceof Error ? error.message : t("errors.unexpectedError")
-      );
+      setErrorMessage((error as Error).message);
     } finally {
       setIsSaving(false);
     }
@@ -87,10 +82,6 @@ export function TodoItem({
 
   const handleCancel = () => {
     setEditing(false);
-    setErrorMessage(null);
-    setDraftTitle(todo.title);
-    setDraftDescription(todo.description ?? "");
-    setDraftCategoryId(todo.categoryId ?? undefined);
   };
 
   const setSelectedCategory = (categoryId: string | undefined) => {
@@ -115,9 +106,11 @@ export function TodoItem({
             onToggleComplete(todo.id);
           }
         }}
-        onLongPress={() =>
-          Platform.OS !== "web" && !editing ? beginEditing() : {}
-        }
+        onLongPress={() => {
+          if (Platform.OS !== "web" && !editing) {
+            beginEditing();
+          }
+        }}
       >
         <View className="flex-1">
           {editing && (
@@ -129,6 +122,7 @@ export function TodoItem({
                 onPress={handleSave}
                 className="px-4"
                 disabled={isSaving}
+                testID="todo-item-save-button"
               />
               <Button
                 t="todos.cancel"
@@ -137,6 +131,7 @@ export function TodoItem({
                 onPress={handleCancel}
                 className="px-4"
                 disabled={isSaving}
+                testID="todo-item-cancel-button"
               />
               <Button
                 t="todos.delete"
@@ -144,6 +139,7 @@ export function TodoItem({
                 size="small"
                 onPress={handleDeleteClick}
                 disabled={isSaving}
+                testID="todo-item-delete-button"
               />
             </View>
           )}
@@ -155,11 +151,9 @@ export function TodoItem({
               ) : null}
               <Text
                 className="text-xs font-medium"
-                style={
-                  todo.category.color
-                    ? { color: todo.category.color }
-                    : undefined
-                }
+                style={{
+                  color: todo.category.color || undefined,
+                }}
               >
                 {todo.category.name} <Text className="color-gray-400">/</Text>
               </Text>
@@ -194,6 +188,7 @@ export function TodoItem({
                     className="px-3 py-2 text-base"
                     editable={!isSaving}
                     maxLength={220}
+                    testID="todo-item-title-input"
                   />
                   <FormTextInput
                     type="text"
@@ -205,6 +200,7 @@ export function TodoItem({
                     multiline
                     numberOfLines={4}
                     textAlignVertical="top"
+                    testID="todo-item-description-input"
                   />
                   {categories && categories.length > 0 && (
                     <View className="flex-row flex-wrap gap-2">
@@ -238,7 +234,7 @@ export function TodoItem({
                     <Text
                       className={`mt-1 text-sm ${
                         todo.completed
-                          ? "text-gray-400 dark:text-gray-500"
+                          ? "text-gray-500 dark:text-gray-500"
                           : "text-gray-600 dark:text-gray-300"
                       }`}
                     >
@@ -259,6 +255,7 @@ export function TodoItem({
               }}
               className="h-6 w-6 items-center justify-center rounded hover:bg-gray-200 active:bg-gray-300 dark:hover:bg-gray-600 dark:active:bg-gray-500"
               style={{ opacity: isHovered ? 1 : 0 }}
+              testID="todo-item-edit-button"
             >
               <MaterialIcons name="edit" size={18} color="#6b7280" />
             </Pressable>
