@@ -8,7 +8,7 @@
     "ios": "expo start --ios",
     "web": "expo start --web",
     "lint": "tsc --noEmit && expo lint",
-    "db:generate": "npx @better-auth/cli@latest generate",
+    "db:generate": "npx prisma generate",
     "start:storybook": "storybook dev -p 6006",
     "build-storybook": "storybook build",
     "test": "vitest run",
