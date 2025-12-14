@@ -100,13 +100,13 @@ export const WithActions: Story = {
       `category-selector-entry-action-${SAMPLE_CATEGORY.id}`
     );
 
-    await userEvent.unhover(wrapper);
-
-    await expect(actionButton.style.opacity).toBe("0");
-
     await userEvent.hover(wrapper);
 
     await expect(actionButton.style.opacity).toBe("1");
+
+    await userEvent.unhover(wrapper);
+
+    await expect(actionButton.style.opacity).toBe("0");
 
     await userEvent.click(actionButton);
 
