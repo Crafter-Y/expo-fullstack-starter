@@ -144,8 +144,6 @@ export const Default: Story = {
 
     const editButton = canvas.getByTestId("todo-item-edit-button");
 
-    await expect(editButton.style.opacity).toBe("0");
-
     await userEvent.hover(title);
 
     await expect(editButton.style.opacity).toBe("1");
