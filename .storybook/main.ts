@@ -4,7 +4,7 @@ import path from "path";
 import tailwindcss from "tailwindcss";
 import { fileURLToPath } from "url";
 import type { UserConfig } from "vite";
-import { exportsPolyfillPlugin } from "./vite-plugin-exports-polyfill";
+import { exportsPolyfillPlugin } from "./vite-plugin-exports-polyfill.ts";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
