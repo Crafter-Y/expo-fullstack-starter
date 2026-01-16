@@ -271,7 +271,6 @@ export default function TodosScreen() {
         title="todos.delete"
       >
         <TodoDeleteModal
-          visible={deleteModalOpen}
           todoTitle={todoToDelete?.title || ""}
           error={deleteError}
           isPending={isDeleting}

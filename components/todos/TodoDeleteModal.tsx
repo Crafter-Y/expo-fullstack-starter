@@ -4,7 +4,6 @@ import { useTranslation } from "react-i18next";
 import { Text, View } from "react-native";
 
 interface TodoDeleteModalProps {
-  visible: boolean;
   todoTitle: string;
   error: ErrorState;
   isPending: boolean;
@@ -13,7 +12,6 @@ interface TodoDeleteModalProps {
 }
 
 export function TodoDeleteModal({
-  visible,
   todoTitle,
   error,
   isPending,
@@ -22,10 +20,8 @@ export function TodoDeleteModal({
 }: TodoDeleteModalProps) {
   const { t } = useTranslation();
 
-  if (!visible) return null;
-
   return (
-    <View className="gap-4">
+    <View className="gap-4" testID="todo-delete-modal">
       <Text className="text-base text-gray-900 dark:text-white">
         {t("todos.deleteConfirmation")}
       </Text>
@@ -36,7 +32,7 @@ export function TodoDeleteModal({
         </Text>
       </View>
 
-      <ErrorMessage error={error} />
+      <ErrorMessage error={error} testID="todo-delete-error" />
 
       <View className="flex-row gap-3">
         <Button
@@ -45,6 +41,7 @@ export function TodoDeleteModal({
           onPress={onCancel}
           disabled={isPending}
           className="flex-1"
+          testID="todo-delete-cancel-button"
         />
         <Button
           type="destructive"
@@ -52,6 +49,7 @@ export function TodoDeleteModal({
           onPress={onConfirm}
           disabled={isPending}
           className="flex-1"
+          testID="todo-delete-confirm-button"
         />
       </View>
     </View>
