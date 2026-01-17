@@ -25,14 +25,11 @@ const getDeviceLanguage = (): Language => {
 export const usePreferencesStore = create<PreferencesState>()(
   persist(
     (set) => ({
-      // Default to device language (will be overridden by persisted values if they exist)
       language: getDeviceLanguage(),
       theme: "system",
 
-      // Actions
       setLanguage: (language) => {
         set({ language });
-        // Update i18n when language changes
         if (i18n.language !== language) {
           // eslint-disable-next-line import/no-named-as-default-member
           i18n.changeLanguage(language);
@@ -53,15 +50,14 @@ export const usePreferencesStore = create<PreferencesState>()(
       },
     }),
     {
-      name: "preferences-storage", // unique name for AsyncStorage key
+      name: "preferences-storage",
       storage: createJSONStorage(() => AsyncStorage),
       onRehydrateStorage: () => (state) => {
-        // After rehydration, sync i18n with the loaded language
         if (state?.language && i18n.language !== state.language) {
           // eslint-disable-next-line import/no-named-as-default-member
           i18n.changeLanguage(state.language);
         }
-        // After rehydration, sync NativeWind with the loaded theme
+
         if (state?.theme) {
           if (Platform.OS === "web" && state.theme === "system") {
             // On web, when system mode is selected, check actual system preference
