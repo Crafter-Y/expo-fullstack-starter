@@ -1,9 +1,7 @@
 import { trpc } from "@/lib/trpc-client";
 import { useState } from "react";
-import { useTranslation } from "react-i18next";
 
 export function useDeleteTodo() {
-  const { t } = useTranslation();
   const utils = trpc.useUtils();
   const [error, setError] = useState<ErrorState>(null);
   const [errorTodoId, setErrorTodoId] = useState<string | null>(null);
@@ -25,9 +23,7 @@ export function useDeleteTodo() {
       return { previousTodos };
     },
     onError: (_err, _variables, context) => {
-      if (context?.previousTodos) {
-        utils.todo.getAll.setData(undefined, context.previousTodos);
-      }
+      utils.todo.getAll.setData(undefined, context?.previousTodos);
     },
     onSettled: () => {
       utils.todo.getAll.invalidate();
@@ -41,10 +37,7 @@ export function useDeleteTodo() {
       await mutation.mutateAsync({ id });
       setErrorForTodo(id, null);
     } catch (caughtError) {
-      const message =
-        caughtError instanceof Error && caughtError.message
-          ? caughtError.message
-          : t("errors.unexpectedError");
+      const message = (caughtError as Error).message;
       setErrorForTodo(id, message);
       throw caughtError;
     }

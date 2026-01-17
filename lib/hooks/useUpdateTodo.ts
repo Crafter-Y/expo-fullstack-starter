@@ -23,15 +23,11 @@ export function useUpdateTodo() {
           todo.id === input.id
             ? {
                 ...todo,
-                title: input.title ?? todo.title,
-                description:
-                  typeof input.description !== "undefined"
-                    ? input.description
-                    : todo.description,
-                categoryId:
-                  typeof input.categoryId !== "undefined"
-                    ? input.categoryId
-                    : todo.categoryId,
+                title: input.title!,
+                description: input.description!,
+                ...(input.categoryId !== undefined
+                  ? { categoryId: input.categoryId }
+                  : {}),
               }
             : todo
         )
@@ -40,9 +36,7 @@ export function useUpdateTodo() {
       return { previousTodos };
     },
     onError: (_err, _variables, context) => {
-      if (context?.previousTodos) {
-        utils.todo.getAll.setData(undefined, context.previousTodos);
-      }
+      utils.todo.getAll.setData(undefined, context?.previousTodos);
     },
     onSettled: () => {
       utils.todo.getAll.invalidate();
@@ -66,25 +60,18 @@ export function useUpdateTodo() {
       throw new Error(t("errors.titleTooLong"));
     }
 
-    const normalizedDescription = description.trim();
-    const payloadDescription =
-      normalizedDescription.length > 0 ? normalizedDescription : "";
-
     setErrorForTodo(id, null);
 
     try {
       await mutation.mutateAsync({
         id,
         title: trimmedTitle,
-        description: payloadDescription,
+        description: description.trim(),
         categoryId,
       });
       setErrorForTodo(id, null);
     } catch (caughtError) {
-      const message =
-        caughtError instanceof Error && caughtError.message
-          ? caughtError.message
-          : t("errors.unexpectedError");
+      const message = (caughtError as Error).message;
       setErrorForTodo(id, message);
       throw caughtError;
     }

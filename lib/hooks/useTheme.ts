@@ -1,20 +1,11 @@
 import { usePreferencesStore } from "../stores/preferences";
 
-/**
- * Custom hook for theme management
- * Use this hook in components that need to change the theme
- *
- * How it works:
- * 1. Zustand loads persisted theme from AsyncStorage automatically
- * 2. The store's setTheme() updates both Zustand (persisted) and NativeWind (runtime)
- * 3. No manual syncing needed!
- */
 export function useTheme() {
   const theme = usePreferencesStore((state) => state.theme);
   const setTheme = usePreferencesStore((state) => state.setTheme);
 
   const changeTheme = (newTheme: "light" | "dark" | "system") => {
-    setTheme(newTheme); // This updates both store and NativeWind
+    setTheme(newTheme);
   };
 
   const cycleTheme = () => {

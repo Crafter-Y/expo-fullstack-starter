@@ -23,6 +23,21 @@ export default defineConfig({
     projects: [
       {
         extends: true,
+        test: {
+          name: "unit",
+          environment: "jsdom",
+          exclude: ["node_modules/**"],
+          alias: {
+            "@": dirname,
+            "react-native": path.join(
+              dirname,
+              "lib/testing/mocks/react-native.ts"
+            ),
+          },
+        },
+      },
+      {
+        extends: true,
         plugins: [
           storybookTest({ configDir: path.join(dirname, ".storybook") }),
         ],
