@@ -19,6 +19,7 @@ export default defineConfig({
       provider: "v8",
       reporter: ["html", "json-summary", "json"],
       reportOnFailure: true,
+      exclude: [".storybook/**", "lib/testing/mocks/**"],
     },
     projects: [
       {

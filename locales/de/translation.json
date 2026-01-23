@@ -27,7 +27,6 @@
     "titleTooLong": "Titel muss weniger als 200 Zeichen haben",
     "nameRequired": "Name ist erforderlich",
     "nameTooLong": "Name muss weniger als 100 Zeichen haben",
-    "createTodoFailed": "Aufgabe konnte nicht erstellt werden",
     "createCategoryFailed": "Kategorie konnte nicht erstellt werden",
     "updateCategoryFailed": "Kategorie konnte nicht aktualisiert werden"
   },

@@ -115,14 +115,18 @@ type CategoryListData = CategoryList | undefined;
 type CategoryCreateInput = RouterInput["category"]["create"];
 type CategoryUpdateInput = RouterInput["category"]["update"];
 type CategoryDeleteInput = RouterInput["category"]["delete"];
+type TodoCreateInput = RouterInput["todo"]["create"];
 type TodoDeleteInput = RouterInput["todo"]["delete"];
+type TodoToggleCompleteInput = RouterInput["todo"]["toggleComplete"];
 type TodoUpdateInput = RouterInput["todo"]["update"];
 
 export function createTrpcMock() {
   const createCategoryMutation = createMutationMock<CategoryCreateInput>();
   const deleteCategoryMutation = createMutationMock<CategoryDeleteInput>();
   const updateCategoryMutation = createMutationMock<CategoryUpdateInput>();
+  const createTodoMutation = createMutationMock<TodoCreateInput>();
   const deleteTodoMutation = createMutationMock<TodoDeleteInput>();
+  const toggleCompleteMutation = createMutationMock<TodoToggleCompleteInput>();
   const updateTodoMutation = createMutationMock<TodoUpdateInput>();
 
   let todoData: TodoListData = [];
@@ -173,7 +177,9 @@ export function createTrpcMock() {
       update: { useMutation: updateCategoryMutation.useMutation },
     },
     todo: {
+      create: { useMutation: createTodoMutation.useMutation },
       delete: { useMutation: deleteTodoMutation.useMutation },
+      toggleComplete: { useMutation: toggleCompleteMutation.useMutation },
       update: { useMutation: updateTodoMutation.useMutation },
     },
   };
@@ -183,7 +189,9 @@ export function createTrpcMock() {
       createCategoryMutation,
       deleteCategoryMutation,
       updateCategoryMutation,
+      createTodoMutation,
       deleteTodoMutation,
+      toggleCompleteMutation,
       updateTodoMutation,
     ].forEach((mutation) => mutation.reset());
 
@@ -208,7 +216,9 @@ export function createTrpcMock() {
       createCategoryMutation,
       deleteCategoryMutation,
       updateCategoryMutation,
+      createTodoMutation,
       deleteTodoMutation,
+      toggleCompleteMutation,
       updateTodoMutation,
     },
     reset,
