@@ -146,11 +146,15 @@ export const Default: Story = {
 
     await userEvent.hover(title);
 
-    await expect(editButton.style.opacity).toBe("1");
+    await waitFor(() => {
+      expect(editButton.style.opacity).toBe("1");
+    });
 
     await userEvent.unhover(title);
 
-    await expect(editButton.style.opacity).toBe("0");
+    await waitFor(() => {
+      expect(editButton.style.opacity).toBe("0");
+    });
 
     // Find the description
     const description = canvas.getByText("Milk, eggs, and bread");
