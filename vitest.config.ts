@@ -19,8 +19,24 @@ export default defineConfig({
       provider: "v8",
       reporter: ["html", "json-summary", "json"],
       reportOnFailure: true,
+      exclude: [".storybook/**", "lib/testing/mocks/**"],
     },
     projects: [
+      {
+        extends: true,
+        test: {
+          name: "unit",
+          environment: "jsdom",
+          exclude: ["node_modules/**"],
+          alias: {
+            "@": dirname,
+            "react-native": path.join(
+              dirname,
+              "lib/testing/mocks/react-native.ts"
+            ),
+          },
+        },
+      },
       {
         extends: true,
         plugins: [

@@ -27,7 +27,6 @@
     "titleTooLong": "Title must be less than 200 characters",
     "nameRequired": "Name is required",
     "nameTooLong": "Name must be less than 100 characters",
-    "createTodoFailed": "Failed to create todo",
     "createCategoryFailed": "Failed to create category",
     "updateCategoryFailed": "Failed to update category"
   },

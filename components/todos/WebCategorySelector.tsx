@@ -26,7 +26,7 @@ export function WebCategorySelector({
   const { t } = useTranslation();
 
   return (
-    <View className="pr-4">
+    <View className="pr-4" testID="web-category-selector">
       <Text className="mb-3 pl-4 text-xs font-semibold uppercase text-gray-500 dark:text-gray-400">
         {t("todos.categories")}
       </Text>
@@ -75,7 +75,9 @@ export function WebCategorySelector({
       {/* Add Category Button */}
       <Pressable
         onPress={onAddCategory}
+        accessibilityRole="button"
         className="ml-4 mt-2 flex-row items-center rounded-lg border border-dashed border-gray-400 px-3 py-2 hover:bg-gray-50 active:bg-gray-100 dark:border-gray-500 dark:hover:bg-gray-800 dark:active:bg-gray-700"
+        testID="category-add-button"
       >
         <Text className="text-sm font-medium text-gray-600 dark:text-gray-400">
           {t("todos.add")}

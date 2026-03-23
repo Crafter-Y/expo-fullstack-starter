@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from "@storybook/react-native-web-vite";
 
-import { expect, fn, userEvent, within } from "storybook/test";
+import { expect, fn, userEvent, waitFor, within } from "storybook/test";
 
 import { RouterOutput } from "@/lib/routers/_app";
 import { useColorScheme } from "nativewind";
@@ -102,11 +102,15 @@ export const WithActions: Story = {
 
     await userEvent.hover(wrapper);
 
-    await expect(actionButton.style.opacity).toBe("1");
+    await waitFor(() => {
+      expect(actionButton.style.opacity).toBe("1");
+    });
 
     await userEvent.unhover(wrapper);
 
-    await expect(actionButton.style.opacity).toBe("0");
+    await waitFor(() => {
+      expect(actionButton.style.opacity).toBe("0");
+    });
 
     await userEvent.click(actionButton);
 

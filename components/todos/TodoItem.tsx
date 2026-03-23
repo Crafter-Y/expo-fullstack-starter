@@ -99,7 +99,7 @@ export function TodoItem({
     >
       <Pressable
         className={`mb-1 flex-row rounded-lg border border-transparent p-3 pt-1 hover:border-gray-200 dark:hover:border-gray-700 ${
-          !editing ? " active:bg-gray-50  dark:active:bg-gray-700" : ""
+          !editing ? "active:bg-gray-50 dark:active:bg-gray-700" : ""
         }`}
         onPress={() => {
           if (!editing) {
@@ -195,7 +195,7 @@ export function TodoItem({
                     placeholder="todos.addDetails"
                     value={draftDescription}
                     onChangeText={(value) => setDraftDescription(value)}
-                    className=" px-3 py-2 text-sm"
+                    className="px-3 py-2 text-sm"
                     editable={!isSaving}
                     multiline
                     numberOfLines={4}

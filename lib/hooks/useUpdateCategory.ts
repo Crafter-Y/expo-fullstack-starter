@@ -1,5 +1,5 @@
+import { trpc } from "@/lib/trpc-client";
 import { useState } from "react";
-import { trpc } from "../trpc-client";
 
 export const useUpdateCategory = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -20,7 +20,7 @@ export const useUpdateCategory = () => {
       closeModal();
     },
     onError: (err) => {
-      setError(err.message || "Failed to update category");
+      setError(err.message);
     },
   });
 

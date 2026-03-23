@@ -259,12 +259,12 @@
 
 #### **5.1 Storybook Setup (Week 6-7)**
 
-- [ ] Install Storybook for React Native
-- [ ] Configure Storybook with NativeWind
-- [ ] Create stories for all base components
-- [ ] Create stories for todo components
-- [ ] Add interaction tests
-- [ ] Document component props & usage
+- [x] Install Storybook for React Native
+- [x] Configure Storybook with NativeWind
+- [x] Create stories for all base components
+- [x] Create stories for todo components
+- [x] Add interaction tests
+- [x] Document component props & usage
 
 #### **5.2 Visual Regression Testing (Week 7)**
 

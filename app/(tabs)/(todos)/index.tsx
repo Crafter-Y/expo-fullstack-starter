@@ -9,7 +9,9 @@ import { NativeCategorySelector } from "@/components/todos/NativeCategorySelecto
 import { TodoDeleteModal } from "@/components/todos/TodoDeleteModal";
 import { TodoItem } from "@/components/todos/TodoItem";
 import { useCreateCategory } from "@/lib/hooks/useCreateCategory";
+import { useCreateTodo } from "@/lib/hooks/useCreateTodo";
 import { useDeleteTodo } from "@/lib/hooks/useDeleteTodo";
+import { useToggleTodo } from "@/lib/hooks/useToggleTodo";
 import { useUpdateCategory } from "@/lib/hooks/useUpdateCategory";
 import { useUpdateTodo } from "@/lib/hooks/useUpdateTodo";
 import { RouterOutput } from "@/lib/routers/_app";
@@ -32,6 +34,8 @@ export default function TodosScreen() {
     error: deleteError,
     isPending: isDeleting,
   } = useDeleteTodo();
+  const { error, createTodo } = useCreateTodo();
+  const { toggleComplete } = useToggleTodo();
 
   const [selectedCategoryId, setSelectedCategoryId] =
     useState<CategoryFiler>("all");
@@ -49,11 +53,8 @@ export default function TodosScreen() {
     }
   }, [categoryParam]);
 
-  const [error, setError] = useState<ErrorState>(null);
-
   const { data: todos, isLoading, refetch } = trpc.todo.getAll.useQuery();
   const { data: categories } = trpc.category.getAll.useQuery();
-  const utils = trpc.useUtils();
 
   const {
     showModal: showCategoryModal,
@@ -96,63 +97,6 @@ export default function TodosScreen() {
 
     return todos.filter((todo) => todo.categoryId === selectedCategoryId);
   }, [todos, selectedCategoryId]);
-
-  const createTodoMutation = trpc.todo.create.useMutation();
-
-  const createTodo = async (
-    title: string,
-    description: string,
-    createCategoryId?: string
-  ): Promise<boolean> => {
-    if (!title.trim()) {
-      setError(t("errors.titleRequired"));
-      return false;
-    }
-
-    if (title.length > 200) {
-      setError(t("errors.titleTooLong"));
-      return false;
-    }
-
-    try {
-      await createTodoMutation.mutateAsync({
-        title: title.trim(),
-        description: description.trim() || undefined,
-        categoryId: createCategoryId,
-      });
-
-      utils.todo.getAll.invalidate();
-      setError(null);
-      return true;
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "Failed to create todo");
-      return false;
-    }
-  };
-
-  const toggleComplete = trpc.todo.toggleComplete.useMutation({
-    onMutate: async ({ id }) => {
-      // Cancel outgoing refetches
-      await utils.todo.getAll.cancel();
-      const previousTodos = utils.todo.getAll.getData();
-
-      // Optimistic update
-      utils.todo.getAll.setData(undefined, (old) =>
-        old?.map((todo) =>
-          todo.id === id ? { ...todo, completed: !todo.completed } : todo
-        )
-      );
-
-      return { previousTodos };
-    },
-    onError: (err, variables, context) => {
-      // Rollback on error
-      utils.todo.getAll.setData(undefined, context?.previousTodos);
-    },
-    onSettled: () => {
-      utils.todo.getAll.invalidate();
-    },
-  });
 
   const handleOpenDeleteModal = (id: string, title: string) => {
     setTodoToDelete({ id, title });
@@ -210,7 +154,7 @@ export default function TodosScreen() {
           <TodoItem
             todo={item}
             categories={categories}
-            onToggleComplete={(id) => toggleComplete.mutate({ id })}
+            onToggleComplete={toggleComplete}
             onUpdateTodo={updateTodo}
             onOpenDeleteModal={handleOpenDeleteModal}
           />
@@ -271,7 +215,6 @@ export default function TodosScreen() {
         title="todos.delete"
       >
         <TodoDeleteModal
-          visible={deleteModalOpen}
           todoTitle={todoToDelete?.title || ""}
           error={deleteError}
           isPending={isDeleting}
