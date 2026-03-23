@@ -1,7 +1,6 @@
 import { act, renderHook } from "@testing-library/react";
 import { afterEach, describe, expect, it, vi } from "vitest";
 
-import { asyncStorageMock } from "@/lib/testing/mocks/async-storage";
 import { createI18nMock } from "@/lib/testing/mocks/i18n";
 import { colorSchemeMock } from "@/lib/testing/mocks/nativewind";
 import {
@@ -22,9 +21,8 @@ vi.mock("i18next", async () => ({
   default: createI18nMock(),
 }));
 
-afterEach(async () => {
+afterEach(() => {
   resetPreferencesStore();
-  asyncStorageMock.reset();
 });
 
 describe("useLanguage", () => {

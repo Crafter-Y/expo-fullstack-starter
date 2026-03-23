@@ -11,11 +11,9 @@ import {
 } from "@/lib/testing/mocks/preferences";
 import { useTheme } from "../useTheme";
 
-vi.mock(
-  "@react-native-async-storage/async-storage",
-  async () =>
-    (await import("../../testing/mocks/async-storage")).asyncStorageMock
-);
+vi.mock("@react-native-async-storage/async-storage", async () => ({
+  default: (await import("../../testing/mocks/async-storage")).asyncStorageMock,
+}));
 
 vi.mock("expo-localization", () => ({
   getLocales: () => [{ languageCode: "en" }],
