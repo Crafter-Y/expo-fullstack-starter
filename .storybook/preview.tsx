@@ -3,6 +3,7 @@
 import "@/lib/i18n";
 import "../global.css";
 
+import performancePanelPreview from "@github-ui/storybook-addon-performance-panel/preview";
 import type { Decorator, Preview } from "@storybook/react-native-web-vite";
 import { changeLanguage } from "i18next";
 import { colorScheme } from "nativewind";
@@ -27,7 +28,11 @@ const preview: Preview = {
   },
 };
 
+const performancePanelDecorators =
+  (performancePanelPreview.decorators as Decorator[]) ?? [];
+
 export const decorators: Decorator[] = [
+  ...performancePanelDecorators,
   (Story, context) => {
     const { locale } = context.globals;
     const isInDocs = context.viewMode === "docs";
