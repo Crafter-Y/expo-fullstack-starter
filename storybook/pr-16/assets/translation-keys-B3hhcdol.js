@@ -1,1 +1,0 @@
-import{e as r}from"./iframe-WWK3Gj28.js";function l(o,s=""){const t=[];for(const e in o){const n=o[e],a=s?`${s}.${e}`:e;typeof n=="object"&&n!==null?t.push(...l(n,a)):t.push(a)}return t}const y=l(r),i={control:{type:"select"},options:y,description:"Translation key from i18n",table:{type:{summary:"TranslationKey"}}};export{i as t};
