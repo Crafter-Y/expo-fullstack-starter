@@ -19,6 +19,7 @@ const config: StorybookConfig = {
     "@storybook/addon-a11y",
     "@storybook/addon-vitest",
     "@storybook/addon-themes",
+    "@github-ui/storybook-addon-performance-panel/preset",
   ],
   framework: {
     name: "@storybook/react-native-web-vite",
